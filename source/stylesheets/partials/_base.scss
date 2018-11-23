@@ -1,0 +1,51 @@
+body>section>header>h1 {
+  font-family: $font-title;
+  font-weight: bold;
+  font-size: 2.5em;
+}
+
+
+.blog {
+  @extend .row;
+  .main {
+    @extend .grid-three-fourths;
+
+    aside {
+      padding-left: $spacing;
+      color: $color-gray-dark;
+    }
+
+    .highlight {
+      background-color: darken( $color-white, 5% );
+    }
+    code, pre {
+      color: $color-black;
+      background-color: darken( $color-white, 5% );
+    }
+
+    .spreadsheet {
+      border: 1px solid $color-black;
+      border-collapse: collapse;
+      td {
+        border: 1px solid $color-black;
+        padding: 0.75em;
+      }
+    }
+
+  }
+  &> aside {
+    @extend .grid-fourth;
+    font-size: 0.7em;
+  }
+
+  article {
+    header {
+      time {
+        display: block;
+        margin-top: -1.5em;
+        margin-bottom: 2em;
+      }
+    }
+  }
+}
+

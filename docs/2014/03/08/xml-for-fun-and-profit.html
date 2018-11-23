@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><article>
+<header>
+<h1>Xml manipulation in clojure</h1>
+<time>Mar  8 2014</time>
+</header>
+<blockquote>
+  <p><strong>"XML is like violence - if it doesn't work, use more"</strong></p>
+</blockquote>
+
+<p>Clojure is awesome for parsing and processing structured data.  It has a wide range of functions for handling lists, maps (associative arrays), sets, and (if you really need them) objects.</p>
+
+<p>One great example of the power of clojure for this sort of thing is processing xml.  You may hate xml, you may use json or edn or yaml or anything else you can - but ultimately, xml is still all over the place, and if you need to handle complex xml or large xml, you might want to look at clojure.</p>
+
+<aside>
+  <p>This article was started in September 2013 - but it grew, and it grew, and the blog needed some styling, and I moved to Glasgow… so it's rather late getting out of beta.</p>
+</aside>
+
+<p></p>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#parsing-xml-as-structured-data">Parsing XML</a></li>
+  <li><a href="#lazy-parsing">Lazy parsing</a></li>
+  <li><a href="#traversing-xml-as-a-sequence">XML as a sequence</a></li>
+  <li><a href="#zippers">Zippers</a></li>
+  <li><a href="#datazip-for-zipper-awesomeness">data.zip for zipper awesomeness</a></li>
+  <li><a href="#parsing-wikipedia">Parsing Wikipedia</a></li>
+  <li><a href="#laziness---lose-your-head">Laziness - Lose your head</a></li>
+  <li><a href="#data-processing-with-lazy-sequences">Data processing with lazy sequences</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h2 id="introduction">Introduction</h2>
+<aside>
+  <p><em>Note</em> - this was originally written as a no-previous-clojure-knowledge-needed post, but it got quite long.  So now I assume you know basic clojure syntax, and how to use the <a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E"><code>-&gt;</code></a> and <a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E%3E"><code>-&gt;&gt;</code></a>.  If this means nothing to you, check out <a href="http://www.braveclojure.com/">Clojure for the brave and true</a> a great starting resource, as well as <a href="http://clojure.org">http://clojure.org</a> and <a href="http://jafingerhut.github.io/cheatsheet-clj-1.3/cheatsheet-tiptip-cdocs-summary.html">the cheat sheet</a>.</p>
+</aside>
+
+<p>As I said at the start, handling XML in clojure is awesome - but the documentation is all over the place, especially as you need to use several different libraries together (this being the clojure way - prefer small composable functions over monolithic frameworks). Hence I'll attempt to pull everything together in this blog post - at least for <em>reading</em> xml.</p>
+
+<p>Clojure has three basic approaches to xml:</p>
+
+<ol>
+  <li>Parsing as structured data</li>
+  <li>Traversing the structured data as a sequence</li>
+  <li>Manipulating via zippers and their friends</li>
+</ol>
+
+<p>More, the first two of these can be done lazily, allowing for easy processing of huge data sets.  More on this later.</p>
+
+<h2 id="parsing-xml-as-structured-data">Parsing xml as structured data</h2>
+
+<p>Clojure comes with a built in xml parser - it can parse streams, files, or URIs into nested maps.  Unfortunately it doesn't have a simple way to parse strings, but you can make them into streams and then parse them as follows:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="nb">parse</span><span class="w"> </span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="w">
+   </span><span class="p">(</span><span class="nf">clojure.xml/parse</span><span class="w">
+     </span><span class="p">(</span><span class="nf">java.io.ByteArrayInputStream.</span><span class="w"> </span><span class="p">(</span><span class="nf">.getBytes</span><span class="w"> </span><span class="n">s</span><span class="p">))))</span><span class="w">
+</span></code></pre></div>
+<p>Given an xml file like this:</p>
+
+<div class="highlight"><pre class="highlight xml"><code><span class="nt">&lt;top&gt;</span>
+Baby, I'm the top
+  <span class="nt">&lt;mid&gt;</span>
+    <span class="nt">&lt;bot</span> <span class="na">foo=</span><span class="s">"bar"</span><span class="nt">&gt;</span>
+      I'm the bottom!
+    <span class="nt">&lt;/bot&gt;</span>
+  <span class="nt">&lt;/mid&gt;</span>
+<span class="nt">&lt;/top&gt;</span>
+</code></pre></div><p>calling <code>(parse xml)</code> will return a set of nested maps representing the data:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">{</span><span class="no">:tag</span><span class="w"> </span><span class="no">:top,</span><span class="w">
+ </span><span class="no">:attrs</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+ </span><span class="no">:content</span><span class="w"> </span><span class="p">[</span><span class="w">
+   </span><span class="s">"Baby, I'm the top"</span><span class="w">
+    </span><span class="p">{</span><span class="no">:tag</span><span class="w"> </span><span class="no">:mid,</span><span class="w"> 
+     </span><span class="no">:attrs</span><span class="w"> </span><span class="n">nil,</span><span class="w"> 
+     </span><span class="no">:content</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="no">:tag</span><span class="w"> </span><span class="no">:bot,</span><span class="w">
+         </span><span class="no">:attrs</span><span class="w"> </span><span class="p">{</span><span class="no">:foo</span><span class="w"> </span><span class="s">"bar"</span><span class="p">}</span><span class="n">,</span><span class="w">
+         </span><span class="no">:content</span><span class="w"> </span><span class="p">[</span><span class="s">"I'm the bottom!"</span><span class="p">]}]}]}</span><span class="w">
+</span></code></pre></div>
+<p>Once you have nested maps in clojure, you have a huge number of ways to manipulate the data just using language constructs.  For example, you can get the content above with:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="p">(</span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="p">(</span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="nb">second</span><span class="w"> </span><span class="p">(</span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="nb">parse</span><span class="w"> </span><span class="n">data</span><span class="p">)))))))</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"I'm the bottom!"</span><span class="w">
+</span></code></pre></div>
+<p>Or using the <a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E%3E"><code>-&gt;&gt;</code></a> macro:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">parse</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="nb">second</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="nb">first</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="nb">first</span><span class="w">
+     </span><span class="no">:content</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"I'm the bottom!"</span><span class="w">
+</span></code></pre></div>
+<p>You can do more than just 'first' and 'second' here - you can add functions to filter data, such as:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">parse</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">%</span><span class="p">)</span><span class="w"> </span><span class="no">:mid</span><span class="p">))</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="nb">first</span><span class="w">
+     </span><span class="no">:content</span><span class="w">
+     </span><span class="nb">first</span><span class="w">
+     </span><span class="no">:content</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"I'm the bottom!"</span><span class="w">
+</span></code></pre></div>
+<p>The <code>filter</code> explicitly looks for a child of the :content element with a <code>:tag</code> of <code>:mid</code>.</p>
+
+<h2 id="lazy-parsing">Lazy parsing</h2>
+
+<p>Instead of using core.xml you can use the <a href="https://github.com/clojure/data.xml">data.xml</a> library (<a href="http://clojure.github.io/data.xml/">api docs here</a>).  This superficially works like the core.xml parser (though happily it has a parse-str function built in) :</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">use</span><span class="w"> </span><span class="ss">'clojure.data.xml</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">parse-str</span><span class="w"> </span><span class="n">xml</span><span class="p">)</span><span class="w"> </span><span class="c1">; as above</span><span class="w">
+</span></code></pre></div><p>results in:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="o">#</span><span class="n">clojure.data.xml.Element</span><span class="p">{</span><span class="w">
+  </span><span class="no">:tag</span><span class="w">  </span><span class="no">:top,</span><span class="w">
+  </span><span class="no">:attrs</span><span class="w"> </span><span class="p">{}</span><span class="n">,</span><span class="w">
+  </span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="s">"Baby, I'm the top"</span><span class="w">
+            </span><span class="o">#</span><span class="n">clojure.data.xml.Element</span><span class="p">{</span><span class="w">
+              </span><span class="no">:tag</span><span class="w"> </span><span class="no">:mid,</span><span class="w">
+              </span><span class="no">:attrs</span><span class="w"> </span><span class="p">{}</span><span class="n">,</span><span class="w">
+              </span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="o">#</span><span class="n">clojure.data.xml.Element</span><span class="p">{</span><span class="w">
+                        </span><span class="no">:tag</span><span class="w"> </span><span class="no">:bot,</span><span class="w">
+                        </span><span class="no">:attrs</span><span class="w"> </span><span class="p">{</span><span class="no">:foo</span><span class="w"> </span><span class="s">"bar"</span><span class="p">}</span><span class="n">,</span><span class="w">
+                        </span><span class="no">:content</span><span class="w"> </span><span class="p">(</span><span class="s">"I'm the bottom!"</span><span class="p">)})})}</span><span class="w">
+</span></code></pre></div>
+<aside>
+  <p>The <code>#clojure.data.xml.Element</code> values above are <a href="http://clojure.org/datatypes">records</a> - which implement Map, so our code doesn't have to change.</p>
+</aside>
+
+<p>The big difference isn't immediately obvious: the lists in the <code>:content</code> sections, and the <code>Element</code>s, are both lazy.  They won't be evaluated until needed - which means you can process huge xml structures this way without needing to load the whole thing into memory.  If you start parsing (say) a 42G wikipedia dump, and you only look at <code>(first (:content dump))</code> then the parser will never look beyond the first well formed xml element in the body.</p>
+
+<h3 id="a-quick-aside---dumping-an-xml-element-for-debugging">A quick aside - dumping an xml element for debugging</h3>
+
+<p>To make sense of xml traversal, often you'll want to look at an element like the <code>top</code> element - and there's a function called <code>emit-element</code> that will convert an element back to xml for you.  However, it will convert the <em>whole</em> element, including all it's children, to xml.  So I have a couple of handy functions:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="p">[</span><span class="nb">node</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">associative?</span><span class="w"> </span><span class="nb">node</span><span class="p">)</span><span class="w">
+      </span><span class="p">(</span><span class="nf">emit-element</span><span class="w"> </span><span class="p">(</span><span class="nb">dissoc</span><span class="w"> </span><span class="nb">node</span><span class="w"> </span><span class="no">:content</span><span class="p">))</span><span class="w">
+      </span><span class="p">(</span><span class="nf">emit-element</span><span class="w"> </span><span class="nb">node</span><span class="p">))</span><span class="w">
+  </span><span class="nb">node</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">as-short-xml</span><span class="w"> </span><span class="p">[</span><span class="nb">node</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">clojure.string/trim</span><span class="w"> </span><span class="c1">; remove trailing \n</span><span class="w">
+    </span><span class="p">(</span><span class="nb">with-out-str</span><span class="w">
+      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">associative?</span><span class="w"> </span><span class="nb">node</span><span class="p">)</span><span class="w">
+        </span><span class="p">(</span><span class="nf">c-xml/emit-element</span><span class="w"> </span><span class="p">(</span><span class="nb">dissoc</span><span class="w"> </span><span class="nb">node</span><span class="w"> </span><span class="no">:content</span><span class="p">))</span><span class="w">
+        </span><span class="p">(</span><span class="nf">c-xml/emit-element</span><span class="w"> </span><span class="nb">node</span><span class="p">)))))</span><span class="w">
+</span></code></pre></div>
+<p>These do essentially the same thing - <code>dbg</code> will print a node as xml without it's contents.  Or if you pass it anything else, like a string "I'm the bottom!" it will pass it to emit-element, which will just print it.  And then <code>dbg</code> returns the original node for further processing - all the printing is as side effects.</p>
+
+<p><code>as-short-xml</code> instead captures the printed output as a string, and returns that - useful when you want a side-effect free function that returns a string, rather than printing.</p>
+
+<h2 id="traversing-xml-as-a-sequence">Traversing xml as a sequence</h2>
+
+<p>Clojure core includes the <a href="http://clojuredocs.org/clojure_core/clojure.core/xml-seq">xml-seq</a> function that works on either of the above structures, letting you iterate over the tree of elements in a depth-first fashion.</p>
+
+<p>For example, with our xml above:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">as-short-xml</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-seq</span><span class="w"> </span><span class="p">(</span><span class="nf">c-d-xml/parse-str</span><span class="w"> </span><span class="n">data</span><span class="p">)))</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"&lt;top/&gt;"</span><span class="w">
+    </span><span class="s">"Baby, I'm the top"</span><span class="w">
+    </span><span class="s">"&lt;mid/&gt;"</span><span class="w">
+    </span><span class="s">"&lt;bot foo='bar'/&gt;"</span><span class="w">
+    </span><span class="s">"I'm the bottom!"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
+<p>The <code>xml-seq</code> function traversed the whole tree lazily from the top to the bottom.</p>
+
+<p>You can of course use all the standard clojure list processing functions on the node sequence - for instance, if you wanted the first node with an attribute:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">c-d-xml/parse-str</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w">
+    </span><span class="nb">xml-seq</span><span class="w">
+    </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">not-empty</span><span class="w"> </span><span class="p">(</span><span class="no">:attrs</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+    </span><span class="nb">first</span><span class="w">
+    </span><span class="n">as-short-xml</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"&lt;bot foo='bar'/&gt;"</span><span class="w">
+</span></code></pre></div>
+<p>As I mentioned earlier, this is lazy - once you've found an element with an attribute, and output it, the sequence traversal will stop, and so will the parser.  Of course we are using strings here, so the whole xml string will be in memory, but you can use streams to avoid this as well.  More on this later.</p>
+
+<h2 id="zippers">Zippers</h2>
+
+<p>Zippers are probably the easiest way to manage xml - once you grok them.</p>
+
+<p>Zippers are a strange beast. <a href="http://en.wikipedia.org/wiki/Zipper_(data_structure)">Wikipedia</a> describes them as:</p>
+
+<blockquote>
+  <p>A technique of representing an aggregate data structure so that it is convenient for writing programs that traverse the structure arbitrarily and update it's contents…</p>
+</blockquote>
+
+<p>I like to think of a zipper as a kind of pointer to part of a tree - at any time if you have a tree of nodes like the one above, you can have a zipper that refers to a node in the tree, and use it to navigate around the tree.  You can also use the zipper to produce a modified version of the xml document, but I'll leave that for another post.</p>
+
+<p>To get a zipper from an xml tree, you need another library:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">clojure.zip/xml-zip</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-str</span><span class="w"> </span><span class="n">xml</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
+<p>The output of this isn't very useful.  Zippers are a little hard to view, because they need to keep track of the entire xml tree they are created from - so every time you output a zipper, you see the whole parsed xml structure, which doesn't help much.</p>
+
+<p>To find out more about the current state of a zipper, you can call <code>clojure.zip/node</code>, which returns the node pointed to by the zipper.  Then you can call the same debug functions described earlier.  Here's some short functions to dump zippers:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">dz</span><span class="w"> </span><span class="p">[</span><span class="n">zipper</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nf">do</span><span class="w">
+                    </span><span class="p">(</span><span class="nf">dbg</span><span class="w"> </span><span class="p">(</span><span class="nf">clojure.zip/node</span><span class="w"> </span><span class="n">zipper</span><span class="p">))</span><span class="w">
+                    </span><span class="n">zipper</span><span class="p">))</span><span class="w"> </span><span class="c1">; return the zipper for more processing</span><span class="w">
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">az</span><span class="w"> </span><span class="p">[</span><span class="n">zipper</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nf">as-short-xml</span><span class="w"> </span><span class="p">(</span><span class="nf">clojure.zip/node</span><span class="w"> </span><span class="n">zipper</span><span class="p">)))</span><span class="w">
+</span></code></pre></div>
+<h2 id="basic-zipper-navigation">Basic zipper navigation</h2>
+
+<p>Zippers, like most of clojure, are immutable - to "navigate" using them, you modify a zipper with a function to get a new zipper.  The basic options are:</p>
+
+<ol>
+  <li>down - takes you to the first child of this node</li>
+  <li>up - takes you to the parent element of this node</li>
+  <li>right - takes you to the next sibling of this node</li>
+  <li>left - takes you to the previous sibling of this node</li>
+</ol>
+
+<p><a href="http://richhickey.github.io/clojure/clojure.zip-api.html">and many many other similar navigation commands</a></p>
+
+<p>So to continue with our example xml:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">xml</span><span class="w">
+    </span><span class="n">c-zip/xml-zip</span><span class="w">
+    </span><span class="n">c-zip/down</span><span class="w">
+    </span><span class="n">dz</span><span class="w">
+    </span><span class="n">c-zip/right</span><span class="w">
+    </span><span class="n">dz</span><span class="w">
+    </span><span class="n">c-zip/down</span><span class="w">
+    </span><span class="n">az</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"Baby, I'm the top"</span><span class="w">
+</span><span class="s">"&lt;mid/&gt;"</span><span class="w">
+</span><span class="s">"&lt;bot foo='bar'/&gt;"</span><span class="w">
+</span></code></pre></div>
+<p>The first call to 'dz' dumps the first child of the root, the text node "Baby, I'm the top"</p>
+
+<p>Then we move to it's right sibling and dump the value there - the "&lt;mid&gt;" node.</p>
+
+<p>Then we move down to it's first child, and output the "&lt;bot&gt;" node.</p>
+
+<p>I hope this is making sense.  Basically, you move the zipper around the tree to get to the node you want.  Handy for some cases, but still a little strange.</p>
+
+<h2 id="datazip-for-zipper-awesomeness">Data.zip for zipper awesomeness</h2>
+
+<p>Basic zippers are just a starting point.  To really make them fly for xml manipulation, I'll use yet another library: <a href="http://clojure.github.io/data.zip/">data.zip</a></p>
+
+<p>Data.zip contains the data.zip.xml namespace which has a number of simple and powerful functions that operate on xml zippers and play very nicely together.</p>
+
+<h2 id="accessors">Accessors</h2>
+
+<p>There are several functions that given a zipper pointing to an xml node, extract information on it.  For example, using the zipper we had above pointing to the <bot> node, we could call `(attr zipper :foo)` which would return "bar", naturally. `(text zipper)` would return "I'm the bottom!".</bot></p>
+
+<p>There are also predicates similar to these - <code>(attr= :foo "bar")</code> returns a predicate that returns true if a given node has a "foo=bar" attribute - so <code>((attr= :foo "bar") zipper)</code> would be true.  Similarly <code>(text= "asdf")</code> is a predicate that matches based on element text, <code>(tag= :mid)</code> matches on tag name.</p>
+
+<h2 id="threading-magic">Threading magic</h2>
+
+<p>Clojure.data.zip has two functions that look and act a little like the <code>-&gt;</code> threading macro:</p>
+
+<p><strong><a href="http://clojure.github.io/data.zip/#clojure.data.zip.xml/xml-&gt;"><code>xml-&gt;</code></a></strong> and <strong><a href="http://clojure.github.io/data.zip/#clojure.data.zip.xml/xml1-&gt;"><code>xml1-&gt;</code></a></strong></p>
+
+<p>These work similarly - they take a zipper as a starting location, and then a sequence of matchers.  They apply each matcher in order as follows:</p>
+
+<ol>
+  <li>If it's a function, call it on the zipper
+    <ol>
+      <li>If it returns a collection, each value of the collection is passed to the next matcher</li>
+      <li>If it returns a (zipper) location, the location is passed to the next matcher</li>
+      <li>If it returns true, the current location is passed to the next matcher</li>
+      <li>If it returns false or nil, this particular matching branch stops</li>
+    </ol>
+  </li>
+  <li>If it's a keyword <code>:foo</code> it is converted to the predicate <code>(tag= :foo)</code> and run as above</li>
+  <li>If it's a string "bar" it is converted to the predicate <code>(text= "bar")</code> and run as above</li>
+  <li>If it's a vector, it is converted to a sub query</li>
+</ol>
+
+<p>Note that this can result in more than one value - each matcher can return a collection, which results in more results being passed to later matchers.  The difference between <code>xml-&gt;</code> and <code>xml1-&gt;</code> is that <code>xml-&gt;</code> returns a collection of results, whereas <code>xml1-&gt;</code> returns only the first not-false-or-nil result.</p>
+
+<p>The actual result is whatever comes out of the rightmost matcher function.</p>
+
+<p>An example may help.  Given our xml yet again,</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="w">
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-str</span><span class="w"> </span><span class="n">xml</span><span class="p">)))</span><span class="w"> </span><span class="c1">; for convenience</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w">
+       </span><span class="no">:mid</span><span class="w">
+       </span><span class="no">:bot</span><span class="w">
+       </span><span class="p">(</span><span class="nf">attr=</span><span class="w"> </span><span class="no">:foo</span><span class="w"> </span><span class="s">"bar"</span><span class="p">)</span><span class="w">
+       </span><span class="n">text</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"I'm the bottom!"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
+<p>returns a sequence with a single element <code>("I'm the bottom")</code>.  If we'd called <code>xml1-&gt;</code> it would have just returned a single string.</p>
+
+<p>This worked by taking the <top> node, looking for a child <mid> node, then a child <bot> node, then checking that node had the `foo=bar` attribute, then returning it's text.</bot></mid></top></p>
+
+<p>Our xml is too simple for much more complex manipulation.  If you want to see more of the things you can do with xml and zippers, have a look at <a href="https://github.com/clojure/data.zip/blob/master/src/test/clojure/clojure/data/zip/xml_test.clj">the test cases for clojure.data.zip</a> - they are far more useful than the actual documentation!</p>
+
+<p>However, let's move on to a real world example - reading a big big xml file.</p>
+
+<h2 id="parsing-wikipedia">Parsing Wikipedia</h2>
+
+<p>Wikipedia is <a href="http://en.wikipedia.org/wiki/Wikipedia:Database_download#English-language_Wikipedia">available for download</a> as a big gzipped xml file.  And when I say big - it's around 9.5 GB compressed, or 44 GB of xml.  You don't really want to read it into memory.</p>
+
+<p>So lets be lazy.</p>
+
+<p>First some boilerplate - I'm going to include the whole namespace here, so you can try this code yourself if you want:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">wikiparse.core</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">wikiparse.util</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">dbg</span><span class="w"> </span><span class="n">as-short-xml</span><span class="w"> </span><span class="n">dz</span><span class="w"> </span><span class="n">az</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.xml</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-xml</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.xml</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-d-xml</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="nb">parse</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.zip</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-zip</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="nb">xml-zip</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.zip</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-d-zip</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.zip.xml</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-d-z-xml</span><span class="w">
+                </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">xml-&gt;</span><span class="w"> </span><span class="n">xml1-&gt;</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">attr=</span><span class="w"> </span><span class="n">text</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.java.io</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">io</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clj-time.core</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="nb">time</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clj-time.format</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">fmt</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.pprint</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">pprint</span><span class="p">]])</span><span class="w">
+  </span><span class="p">(</span><span class="no">:import</span><span class="w"> </span><span class="p">[</span><span class="n">org.apache.commons.compress.compressors.bzip2</span><span class="w">
+              </span><span class="n">BZip2CompressorInputStream</span><span class="p">]))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">bz2-reader</span><span class="w"> </span><span class="s">"produce a Reader on a bzipped file"</span><span class="w">
+  </span><span class="p">[</span><span class="n">filename</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">filename</span><span class="w">
+      </span><span class="n">io/file</span><span class="w">
+      </span><span class="n">io/input-stream</span><span class="w"> 
+      </span><span class="n">BZip2CompressorInputStream.</span><span class="w">
+      </span><span class="n">io/reader</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
+<p>The bz2-reader function will unzip the file on the fly - it's all streams and readers, so you don't need to store the whole thing in memory.</p>
+
+<p>Let's start parsing the xml.  First, we'll define a reader - note, this is not something you'd ever do outside a repl, as using <code>def</code> like this puts the reader in a global symbol.  See further down for better ways to handle readers.</p>
+
+<p>Then we can start parsing the xml:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">rdr</span><span class="w"> </span><span class="p">(</span><span class="nf">bz2-reader</span><span class="w"> </span><span class="s">"wikipedia.xml.bz2"</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">(</span><span class="nb">parse</span><span class="w"> </span><span class="n">rdr</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="no">:mediawiki</span><span class="w">
+
+</span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="no">:content</span><span class="w"> </span><span class="nb">first</span><span class="w"> </span><span class="no">:content</span><span class="w"> </span><span class="nb">first</span><span class="w"> </span><span class="no">:content</span><span class="p">)</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"Wikipedia"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
+<p>The top few lines of the wikipedia dump are:</p>
+
+<div class="highlight"><pre class="highlight xml"><code><span class="nt">&lt;mediawiki</span> <span class="na">xmlns=</span><span class="s">"..."</span> <span class="na">version=</span><span class="s">"0.8"</span> <span class="na">xml:lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;siteinfo&gt;</span>
+    <span class="nt">&lt;sitename&gt;</span>Wikipedia<span class="nt">&lt;/sitename&gt;</span>
+</code></pre></div>
+<p>so this looks right.</p>
+
+<p>Most of the wikipedia dump is a long sequence of <code>&lt;page&gt;</code> tags similar to:</p>
+
+<div class="highlight"><pre class="highlight xml"><code>  <span class="nt">&lt;page&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Autism<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;revision&gt;</span>
+      <span class="nt">&lt;id&gt;</span>557666522<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;timestamp&gt;</span>2013-05-31T11:04:03Z<span class="nt">&lt;/timestamp&gt;</span>
+      <span class="nt">&lt;text</span> <span class="na">xml:space=</span><span class="s">"preserve"</span><span class="nt">&gt;</span>
+... lots of text here
+      <span class="nt">&lt;/text&gt;</span>
+      <span class="nt">&lt;model&gt;</span>wikitext<span class="nt">&lt;/model&gt;</span>
+      <span class="nt">&lt;format&gt;</span>text/x-wiki<span class="nt">&lt;/format&gt;</span>
+    <span class="nt">&lt;/revision&gt;</span>
+  <span class="nt">&lt;/page&gt;</span>
+</code></pre></div>
+<p>though there are some which are just redirect stubs:</p>
+
+<div class="highlight"><pre class="highlight xml"><code>  <span class="nt">&lt;page&gt;</span>
+    <span class="nt">&lt;title&gt;</span>AccessibleComputing<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;redirect</span> <span class="na">title=</span><span class="s">"Computer accessibility"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;revision&gt;</span>
+      <span class="nt">&lt;id&gt;</span>381202555<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;timestamp&gt;</span>2010-08-26T22:38:36Z<span class="nt">&lt;/timestamp&gt;</span>
+      <span class="nt">&lt;text</span> <span class="na">xml:space=</span><span class="s">"preserve"</span><span class="nt">&gt;</span>#REDIRECT [[Computer accessibility]] {{R from CamelCase}}<span class="nt">&lt;/text&gt;</span>
+      <span class="nt">&lt;model&gt;</span>wikitext<span class="nt">&lt;/model&gt;</span>
+      <span class="nt">&lt;format&gt;</span>text/x-wiki<span class="nt">&lt;/format&gt;</span>
+    <span class="nt">&lt;/revision&gt;</span>
+  <span class="nt">&lt;/page&gt;</span>
+</code></pre></div>
+<p>Let's look for the first few titles.  How about we use the zipper stuff from before?</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">10</span><span class="w">
+      </span><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w">
+             </span><span class="no">:page</span><span class="w">
+             </span><span class="no">:title</span><span class="w">
+             </span><span class="n">text</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"AccessibleComputing"</span><span class="w"> </span><span class="s">"Anarchism"</span><span class="w"> </span><span class="s">"AfghanistanHistory"</span><span class="w"> </span><span class="s">"AfghanistanGeography"</span><span class="w"> </span><span class="s">"AfghanistanPeople"</span><span class="w"> </span><span class="s">"AfghanistanCommunications"</span><span class="w"> </span><span class="s">"AfghanistanTransportations"</span><span class="w"> </span><span class="s">"AfghanistanMilitary"</span><span class="w"> </span><span class="s">"AfghanistanTransnationalIssues"</span><span class="w"> </span><span class="s">"AssistiveTechnology"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
+<p>Cool - how about we test laziness, let's look for the 1000th title:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">nth</span><span class="w"> </span><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w">
+            </span><span class="no">:page</span><span class="w">
+            </span><span class="no">:title</span><span class="w">
+            </span><span class="n">text</span><span class="p">)</span><span class="w">
+     </span><span class="mi">10000</span><span class="p">)</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"Integral domain"</span><span class="w">
+</span></code></pre></div>
+<p>Awesome - how about the 100,000th?</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">nth</span><span class="w"> </span><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w">
+            </span><span class="no">:page</span><span class="w">
+            </span><span class="no">:title</span><span class="w">
+            </span><span class="n">text</span><span class="p">)</span><span class="w">
+     </span><span class="mi">100000</span><span class="p">)</span><span class="w">
+</span><span class="n">Exception</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">thread</span><span class="w"> </span><span class="s">"RMI TCP Connection(idle)"</span><span class="w"> </span><span class="n">java.lang.OutOfMemoryError</span><span class="err">:</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="n">exceeded</span><span class="w">
+</span></code></pre></div>
+<p>Oops - what happened to that laziness?</p>
+
+<h2 id="laziness---lose-your-head">Laziness - Lose your head</h2>
+
+<p>The trouble is, we have a reference to the original parsed xml structure in the symbol <code>x</code>.  This means that even though the pages are expanded lazily, the old pages we've looked at can't be fully garbage collected, as their parent <code>x</code> still has a reference to them.</p>
+
+<p>This is called "head retention" in clojure - it's not uncommon with lazy sequences.  If you keep a reference to the head of a sequence, it can't be garbage collected.</p>
+
+<p><em>Worse</em>, the zipper library does the same thing.  Every zipper can be traversed to find it's parent - so every zipper keeps a reference to it's parent.</p>
+
+<p>So we have to go back to simple structure parsing.  Don't worry, we won't throw away <em>all</em> the zipper functionality - you just have to use it on each child node, not the overall tree.</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">page-title</span><span class="w"> </span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="n">element</span><span class="p">)</span><span class="w">
+          </span><span class="no">:title</span><span class="w">
+          </span><span class="n">text</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nb">with-open</span><span class="w"> </span><span class="p">[</span><span class="n">rdr</span><span class="w"> </span><span class="p">(</span><span class="nf">bz2-reader</span><span class="w"> </span><span class="s">"wikipedia.xml.bz2"</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">nth</span><span class="w"> </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">rdr</span><span class="w">
+         </span><span class="nb">parse</span><span class="w">
+         </span><span class="no">:content</span><span class="w">
+         </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="no">:page</span><span class="w"> </span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+         </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">page-title</span><span class="p">))</span><span class="w">
+       </span><span class="mi">100000</span><span class="p">))</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"Flatonia, Texas"</span><span class="w">
+</span></code></pre></div>
+<aside>
+  <p>(Note: with-open is a macro that automatically closes the reader when we're done)</p>
+</aside>
+
+<p>Success!  Getting rid of the symbol <code>x</code> means we aren't keeping the head around - and we can still use a zipper within the <code>page-title</code> function to manipulate the individual page.  For a simple task like this it is probably overkill, and will add a fair bit of overhead - especially as we are mapping the page title for the 99,999 pages we don't care about.  But the minute you want to filter or act on the page contents, you'll need that processing.</p>
+
+<p>And this still only took 135 seconds, using 123 MB peak RAM on my laptop - not too bad for an unoptimised scan through 100,000 xml nodes.</p>
+
+<h2 id="data-processing-with-lazy-sequences">Data processing with lazy sequences</h2>
+
+<p>Clojure excels at processing sequences of stuff.  The wikipedia data is a bit simple for a great example, but it's a start.</p>
+
+<p>First, lets write a function to transform a wikipedia xml sub-document into a useful structure:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">page-&gt;map</span><span class="w"> </span><span class="p">[</span><span class="n">page</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">z</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="n">page</span><span class="p">)]</span><span class="w">
+    </span><span class="p">{</span><span class="no">:title</span><span class="w">     </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="no">:title</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w">
+     </span><span class="no">:redirect</span><span class="w">  </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="no">:redirect</span><span class="w"> </span><span class="p">(</span><span class="nf">attr</span><span class="w"> </span><span class="no">:title</span><span class="p">))</span><span class="w">
+     </span><span class="no">:id</span><span class="w">        </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="no">:revision</span><span class="w"> </span><span class="no">:id</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w">
+     </span><span class="no">:timestamp</span><span class="w"> </span><span class="p">(</span><span class="nf">fmt/parse</span><span class="w"> </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="no">:revision</span><span class="w"> </span><span class="no">:timestamp</span><span class="w"> </span><span class="n">text</span><span class="p">))</span><span class="w">
+     </span><span class="no">:text</span><span class="w">      </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="no">:revision</span><span class="w"> </span><span class="no">:text</span><span class="w"> </span><span class="n">text</span><span class="p">)}))</span><span class="w">
+</span></code></pre></div>
+<aside>
+  <p>Note I've been a bit lazy here with error checking - if there is no timestamp element this will crash horribly.</p>
+</aside>
+
+<p>Now let's get the first few entries:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">with-open</span><span class="w"> </span><span class="p">[</span><span class="n">rdr</span><span class="w"> </span><span class="p">(</span><span class="nf">bz2-reader</span><span class="w"> </span><span class="n">filename</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">doall</span><span class="w">
+    </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">4</span><span class="w">
+          </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">rdr</span><span class="w">
+               </span><span class="nb">parse</span><span class="w">
+               </span><span class="no">:content</span><span class="w">
+               </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="no">:page</span><span class="w"> </span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+               </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">page-&gt;map</span><span class="p">)))))</span><span class="w">
+</span></code></pre></div>
+<p>One strange thing I had to do here is use <code>doall</code> - this is to force non-laziness.  Clojure's laziness is great generally, but without <code>doall</code> you will get:</p>
+
+<div class="highlight"><pre class="highlight plaintext"><code>XMLStreamException ParseError at [row,col]:[85,2582]
+Message: Stream closed  com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next (XMLStreamReaderImpl.java:596)
+</code></pre></div>
+<p>Why?  This is a common point of pain in dealing with lazy sequences - you need to make sure you force non-lazy behaviour before you lose your data source or connection or similar.  In this case, the <code>with-open</code> call opens a file for streaming - but everything inside the <code>take 4</code> call is only processed when output is needed.  Which is after <code>with-open</code> has closed the reader on you!</p>
+
+<p>So you need to add a <code>doall</code> first, which takes those 4 lazy results and forces them to be evaluated as concrete results. You wouldn't need this if all the processing of the sequence was forced within the <code>with-open</code> call in some other way.</p>
+
+<p>Anyway, back to the output of the above:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">({</span><span class="no">:title</span><span class="w"> </span><span class="s">"AccessibleComputing"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="s">"Computer accessibility"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"381202555"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2010-08-26</span><span class="n">T22</span><span class="no">:38:36.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Anarchism"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"557411769"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2013-05-29</span><span class="n">T21</span><span class="no">:19:48.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"AfghanistanHistory"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="s">"History of Afghanistan"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"74466652"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2006-09-08</span><span class="n">T04</span><span class="no">:15:52.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"AfghanistanGeography"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="s">"Geography of Afghanistan"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"407008307"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2011-01-10</span><span class="n">T03</span><span class="no">:56:19.000Z&gt;</span><span class="p">})</span><span class="w">
+</span></code></pre></div>
+<p>(I removed the text for clarity)</p>
+
+<p>Ok, now we have structured data we can process it.  Let's say we want to know the first 4 articles last updated before 2008?  Ignoring redirects, of course.</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">with-open</span><span class="w"> </span><span class="p">[</span><span class="n">rdr</span><span class="w"> </span><span class="p">(</span><span class="nf">bz2-reader</span><span class="w"> </span><span class="n">filename</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">doall</span><span class="w">
+    </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">4</span><span class="w">
+          </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">rdr</span><span class="w">
+               </span><span class="nb">parse</span><span class="w">
+               </span><span class="no">:content</span><span class="w">
+               </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="no">:page</span><span class="w"> </span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+               </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">page-&gt;map</span><span class="p">)</span><span class="w">
+               </span><span class="p">(</span><span class="nb">remove</span><span class="w"> </span><span class="no">:redirect</span><span class="p">)</span><span class="w">
+               </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">time/after?</span><span class="w"> </span><span class="p">(</span><span class="nf">time/date-time</span><span class="w"> </span><span class="mi">2008</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="no">:timestamp</span><span class="w"> </span><span class="n">%</span><span class="p">)))))))</span><span class="w">
+
+</span><span class="n">=&gt;</span><span class="w">
+</span><span class="p">({</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:Complete list of encyclopedia topics (obsolete)"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"31953688"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2005-12-19</span><span class="n">T09</span><span class="no">:54:11.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:Complete list of encyclopedia topics (obsolete)/6"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"15904520"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2005-05-16</span><span class="n">T07</span><span class="no">:18:26.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:Complete list of encyclopedia topics (obsolete)/7"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"15904521"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2005-05-16</span><span class="n">T07</span><span class="no">:18:30.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:Complete list of encyclopedia topics (obsolete)/8"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"15904522"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2005-05-16</span><span class="n">T07</span><span class="no">:18:56.000Z&gt;</span><span class="p">})</span><span class="w">
+</span></code></pre></div>
+<p>Hmm - kind of boring.  Let's strip the obsolete pages:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">with-open</span><span class="w"> </span><span class="p">[</span><span class="n">rdr</span><span class="w"> </span><span class="p">(</span><span class="nf">bz2-reader</span><span class="w"> </span><span class="n">filename</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">doall</span><span class="w">
+    </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">4</span><span class="w">
+          </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">rdr</span><span class="w">
+               </span><span class="nb">parse</span><span class="w">
+               </span><span class="no">:content</span><span class="w">
+               </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="no">:page</span><span class="w"> </span><span class="p">(</span><span class="no">:tag</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+               </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">page-&gt;map</span><span class="p">)</span><span class="w">
+               </span><span class="p">(</span><span class="nb">remove</span><span class="w"> </span><span class="no">:redirect</span><span class="p">)</span><span class="w">
+               </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">time/after?</span><span class="w"> </span><span class="p">(</span><span class="nf">time/date-time</span><span class="w"> </span><span class="mi">2008</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="no">:timestamp</span><span class="w"> </span><span class="n">%</span><span class="p">)))</span><span class="w">
+               </span><span class="p">(</span><span class="nb">remove</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">re-find</span><span class="w"> </span><span class="o">#</span><span class="s">"\(obsolete\)"</span><span class="w"> </span><span class="n">%</span><span class="p">))))))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w">
+</span><span class="p">({</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:GNE Project Files/Proposed GNU Moderation System"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"57629800"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2006-06-09</span><span class="n">T01</span><span class="no">:38:24.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:GNE Project Files/GNE Project Design"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"57629879"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2006-06-09</span><span class="n">T01</span><span class="no">:39:07.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"Wikipedia:GNE Project Files/Project Name"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"15910103"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2004-04-14</span><span class="n">T22</span><span class="no">:22:01.000Z&gt;</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:title</span><span class="w"> </span><span class="s">"History of the Virgin Islands"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:redirect</span><span class="w"> </span><span class="n">nil,</span><span class="w">
+  </span><span class="no">:id</span><span class="w"> </span><span class="s">"155442896"</span><span class="n">,</span><span class="w">
+  </span><span class="no">:timestamp</span><span class="w"> </span><span class="o">#</span><span class="n">&lt;DateTime</span><span class="w"> </span><span class="mi">2007-09-03</span><span class="n">T16</span><span class="no">:52:44.000Z&gt;</span><span class="p">})</span><span class="w">
+</span></code></pre></div>
+<p>This should give you a taste for what you can do.  Finding the above on my laptop took almost a minute - I'm not sure how far through the wikipedia dump it searched.  Counting the number of skipped pages is left as an exercise for the reader!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This is still a pretty simple data structure.  In many environments you will probably find some much worse examples - my most recent project involved parsing <a href="http://www.xbrl.org/specification/gnl/rec-2009-06-22/gnl-rec-2009-06-22.html">xbrl</a> which was a lot of fun.  If you meed this sort of xml, you'll really appreciate having a language like clojure on hand.</p>
+
+<p>I also haven't touched on modifying xml - the zipper frameworks have a lot of tools for on-the-fly modification of xml documents, but that's something for another article.</p>
+
+<div id='disqus_thread'></div>
+<script>
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'kornyblog';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>
+Please enable JavaScript to view the
+<a href='http://disqus.com/?ref_noscript'>comments powered by Disqus.</a>
+</noscript>
+<a class='dsq-brlink' href='http://disqus.com'>
+comments powered by
+<span class='logo-disqus'>Disqus</span>
+</a>
+</article>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in Glasgow.  More info at
+<a href='http://korny.info'>
+http://korny.info
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2018
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>

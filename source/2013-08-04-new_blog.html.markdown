@@ -1,0 +1,12 @@
+---
+title: A wild blog appears!
+date: 2013-08-04 03:04 UTC
+tags:
+---
+My old blog at trouble.net.au seems to have died - and it hadn't been updated for ages.
+
+So I'm starting a new one here, at http://blog.korny.info - there isn't much here right now, but I will work on that soon.
+
+The blog is being built with [middleman](http://middlemanapp.com/) for it's nifty static templating magic, [neat bourbon](http://neat.bourbon.io/) for Bourbon's nice scss addons, and the Neat grid system.  And some starting structure from the [Middleman Bourbon](https://github.com/kuldarkalvik/Middleman-Bourbon) template by [Kuldar](https://github.com/kuldarkalvik)
+
+Update: I ended up switching to [kraken](http://cferdinandi.github.io/kraken/index.html) rather than neat bourbon - I wanted something very simple, because really I just wanted to get text out there rather than fiddle with things.

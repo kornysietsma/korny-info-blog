@@ -1,0 +1,42 @@
+//
+// CONFIGURATION SETTINGS
+// Adjust colors, font stacks, breakpoints and sizing.
+//
+
+// Colors
+$color-primary: #00537d;
+$color-black: #272727;
+$color-white: #fcfdf5;
+//$color-white: #faf7e1;
+//$color-white: #ffffff;
+
+$color-success: #377f31; // Green
+$color-danger: #880e14; // Red
+$color-warning: #dba909; // Yellow
+$color-code: #faf8e1;
+//$color-code: #dd1144;
+
+$color-gray-dark: #808080;
+$color-gray-light: #e5e5e5;
+
+
+// Font Stacks
+//$font-primary: "Helvetica Neue", Arial, sans-serif;
+$font-title: 'Playfair Display', Georgia, Times, serif;
+//$font-title: 'Lora', Georgia, Times, serif;
+$font-primary: 'Vollkorn', Georgia, Times, serif;
+$font-secondary: "Latro", Arial, sans-serif;
+$font-monospace: 'Cousine', Menlo, Monaco, "Courier New", monospace;
+
+// Breakpoints
+$bp-xsmall: 20em;
+$bp-small: 30em;
+$bp-medium: 50em;
+$bp-large: 60em;
+$bp-xlarge: 80em;
+
+
+// Sizing
+$font-base: 125%;
+$spacing: 1.5625em;
+$container-max: 50em;
