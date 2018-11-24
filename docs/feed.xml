@@ -5,10 +5,53 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2014-05-11T13:08:00+01:00</updated>
+  <updated>2018-11-24T17:58:00+00:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>It's alive!</title>
+    <link rel="alternate" href="/2018/11/24/its_alive.html"/>
+    <id>/2018/11/24/its_alive.html</id>
+    <published>2018-11-24T17:58:00+00:00</published>
+    <updated>2018-11-24T17:58:00+00:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;p&gt;I'm moving everything to Google Domains as I don't see the value in paying
+for complex hosting.  I'm using github pages for hosting static sites like
+this one - I'll see how it scales, it doesn't have unlimited scale but I don't
+think I get that many hits!&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;I'm moving everything to Google Domains as I don't see the value in paying
+for complex hosting.  I'm using github pages for hosting static sites like
+this one - I'll see how it scales, it doesn't have unlimited scale but I don't
+think I get that many hits!&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;For the moment this is using my fairly creaky middleman-blog setup - I might
+look at moving to Jekyll as that's what Github does best.  And I fear the
+css here is probably pretty dated, as I haven't done much CSS since 2013 and it's
+now 2018…  anyway, for now I'll port everything with minimal effort, and
+in reality that's probably all I'll have time for, for another 4 years!&lt;/p&gt;
+
+&lt;p&gt;In the 4 years since I last blogged I:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Met a lovely person&lt;/li&gt;
+  &lt;li&gt;Got engaged&lt;/li&gt;
+  &lt;li&gt;Got married!&lt;/li&gt;
+  &lt;li&gt;Had a baby!!! Who will be two in December&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So I have reason to feel I've been busy, and will stay busy.&lt;/p&gt;
+
+&lt;p&gt;I still work for ThoughtWorks, though for the UK tentacle.  Doing all sorts
+of cool things - which I should blog about, some time.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Clojure snippets</title>
     <link rel="alternate" href="/2014/05/11/snippets.html"/>
