@@ -1,7 +1,7 @@
 ---
 title: It's alive!
 date: 2018-11-24 17:58 UTC
-tags:
+tags: meta
 ---
 I'm moving everything to Google Domains as I don't see the value in paying
 for complex hosting.  I'm using github pages for hosting static sites like
