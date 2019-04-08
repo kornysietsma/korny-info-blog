@@ -5,10 +5,88 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2019-01-20T18:46:00+00:00</updated>
+  <updated>2019-04-08T11:51:00+01:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>OCR Hack - grabbing text from the screen on a Macbook</title>
+    <link rel="alternate" href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html"/>
+    <id>/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html</id>
+    <published>2019-04-08T11:51:00+01:00</published>
+    <updated>2019-04-08T11:51:00+01:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;p&gt;(File under: obscure hacks that I'm blogging mostly so I can re-create them in the future when
+I've forgotten what I did to make this work)&lt;/p&gt;
+
+&lt;p&gt;This is a neat hack I worked out a couple of months ago, while I was scanning in some recipes -
+I wanted a...&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;(File under: obscure hacks that I'm blogging mostly so I can re-create them in the future when
+I've forgotten what I did to make this work)&lt;/p&gt;
+
+&lt;p&gt;This is a neat hack I worked out a couple of months ago, while I was scanning in some recipes -
+I wanted a way to easily grab some text from a photo, repeatedly - and more, I wanted to grab
+a section of a page, because often recipes are laid out in strange ways, tables
+of contents, big titles, and the rest.&lt;/p&gt;
+
+&lt;p&gt;Since then, it's turned out to be handy for other things.  Got a locked PDF you want to
+grab a paragraph from?  Or a Kindle book that you want to quote?  (I have no idea how on
+earth people justify locking users out of copying bits of their purchased books!  It's fair
+use, folks - all I want is to quote your book, and I'm sure the real pirates can
+bypass your DRM)&lt;/p&gt;
+
+&lt;p&gt;Anyway, I now have a nifty &lt;code&gt;scrn2txt&lt;/code&gt; button on my Mac's touch bar - this is how it works:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;First, install &lt;a href="https://github.com/tesseract-ocr/tesseract/wiki"&gt;Tesseract&lt;/a&gt; - it's as simple as &lt;code&gt;brew install tesseract&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Next, I wrote a simple commandline wrapper script, &lt;code&gt;ocr_screenshot.sh&lt;/code&gt; in my standard scripts directory:&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;
+#!/bin/bash -e
+tesseract $1 /tmp/out -l eng
+cat /tmp/out.txt | pbcopy
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I run &lt;a href="https://folivora.ai/"&gt;Better Touch Tool&lt;/a&gt; - a very nice tool for scripting the touch bar, as well as lots of
+other nice hacks (like window tiling, special hotkeys and lots of other things).  It's quite easy to set up
+a hotkey to run the above script:&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;
+        &lt;p&gt;Create a new button set up as "capture screenshot - configurable"
+&lt;img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image1.png" alt="better touch tool screenshot&amp;quot;" /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Capture the screenshot to a fixed file - &lt;code&gt;/tmp/tmp_screenshot&lt;/code&gt; in my example
+&lt;img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image2.png" alt="better touch tool screenshot&amp;quot;" /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Run the script above as &lt;code&gt;ocr_screenshot.sh {filepath}&lt;/code&gt; - this will pass the filename to the script
+&lt;img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image3.png" alt="better touch tool screenshot&amp;quot;" /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Save the button!&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The result is a nice little button on my touchbar - when I press it, it prompts me to select a rectangle of the screen, saves it as a bitmap to &lt;code&gt;/tmp/tmp_screenshot.png&lt;/code&gt;, calls &lt;code&gt;tesseract&lt;/code&gt; to OCR it to text, and then &lt;code&gt;pbcopy&lt;/code&gt; to put it on my clipboard.&lt;/p&gt;
+
+&lt;p&gt;Tesseract seems pretty powerful too - it happily grabs text from slightly skewed image files, and any minor mistakes are easy to fix.&lt;/p&gt;
+
+&lt;p&gt;I hope this is useful to someone!&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Excel life</title>
     <link rel="alternate" href="/2019/01/20/excel-life.html"/>
