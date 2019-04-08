@@ -26,11 +26,11 @@ Anyway, I now have a nifty `scrn2txt` button on my Mac's touch bar - this is how
 
 * Next, I wrote a simple commandline wrapper script, `ocr_screenshot.sh` in my standard scripts directory:
 
-```
+~~~bash
 #!/bin/bash -e
 tesseract $1 /tmp/out -l eng
 cat /tmp/out.txt | pbcopy
-```
+~~~
 
 * I run [Better Touch Tool](https://folivora.ai/) - a very nice tool for scripting the touch bar, as well as lots of
 other nice hacks (like window tiling, special hotkeys and lots of other things).  It's quite easy to set up

@@ -48,12 +48,10 @@ bypass your DRM)&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;code&gt;
-#!/bin/bash -e
-tesseract $1 /tmp/out -l eng
-cat /tmp/out.txt | pbcopy
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="c"&gt;#!/bin/bash -e&lt;/span&gt;
+tesseract &lt;span class="nv"&gt;$1&lt;/span&gt; /tmp/out &lt;span class="nt"&gt;-l&lt;/span&gt; eng
+&lt;span class="nb"&gt;cat&lt;/span&gt; /tmp/out.txt | pbcopy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;ul&gt;
   &lt;li&gt;
     &lt;p&gt;I run &lt;a href="https://folivora.ai/"&gt;Better Touch Tool&lt;/a&gt; - a very nice tool for scripting the touch bar, as well as lots of

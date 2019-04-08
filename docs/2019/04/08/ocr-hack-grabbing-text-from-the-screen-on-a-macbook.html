@@ -54,12 +54,10 @@ bypass your DRM)</p>
   </li>
 </ul>
 
-<p><code>
-#!/bin/bash -e
-tesseract $1 /tmp/out -l eng
-cat /tmp/out.txt | pbcopy
-</code></p>
-
+<div class="highlight"><pre class="highlight shell"><code><span class="c">#!/bin/bash -e</span>
+tesseract <span class="nv">$1</span> /tmp/out <span class="nt">-l</span> eng
+<span class="nb">cat</span> /tmp/out.txt | pbcopy
+</code></pre></div>
 <ul>
   <li>
     <p>I run <a href="https://folivora.ai/">Better Touch Tool</a> - a very nice tool for scripting the touch bar, as well as lots of
