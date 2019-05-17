@@ -32,8 +32,46 @@
 </h1>
 </header>
 <section class='blog'>
-<div class='main' role='main'><h1 id="test">test</h1>
-<p>some stuff</p>
+<div class='main' role='main'><p>As a taster for the sort of code we used - this was the code in our test runner that chose which nemesis (the Jepsen term for a failure mechanism) to use:</p>
+
+<p><code>clojure
+(let [the-nemesis (case (:nemesis-kind options)
+  :partition (nemesis/partition-random-halves)
+  :clock-scrambler (nemesis/clock-scrambler 30)
+  :heavy-cpu (monkey/heavy-cpu)
+  :heavy-io (monkey/heavy-io (:nemesis-target-path options))
+  :heavy-io-journal (monkey/heavy-io "/journal")
+  :heavy-io-data (monkey/heavy-io "/data")
+  :heavy-io-root (monkey/heavy-io "/")
+  :network-corruption (monkey/network-corruption "eth0" "10%" options)
+  :packet-loss (monkey/packet-loss "eth0" options)
+  :network-latency (monkey/network-latency "eth0" options)
+  :fill-disk (monkey/fill-disk (:nemesis-target-path options))
+  :fill-disk-root (monkey/fill-disk "/")
+  :fill-disk-journal (monkey/fill-disk "/journal")
+  :oom (monkey/oom)
+  :majority (jmnemesis/nemesis-client options jmnemesis/majority-partitioner)
+  :minority (jmnemesis/nemesis-client options jmnemesis/minority-partitioner)
+  :primary-kill (jmnemesis/primary-killer options)
+  :secondary-kill (jmnemesis/secondary-killer options)
+  :primary-split (do (assert (:nemesis-split-targets options))
+                     (mqnemesis/nemesis-client
+                       options
+                       (partial mqnemesis/generic-primary-splitter (:nemesis-split-targets options))))
+  :primary-nfs-split (mqnemesis/nemesis-client options mqnemesis/primary-nfs-splitter)
+  :primary-leadership-split (mqnemesis/nemesis-client options mqnemesis/primary-leadership-splitter mqnemesis/primary-leadership-splitter-heal)
+  :primary-jms-stop (mqnemesis/nemesis-client options mqnemesis/primary-stopper mqnemesis/primary-stopper-heal)
+  :primary-jms-kill (mqnemesis/nemesis-client options mqnemesis/primary-killer mqnemesis/primary-killer-heal)
+  :noop nemesis/noop)
+</code></p>
+
+<p>The <code>nemesis</code> namespace is simple built-in Jepsen nemeses - such <code>partition-random-halves</code> which simulates a network partition; or <code>clock-scrambler</code> which randomises the system clock by +- 30 seconds (in this example).</p>
+
+<p>The <code>monkey</code> namespace is where we used Netflix Chaos Monkey scripts</p>
+
+<p>The <code>jmnemesis</code> namespace is MongoDB-specific nemeses we wrote - for instance <code>minority-partitioner</code> splits the network such that the primary MongoDB node is in the <em>smaller</em> half-network after a partition.</p>
+
+<p>The <code>mqnemesis</code> namespace, similarly is message-queueing specific nemeses.  We implemented several kinds of message queues, but they had broadly similar failure approaches.</p>
 </div>
 <aside>
 <h2>About Me</h2>

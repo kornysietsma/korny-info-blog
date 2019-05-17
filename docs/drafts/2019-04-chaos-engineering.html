@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async='' src='https://www.googletagmanager.com/gtag/js?id=UA-137924462-1'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-137924462-1');
+</script>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><!--
+Local url: http://127.0.0.1:4567/drafts/2019-04-chaos-engineering.html
+-->
+
+<!-- To cover:
+
+  * Evolutionary architecture and fitness functions http://evolutionaryarchitecture.com/ffkatas/list.html
+  * Russ' toolkit
+  * Incremental - test one thing at a time
+  * The importance of visualisation\
+  * Bureau of Sabotage? https://en.wikipedia.org/wiki/Bureau_of_Sabotage
+ -->
+
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a>    <ul>
+      <li><a href="#what-is-chaos-engineering" id="markdown-toc-what-is-chaos-engineering">What is Chaos Engineering?</a></li>
+      <li><a href="#what-does-resilience-mean" id="markdown-toc-what-does-resilience-mean">What does "resilience" mean?</a>        <ul>
+          <li><a href="#dealing-with-partitions" id="markdown-toc-dealing-with-partitions">Dealing with Partitions</a></li>
+          <li><a href="#doesnt-cap-theorem-mean-" id="markdown-toc-doesnt-cap-theorem-mean-">Doesn't CAP theorem mean …</a></li>
+          <li><a href="#how-does-mongodb-approach-resilience" id="markdown-toc-how-does-mongodb-approach-resilience">How does MongoDB approach resilience?</a></li>
+        </ul>
+      </li>
+      <li><a href="#so-how-do-you-test-this" id="markdown-toc-so-how-do-you-test-this">So how do you test this?</a>        <ul>
+          <li><a href="#set-up-a-test-system" id="markdown-toc-set-up-a-test-system">1. Set up a test system</a></li>
+          <li><a href="#break-the-test-system" id="markdown-toc-break-the-test-system">2. Break the test system</a></li>
+          <li><a href="#analyse-the-results" id="markdown-toc-analyse-the-results">3. Analyse the results</a></li>
+          <li><a href="#document-the-results" id="markdown-toc-document-the-results">4. Document the results</a></li>
+          <li><a href="#iterate" id="markdown-toc-iterate">5. Iterate!</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#applying-this-in-practice---our-chaos-engineering-experience-report" id="markdown-toc-applying-this-in-practice---our-chaos-engineering-experience-report">Applying this in practice - our Chaos Engineering experience report</a>    <ul>
+      <li><a href="#what-is-jepsen" id="markdown-toc-what-is-jepsen">What is Jepsen?</a>        <ul>
+          <li><a href="#how-is-a-jepsen-test-structured" id="markdown-toc-how-is-a-jepsen-test-structured">How is a Jepsen test structured?</a></li>
+          <li><a href="#how-do-checkers-work" id="markdown-toc-how-do-checkers-work">How do checkers work?</a></li>
+        </ul>
+      </li>
+      <li><a href="#early-testing---setup-and-exploration" id="markdown-toc-early-testing---setup-and-exploration">Early testing - setup and exploration</a></li>
+      <li><a href="#a-more-realistic-test---creating-and-updating-artificial-user-data" id="markdown-toc-a-more-realistic-test---creating-and-updating-artificial-user-data">A more realistic test - creating and updating artificial user data</a>        <ul>
+          <li><a href="#first-test---baselining-performance-on-one-node-with-no-nemesis" id="markdown-toc-first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#headings-for-bits-still-to-write" id="markdown-toc-headings-for-bits-still-to-write">Headings for bits still to write:</a>    <ul>
+      <li><a href="#nemeses" id="markdown-toc-nemeses">Nemeses</a></li>
+      <li><a href="#monitoring-and-collecting-results" id="markdown-toc-monitoring-and-collecting-results">Monitoring and collecting results</a></li>
+      <li><a href="#generating-the-reports---asciidoc-and-friends" id="markdown-toc-generating-the-reports---asciidoc-and-friends">Generating the reports - asciidoc and friends</a></li>
+      <li><a href="#what-did-we-find" id="markdown-toc-what-did-we-find">What did we find?</a>        <ul>
+          <li><a href="#separate-sections-for-useful-things-from-our-report" id="markdown-toc-separate-sections-for-useful-things-from-our-report">(Separate sections for useful things from our report)</a></li>
+        </ul>
+      </li>
+      <li><a href="#also-tested---load-testing-queueing" id="markdown-toc-also-tested---load-testing-queueing">Also tested - load testing, queueing</a></li>
+    </ul>
+  </li>
+  <li><a href="#what-didnt-we-get-to" id="markdown-toc-what-didnt-we-get-to">What didn't we get to?</a></li>
+  <li><a href="#what-i-would-do-next-time" id="markdown-toc-what-i-would-do-next-time">What I would do next time</a>    <ul>
+      <li><a href="#new-tools" id="markdown-toc-new-tools">New tools</a></li>
+      <li><a href="#focus-on-the-important-things" id="markdown-toc-focus-on-the-important-things">Focus on the important things</a></li>
+      <li><a href="#evolutionary-architecture-and-continous-delivery" id="markdown-toc-evolutionary-architecture-and-continous-delivery">Evolutionary Architecture and Continous Delivery</a></li>
+    </ul>
+  </li>
+  <li><a href="#todo-other-things-to-put-somewhere-or-mention" id="markdown-toc-todo-other-things-to-put-somewhere-or-mention">TODO: Other things to put somewhere or mention</a></li>
+</ul>
+
+<h2 id="introduction">Introduction</h2>
+<p>Chaos Engineering tools and techniques are extremely useful for anyone planning or operating a distributed system.  I want to talk about our experiences using Jepsen, and a bit of Chaos Monkey, to test-drive a client's architecture - enabling us to validate their plans, based on data derived from tests, rather than based on theorising or guessing.</p>
+
+<p>A lot of Chaos Engineering discussion talks about disrupting your systems in production - and while I think this is an excellent thing to do, we also found a lot of value <em>incrementally</em> testing our systems - working out how they break in controlled simplified environments, before trying to identify failures in a genuine production configuration.</p>
+
+<p>I also see these techniques as a great enabler for <a href="http://evolutionaryarchitecture.com/precis.html">evolutionary architecture</a> - you can use chaos engineering to develop automated fitness functions, so you can be sure your systems are still resilient and reliable even as your architecture grows and evolves over time.</p>
+
+<h3 id="what-is-chaos-engineering">What is Chaos Engineering?</h3>
+
+<p>Frank Herbert had a concept in some of his Science Fiction stories of a <a href="https://en.wikipedia.org/wiki/Bureau_of_Sabotage">"Bureau of Sabotage"</a> - a quasi-official group whose job was to interfere violently with the smooth workings of a futuristic perfect government.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Chaos_engineering">Chaos Engineering</a> feels a bit similar - your goal is to deliberately break things, to mess up the smooth workings of your systems so you can see the hidden faults and failings; so you know how things will break before they break naturally.</p>
+
+<p>Critically, you don't need to be building a massively complex system to benefit from this!  Even if you are "just" using someone else's distributed database or queue, you still need to answer a few key questions:</p>
+
+<ul>
+  <li>How should you configure your systems?  Network topology, timeouts, client setup - there are a lot of settings to consider.</li>
+  <li>What happens when something goes wrong - can you guarantee no data loss? Will you be alerted? Is it possible to manually repair things in the worst case?</li>
+  <li>What are the tradeoffs between performance, resiliency, and cost?</li>
+</ul>
+
+<h3 id="what-does-resilience-mean">What does "resilience" mean?</h3>
+
+<p><em>TODO: look up a nice definition?</em></p>
+
+<p>This is a very complex question! If you want to know more, you could check out <a href="https://jepsen.io/consistency">Aphyr's detailed hierarchy of consistency models</a> or there is some great coverage in <a href="https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications">Martin Kleppmann's "Designing Data-Intensive Applications"</a>.  TODO: other references?  Is Aphyr too low level?  Does Martin have anything?</p>
+
+<p>For our specific purposes, we were helping a client evaluate a system with fairly standard requirements:</p>
+
+<ul>
+  <li>It has to have a good up-time - it needs to be distributed across multiple data centres, so even if a significant outage occurs, users should be able to keep using the system to some degree, even if only to read data.</li>
+  <li>It has to never lose committed user data - if a user hit a "save" button and the system responds with "OK", the data should be saved.</li>
+  <li>It has to recover from some faults automatically - intermittent failures should not cause major outages.</li>
+  <li>It has to handle exceptional situations well - if something goes badly wrong, we still want to be able to manually recover.</li>
+</ul>
+
+<h4 id="dealing-with-partitions">Dealing with Partitions</h4>
+<p>There are a lot of things that can go wrong in a distributed system, but often it's worth focusing on one of the worst situations - a network partition.  Other problems like having a server crash can be dangerous, but not as complex to solve as when your servers are alive, but not talking to each other - this can lead to a "split brain" situation where your distributed system has two or more views of reality, and all consensus is lost.</p>
+
+<h4 id="doesnt-cap-theorem-mean-">Doesn't CAP theorem mean …</h4>
+
+<p>Sigh.  A lot of distributed system discussions spend too much effort talking about CAP theorem. I like the <a href="https://www.the-paper-trail.org/page/cap-faq/">CAP FAQ</a> for a good summary - fundamentally:</p>
+
+<ul>
+  <li>Partitions are <em>going to happen</em> - you can never assume "P" is negotiable, unless you are running on a single server.</li>
+  <li>So really you need to decide - when something goes wrong, which is more important, consistency or availability? Would you prefer to show users a warning page, or invalid data?</li>
+  <li>Also, there are multiple levels of "consistency" - see <a href="https://jepsen.io/consistency">Aphyr's neat chart</a> - and each higher degree of consistency comes with extra tradeoffs.</li>
+</ul>
+
+<h4 id="how-does-mongodb-approach-resilience">How does MongoDB approach resilience?</h4>
+
+<p>MongoDB uses a quorum-based consensus approach - this is quite common among distributed data stores, though many delegate to tools like consul, etcd or zookeeper to manage the consensus:</p>
+
+<p><img src="/2019-04-chaos-engineering/resiliency1.png" alt="Common resiliency architecture diagram" /></p>
+
+<ul>
+  <li>Several distributed nodes have databases operating on replicas of the same data</li>
+  <li>The databases have some sort of consensus mechanism that elects a "Primary" node on start-up, and re-elects one if something goes wrong.</li>
+  <li>Clients use a discovery mechanism to know which is the current primary node, and to redirect to a different primary if it changes</li>
+  <li>Clients write data to the primary node, which then replicates changes to other nodes</li>
+  <li>Clients read data from the primary node by default
+    <ul>
+      <li>Clients may get less critical data in other ways for better performance - monthly reports might not need to be</li>
+    </ul>
+  </li>
+  <li>Nodes communicate between themselves, to replicate data and to detect and handle failures</li>
+</ul>
+
+<p>A network partition is where some or all nodes can't see each other.  A simple case is where some non-primary nodes are split from the rest:
+<img src="/2019-04-chaos-engineering/resiliency2.png" alt="Split with primary majority" /></p>
+
+<p>In this case, the left-hand network is OK - clients can still talk to the primary, these nodes might panic a bit: "We can't see some nodes! Oh no!" - but you still have more than 50% of the network available.  This is how consensus systems work - the majority of nodes can see each other, they can maintain consensus about the state of the data.</p>
+
+<p>The right-hand two nodes will panic, but they can't get a consensus so they will stay in a failed state until the network comes back.</p>
+
+<p>What if the network splits like this?
+<img src="/2019-04-chaos-engineering/resiliency3.png" alt="Split with primary minority" /></p>
+
+<p>Now, the left-hand side no longer has a majority and should detect an error state.  The right-hand network has the majority of nodes, it can only assume that the primary has crashed, and it will trigger a new election and find a new primary.</p>
+
+<p>A client connected to the old primary will need to be redirected somehow to the new primary (if it can see it!) - for example the client may have a list of all node IP addresses, so it can ask other nodes where the primary is now.</p>
+
+<p>You can increase the reliability of writes and reads, at the expense of performance, by tweaking how you trust the distributed network.  In MongoDB you can use <a href="https://docs.mongodb.com/manual/reference/write-concern/">write concerns</a> to say "Don't count data as written successfully until the majority of nodes have confirmed they have seen it", and similarly <a href="https://docs.mongodb.com/manual/reference/read-concern/">read concerns</a> to say "Don't return un-committed data from queries".  Tweaking these options is complex though - which is why it's good to test them!  I'll try to cover a few more specific examples later in this article.</p>
+
+<p><em>Note</em> - this is a deliberately brief and incomplete introduction to this topic.  If you want more gory details, you are far better off reading <a href="https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications">Martin Kleppmann's book mentioned earlier</a>) or <em>TODO</em> suggest other background reading</p>
+
+<h3 id="so-how-do-you-test-this">So how do you test this?</h3>
+
+<p>This is where Chaos Engineering comes in!</p>
+
+<p>The <a href="https://en.wikipedia.org/wiki/Chaos_engineering#History">original idea</a> came from Netflix's experiences building large-scale cloud-based systems.  They had the idea of deliberately causing breakdowns in their production systems - having their own "Bureau of Sabotage" who would deliberately break things, to make sure that their overall system was genuinely resilient - if the systems are genuinely resilient, when  a server crashes, or a network switch dies, the problems will self-heal and end-users should never know anything was wrong.</p>
+
+<p>As I mentioned earlier, testing in production is a powerful approach for mature organisations - but there's also value in using similar approaches to test failure <em>incrementally and iteratively</em>, starting with testing simple failures in isolated systems that you can completely control.</p>
+
+<p>Our Jepsen-based approach was broadly:</p>
+
+<h4 id="set-up-a-test-system">1. Set up a test system</h4>
+
+<p>The first stage of testing is to build a system to test system - containing a subset of what you'd have in production; client systems, database servers, and associated monitoring and logging.</p>
+
+<p>We used an <a href="https://infrastructure-as-code.com/">Infrastructure as Code</a> approach - everything we did was written as version-controlled code, so our environments, tests and outputs were clear and repeatable.</p>
+
+<h4 id="break-the-test-system">2. Break the test system</h4>
+
+<p>The next stage is to break things!  There are thousands of things that can go wrong - we used Jepsen and Chaos Monkey tools to inject problems into the systems as they operated.</p>
+
+<p>Again, everything was scripted as code, everything was version controlled, and all outputs were stored for analysis.</p>
+
+<h4 id="analyse-the-results">3. Analyse the results</h4>
+
+<p>This is typically a mix of automated and manual analysis.  We used automated analysis to gather immediate feedback on "what went wrong" and "how much data did we lose".  And manual review of the output to understand more about "why?" and to look at things to tweak and change.</p>
+
+<h4 id="document-the-results">4. Document the results</h4>
+
+<p>This is a key part of our approach - as we work, we document what we did.  Again, everything is scripted, everything is code - our documents were grown from AsciiDoc text files, and automated graphs built from logs, and automated screenshots taken from monitoring tools.</p>
+
+<h4 id="iterate">5. Iterate!</h4>
+
+<p>This isn't an approach you can plan and execute in a waterfall fashion.  By it's very nature, you need to incrementally grow a suite of things to test - you need to iterate on what failures to simulate, you need to iterate on your network topology, you need to iterate on the complexity of your tests - from simple "let's break a 3-node network" potentially all the way to "let's run tests in production"</p>
+
+<h2 id="applying-this-in-practice---our-chaos-engineering-experience-report">Applying this in practice - our Chaos Engineering experience report</h2>
+
+<p>A few years ago one of our large clients was in the process of building a new system based on a microservices architecture, and they asked us to provide an early review of their planned approach, especially how they planned to use MongoDB as a distributed store for their user data.
+After our initial review of their plans we suggested that it would be best to actually <em>test</em> their approach, rather than just trying to reason about it.</p>
+
+<p>So we agreed to set up a small team to build out some tests.  We chose to initially use <a href="https://jepsen.io/">Jepsen</a> for a chaos engineering tool - we had some familiarity with Clojure, and it seemed like a good tool for our planned iterative approach; we also used the <a href="https://en.wikipedia.org/wiki/YCSB">Yahoo Cloud Serving Benchmark</a> for some load testing, though this article is mostly focusing on the Jepsen tests.</p>
+
+<h3 id="what-is-jepsen">What is Jepsen?</h3>
+
+<p>Jepsen is an <a href="https://github.com/aphyr/jepsen">open source</a> systems testing library, written in Clojure by Kyle Kingsbury aka <a href="https://aphyr.com/about">Aphyr</a>. It allows you to set up a distributed system, run a bunch of destructive operations against that system, and verify that the history of those operations make sense.</p>
+
+<p>Jepsen is <em>not</em> a load testing tool or a general purpose chaos engineering toolkit - there are other tools that may be better for other kinds of testing.  (And there are newer tools emerging in this space - I'll list some other options to try later in this article)</p>
+
+<p>But it's very powerful for building simple isolated tests, and analysing the results in quite sophisticated ways.</p>
+
+<h4 id="how-is-a-jepsen-test-structured">How is a Jepsen test structured?</h4>
+<p>Very broadly, Jepsen consists of a client and a number of distributed nodes:
+<img src="/2019-04-chaos-engineering/jepsen.png" alt="Jepsen overview" /></p>
+
+<p>The Jepsen client does most of the work - it runs the main clojure application, which spawns a number of worker threads, and a single <code>nemesis</code> thread.</p>
+
+<p>The client communicates with a number of nodes, typically named <code>n1</code>, <code>n2</code>, <code>n3</code> and so on.  These can be real servers, or for playing around you can use Docker or Vagrant to set up a virtual network.  Jepsen provides basic tools for configuring the servers; we used these for initial experimentation but ultimately it was easier for us to configure them using a mature tool like Ansible.</p>
+
+<p>At the core of the client is a <code>test</code> definition, which consists of a map of a number of things:</p>
+
+<ul>
+  <li>the name of the test</li>
+  <li>the nodes being tested against</li>
+  <li>a <a href="https://github.com/jepsen-io/jepsen/blob/master/jepsen/src/jepsen/client.clj"><code>client</code></a> definition - clients that do normal operations during your test</li>
+  <li>a <a href="https://github.com/jepsen-io/jepsen/blob/master/jepsen/src/jepsen/nemesis.clj"><code>nemesis</code></a> definition - the thing that is going to break something</li>
+  <li>a <a href="https://github.com/jepsen-io/jepsen/blob/master/jepsen/src/jepsen/generator.clj"><code>generator</code></a> - this generates operations for your test.  More on generators in a bit.</li>
+  <li>a <code>model</code> - this represents the abstract behaviour of a system, for correctness checking</li>
+  <li>a <code>checker</code> - this is run at the end of the test to see if the history of the system corresponds to the given model</li>
+  <li>a bunch of other standard things that clients and the rest might need</li>
+</ul>
+
+<p>You can read more about setting up basic Jepsen tests in the <a href="https://github.com/jepsen-io/jepsen/blob/master/doc/tutorial/index.md">Jepsen tutorial</a></p>
+
+<p>A key concept is the generator - it lets you compose operations and nemeses together in all sorts of different ways.  For example <a href="https://github.com/jepsen-io/jepsen/blob/master/doc/tutorial/03-client.md">in the Jepsen tutorial</a> there is a test with a simple generator:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="w">  </span><span class="no">:generator</span><span class="w"> </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">r</span><span class="w">
+                </span><span class="p">(</span><span class="nf">gen/stagger</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">
+                </span><span class="p">(</span><span class="nf">gen/nemesis</span><span class="w"> </span><span class="n">nil</span><span class="p">)</span><span class="w">
+                </span><span class="p">(</span><span class="nf">gen/time-limit</span><span class="w"> </span><span class="mi">15</span><span class="p">))}))</span><span class="w">
+</span></code></pre></div>
+<p>Here <code>r</code> is the operation - in this example a "read" operation".  <code>gen/stagger</code> introduces random noise in the timing between operations.  <code>gen/nemesis</code> defines what happens on the <code>nemesis</code> process (nothing in this case).  And <code>gen/time-limit</code> stops the generators after 15 seconds - otherwise the generator will keep producing operations forever.</p>
+
+<p>Generators are a fairly complex thing to get your head around - it's worth reading the source at <a href="https://github.com/jepsen-io/jepsen/blob/master/jepsen/src/jepsen/generator.clj">https://github.com/jepsen-io/jepsen/blob/master/jepsen/src/jepsen/generator.clj</a> - you need a decent grounding in clojure too.  Fundamentally a generator is a stateful object which spawns a sequence of "operations", potentially separated by <code>sleep</code>s to delay the rate of tests.</p>
+
+<p>The Jepsen test runner orchestrates all of the above components:</p>
+
+<ul>
+  <li>It opens an ssh session to each server node</li>
+  <li>It sets up the operating system and databases if needed</li>
+  <li>It creates a nemesis thread, and a pool of client threads</li>
+  <li>It creates a global history list for capturing operation history</li>
+  <li>Each thread cycles through the generator, generating each operation requested with the timing specified
+    <ul>
+      <li>Each operation is executed on the appropriate client thread</li>
+      <li>The nemesis operation is executed as requested on the nemesis thread</li>
+      <li>The result of each operation is appended to the history</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Once the generator runs out of new operations:</p>
+
+<ul>
+  <li>tear down any databases / server settings</li>
+  <li>invoke the checker with the model and any accumulated history, returning success/failure.</li>
+</ul>
+
+<h4 id="how-do-checkers-work">How do checkers work?</h4>
+
+<p>For rigourous tests of linearizability, Jepsen uses the <a href="https://github.com/jepsen-io/knossos">Knossos</a> library to examine the entire history of a test run, and detect whether the history was actually linearizable.</p>
+
+<p>For most of our tests, this is overkill.  We aren't really trying to prove if our operations are strictly linearizable - we mostly wanted a broader understanding of how many operations failed/succeeded, which we could do by other cheaper approaches.  So we just created custom checkers to validate overall stats for each experiment.</p>
+
+<h3 id="early-testing---setup-and-exploration">Early testing - setup and exploration</h3>
+
+<p>Like I mentioned earlier - the only way to go about this is iteratively.  We started by going "broad" - testing a lot of small things fairly quickly, and then narrowing down to the <em>important</em> things once we had an idea of how to test, what failure modes there were, what tests were worthwhile, and what we needed to measure.</p>
+
+<p>The <a href="https://www.cockroachlabs.com/blog/diy-jepsen-testing-cockroachdb/">Cockroach Labs blog article on their Jepsen approaches</a> were invaluable at this stage - especially as they link to their git history so we could play along with their different stages of maturity.</p>
+
+<p>For an example of the sort of tests we wrote while experimenting - we wrote a test client which created a single MongoDB document in a collection, then repeatedly appended integers to a list in that document:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">defrecord</span><span class="w"> </span><span class="n">Client</span><span class="w"> </span><span class="p">[</span><span class="n">db-name</span><span class="w">
+                   </span><span class="n">coll-name</span><span class="w">
+                   </span><span class="n">id</span><span class="w">
+                   </span><span class="n">client</span><span class="w">
+                   </span><span class="n">coll</span><span class="p">]</span><span class="w">
+  </span><span class="n">client/Client</span><span class="w">  </span><span class="c1">; implements the Jepsen Client protocol</span><span class="w">
+  </span><span class="p">(</span><span class="nf">setup!</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="nb">node</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">info</span><span class="w"> </span><span class="s">"setting up client on "</span><span class="w"> </span><span class="nb">node</span><span class="w"> </span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">client</span><span class="w"> </span><span class="p">(</span><span class="nf">mongo/cluster-client</span><span class="w"> </span><span class="nb">test</span><span class="p">)</span><span class="w">
+          </span><span class="n">coll</span><span class="w">   </span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">client</span><span class="w">
+                     </span><span class="p">(</span><span class="nf">mongo/db</span><span class="w"> </span><span class="n">db-name</span><span class="p">)</span><span class="w">
+                     </span><span class="p">(</span><span class="nf">mongo/collection</span><span class="w"> </span><span class="n">coll-name</span><span class="p">))]</span><span class="w">
+      </span><span class="c1">; Create initial document</span><span class="w">
+      </span><span class="p">(</span><span class="nf">mongo/upsert!</span><span class="w"> </span><span class="n">coll</span><span class="w"> </span><span class="p">{</span><span class="no">:_id</span><span class="w"> </span><span class="n">id,</span><span class="w"> </span><span class="no">:value</span><span class="w"> </span><span class="p">[]})</span><span class="w">
+
+      </span><span class="p">(</span><span class="nb">assoc</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="no">:client</span><span class="w"> </span><span class="n">client,</span><span class="w"> </span><span class="no">:coll</span><span class="w"> </span><span class="n">coll</span><span class="p">)))</span><span class="w">
+
+  </span><span class="p">(</span><span class="nf">invoke!</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="n">op</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">util/with-timing-logs</span><span class="w"> </span><span class="n">op</span><span class="w">
+      </span><span class="p">(</span><span class="nf">util/with-mongodb-errors</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="o">#</span><span class="p">{</span><span class="no">:read</span><span class="p">}</span><span class="w">
+        </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="p">(</span><span class="no">:f</span><span class="w"> </span><span class="n">op</span><span class="p">)</span><span class="w">
+          </span><span class="no">:read</span><span class="w"> </span><span class="p">(</span><span class="nf">read-doc</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="n">coll</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w">
+          </span><span class="no">:add</span><span class="w"> </span><span class="p">(</span><span class="nf">add-int-to-doc</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="n">coll</span><span class="w"> </span><span class="n">id</span><span class="p">)))))</span><span class="w">
+
+  </span><span class="p">(</span><span class="nf">teardown!</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="w"> </span><span class="nb">test</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">.close</span><span class="w"> </span><span class="o">^</span><span class="n">java.io.Closeable</span><span class="w"> </span><span class="n">client</span><span class="p">)))</span><span class="w">
+</span></code></pre></div>
+<p>This client boils down to:</p>
+
+<ul>
+  <li>Create a single MongoDB document with a constant ID and an empty <code>value</code> array</li>
+  <li>When a <code>:read</code> operation is executed, read the document</li>
+  <li>When an <code>:add</code> operation is executed, add an integer to the array in the document (it uses the MongoDB <a href="https://docs.mongodb.com/manual/reference/operator/update/push/">$push</a> operator internally)</li>
+  <li>There are also wrappers like <code>with-timing-logs</code> and <code>with-mongodb-errors</code> to make sure we track how the commands performed, and handle any MongoDB exceptions correctly.</li>
+</ul>
+
+<p>Our actual test definition: (note that we pass the chosen delay and nemesis functions as parameters)</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">append-ints-test</span><span class="w">
+  </span><span class="p">[</span><span class="n">opts</span><span class="w"> </span><span class="n">the-delayer</span><span class="w"> </span><span class="n">the-nemesis</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">merge</span><span class="w">
+    </span><span class="p">(</span><span class="nf">base-test</span><span class="w"> </span><span class="s">"append-ints"</span><span class="w"> </span><span class="n">opts</span><span class="p">)</span><span class="w">
+    </span><span class="p">{</span><span class="no">:client</span><span class="w">    </span><span class="p">(</span><span class="nf">client</span><span class="w"> </span><span class="n">opts</span><span class="p">)</span><span class="w">
+     </span><span class="no">:generator</span><span class="w"> </span><span class="p">(</span><span class="nf">gen/phases</span><span class="w">
+                  </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">infinite-adds</span><span class="p">)</span><span class="w">
+                       </span><span class="n">gen/seq</span><span class="w">
+                       </span><span class="n">the-delayer</span><span class="w">
+                       </span><span class="p">(</span><span class="nf">gen/nemesis</span><span class="w">
+                         </span><span class="p">(</span><span class="nf">util/cyclic-nemesis-gen</span><span class="w"> </span><span class="n">opts</span><span class="p">))</span><span class="w">
+                       </span><span class="p">(</span><span class="nf">gen/time-limit</span><span class="w"> </span><span class="p">(</span><span class="no">:time-limit</span><span class="w"> </span><span class="n">opts</span><span class="p">)))</span><span class="w">
+                  </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">{</span><span class="no">:type</span><span class="w"> </span><span class="no">:invoke,</span><span class="w"> </span><span class="no">:f</span><span class="w"> </span><span class="no">:read,</span><span class="w"> </span><span class="no">:value</span><span class="w"> </span><span class="n">nil</span><span class="p">}</span><span class="w">
+                       </span><span class="n">gen/once</span><span class="w">
+                       </span><span class="n">gen/clients</span><span class="p">))</span><span class="w">
+     </span><span class="no">:checker</span><span class="w">   </span><span class="p">(</span><span class="nf">check-sets</span><span class="p">)</span><span class="w">
+     </span><span class="no">:nemesis</span><span class="w"> </span><span class="n">the-nemesis</span><span class="p">}</span><span class="w">
+    </span><span class="n">opts</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
+<p>This shows some of the things you can do with generators - we use <code>(gen/phases)</code> to combine two test phases:</p>
+
+<ul>
+  <li>A first phase which sends an infinite series of <code>:add</code> operations to the clients, until a time limit is met, with a nemesis that runs intermittently</li>
+  <li>A second final phase which sends a single <code>:read</code> operation to the clients, to read the document's final state.</li>
+</ul>
+
+<p><code>infinite-adds</code> is a classic bit of clojure:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">infinite-adds</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="nb">array-map</span><span class="w">
+                </span><span class="no">:type</span><span class="w"> </span><span class="no">:invoke</span><span class="w">
+                </span><span class="no">:f</span><span class="w"> </span><span class="no">:add</span><span class="w">
+                </span><span class="no">:value</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nb">range</span><span class="p">)))</span><span class="w">
+</span></code></pre></div>
+<p>This returns an infinite sequence:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="o">`</span><span class="p">({</span><span class="no">:type</span><span class="w">  </span><span class="no">:invoke</span><span class="w">
+   </span><span class="no">:f</span><span class="w">     </span><span class="no">:add</span><span class="w">
+   </span><span class="no">:value</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span><span class="w">
+  </span><span class="p">{</span><span class="no">:type</span><span class="w">  </span><span class="no">:invoke</span><span class="w">
+   </span><span class="no">:f</span><span class="w">     </span><span class="no">:add</span><span class="w">
+   </span><span class="no">:value</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w">
+   </span><span class="n">...</span><span class="w"> </span><span class="nb">and</span><span class="w"> </span><span class="n">so</span><span class="w"> </span><span class="n">on</span><span class="w">
+</span></code></pre></div>
+<p>At the end of this test we had a straightforward checker that looked at the single <code>:read</code> result, and at the history, and identified all mismatches between the history of (apparently) successful writes and the actual final value in mongodb.</p>
+
+<p>This was mostly a learning exercise - appending to an array is an idempotent operation so we weren't testing linearizability or the like, just  "can we string together a pile of operations and see how they fail?".</p>
+
+<h3 id="a-more-realistic-test---creating-and-updating-artificial-user-data">A more realistic test - creating and updating artificial user data</h3>
+
+<p>For the bulk of our tests, we wanted to simulate realistic client behaviour, under reasonably heavy loads.  The main scope of our client's project was managing information about users - so we wanted to simulate reading and writing users, using MongoDB documents similar to those used by the client, and similar client logic. (As clojure runs on the JVM, and the client project was in Java, we could have directly called their code - but it was simple enough to replicate key parts in our tests, and made the tests less tightly coupled to their code, which was under active development)</p>
+
+<p>The client also had some peculiar extra transaction logic - they had their own distributed transaction mechanism, whereby an orchestration system established "pending" changes to each document; multiple microservices could then participate in those transactions, and the orchestration system could then "commit" or "roll back" those transactions when done.  I'm not going to go into the detailed reasons why this is a very bad idea - but we simulated it in our client as well.</p>
+
+<p>At startup our Jepsen client created a simulated production database, with a large number of random users using the <a href="https://github.com/paraseba/faker">faker</a> library, resulting in users like:</p>
+
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"_id"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">364992</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"rhiannon-schimmel @gmail.com"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"first-name"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Judge"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"last-name"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Kuhlman"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"address"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"street"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"229 Mabelle Mountains"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"county"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Lothian"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"postcode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"IW47 3KA"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"phone"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"primary"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"917-524-0981"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mobile"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"1-314-339-4989 x74262"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Our main test function looked like:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">user-test</span><span class="w">
+  </span><span class="p">[</span><span class="n">opts</span><span class="w"> </span><span class="n">the-delayer</span><span class="w"> </span><span class="n">the-nemesis</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">merge</span><span class="w">
+    </span><span class="p">(</span><span class="nf">base-test</span><span class="w"> </span><span class="s">"etla-simulator"</span><span class="w"> </span><span class="n">opts</span><span class="p">)</span><span class="w">
+    </span><span class="p">{</span><span class="no">:client</span><span class="w">    </span><span class="p">(</span><span class="nf">client</span><span class="w"> </span><span class="n">opts</span><span class="p">)</span><span class="w">
+     </span><span class="no">:generator</span><span class="w">   </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">mixed-ops</span><span class="w">
+                       </span><span class="n">the-delayer</span><span class="w">
+                       </span><span class="p">(</span><span class="nf">gen/nemesis</span><span class="w">
+                         </span><span class="p">(</span><span class="nf">util/single-nemesis-gen</span><span class="w"> </span><span class="n">opts</span><span class="p">))</span><span class="w">
+                       </span><span class="p">(</span><span class="nf">gen/time-limit</span><span class="w"> </span><span class="p">(</span><span class="no">:time-limit</span><span class="w"> </span><span class="n">opts</span><span class="p">)))</span><span class="w">
+     </span><span class="no">:checker</span><span class="w">   </span><span class="p">(</span><span class="nf">checker/compose</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                   </span><span class="no">:checker</span><span class="w"> </span><span class="p">(</span><span class="nf">etla-checker/checker</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="s">"jepsen"</span><span class="w"> </span><span class="s">"participants"</span><span class="w"> </span><span class="p">(</span><span class="no">:checker-mode</span><span class="w"> </span><span class="n">opts</span><span class="p">))</span><span class="w">
+                   </span><span class="no">:histogram</span><span class="w"> </span><span class="p">(</span><span class="nf">histogram-producing-checker</span><span class="p">)</span><span class="w">
+                   </span><span class="p">})</span><span class="w">
+     </span><span class="no">:nemesis</span><span class="w">   </span><span class="n">the-nemesis</span><span class="p">}</span><span class="w">
+    </span><span class="n">opts</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
+<p>The client was fairly similar to the example given earlier, except it created all the required random users at startup, and the <code>invoke!</code> function was:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="w">  </span><span class="p">(</span><span class="nf">invoke!</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="n">op</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nf">util/with-timing-logs</span><span class="w"> </span><span class="n">op</span><span class="w">
+      </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="p">(</span><span class="no">:f</span><span class="w"> </span><span class="n">op</span><span class="p">)</span><span class="w">
+        </span><span class="no">:create</span><span class="w"> </span><span class="p">(</span><span class="nf">create-random-participant</span><span class="w"> </span><span class="p">(</span><span class="no">:participant-dao</span><span class="w"> </span><span class="n">this</span><span class="p">)</span><span class="w"> </span><span class="n">op</span><span class="p">)</span><span class="w">
+        </span><span class="no">:update</span><span class="w"> </span><span class="p">(</span><span class="nf">update-random-participant</span><span class="w"> </span><span class="p">(</span><span class="no">:participant-dao</span><span class="w"> </span><span class="n">this</span><span class="p">)</span><span class="w"> </span><span class="n">op</span><span class="p">)</span><span class="w">
+        </span><span class="no">:read</span><span class="w"> </span><span class="p">(</span><span class="nf">read-random-participant</span><span class="w"> </span><span class="p">(</span><span class="no">:participant-dao</span><span class="w"> </span><span class="n">this</span><span class="p">)</span><span class="w"> </span><span class="n">op</span><span class="p">))))</span><span class="w">
+</span></code></pre></div>
+<p>Basically three operations were supported - create, update and read.  Create creates a new random user, update modifies a few fields in a user, and read just reads a user at random.  These operations also created and committed the client's pseudo-transaction logic.</p>
+
+<p>The <code>mixed-ops</code> generator produced a random combination of these operations - configurable per test. By default it generated 1% creates, 10% updates and 89% reads, but test scenarios could override these proportions.</p>
+
+<p>The <code>nemesis</code> was set up with a configurable nemesis which ran once per test, at a specified time interval for a specified duration.  More on that later.</p>
+
+<p>The <code>checker</code> inspected the history log, and a supplementary <code>state</code> object, and calculated a number of overall test metrics:</p>
+
+<ul>
+  <li>counts of the number of kinds of operations performed, and their results - e.g. number of successful create/update/read operations, number of failures, number of indeterminate results</li>
+  <li>a list of any pseudo-transactions that were not fully committed</li>
+  <li>a list of any user ids in the <code>state</code> but not found in the database</li>
+  <li>a list of any "unexpected" user ids - that existed in the database but should not have (due to failed writes)</li>
+  <li>a list of any users where the value of the user in the database did not match what was expected from the Jepsen history</li>
+  <li>an overall "valid" status</li>
+</ul>
+
+<p>The overall validity was determined by not whether everything worked, but by whether everything was reliably reported - writes and updates either failed (and did not change the databse) or succeeded (and <em>did</em> change the database).</p>
+
+<p>One other thing in the test's checker is that call to <code>(histogram-producing-checker)</code> - this called the <a href="http://hdrhistogram.org/">HdrHistogram</a> Java library, using timings from the Jepsen history logs, to produce <code>.hgrm</code> files which we could later use to produce timing plots like this one:</p>
+
+<p><img src="/2019-04-chaos-engineering/histogram-ok.png" alt="HdrHistogram" /></p>
+
+<h4 id="first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</h4>
+
+<p>This was our very first actually useful test - baselining how a normal set of user operations performed on a single-node network.</p>
+
+<p>Settings were fairly simple:</p>
+
+<ul>
+  <li>The test ran for 600 seconds</li>
+  <li>100,000 users were pre-created</li>
+  <li>Operations were 1% creates, 10% updates and 89% reads</li>
+  <li>500 workers were used</li>
+  <li>a simple random test delay was used, set up to consume an operation every 0.25 seconds
+    <ul>
+      <li>so the result should be 2000 operations per second on average</li>
+    </ul>
+  </li>
+  <li>Mongodb clients were set up with:
+    <ul>
+      <li>write-concern "majority"</li>
+      <li>read-concern "default"</li>
+      <li>read-preference "primary"</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The actual operations performed were:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>operation</strong></td>
+      <td><strong>result</strong></td>
+      <td><strong>count</strong></td>
+      <td><strong>median response time</strong></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>:read</td>
+      <td>:ok</td>
+      <td>1,066,947</td>
+      <td>0.6ms</td>
+    </tr>
+    <tr>
+      <td>:create</td>
+      <td>:ok</td>
+      <td>11,912</td>
+      <td>21ms</td>
+    </tr>
+    <tr>
+      <td>:update</td>
+      <td>:ok</td>
+      <td>120,175</td>
+      <td>22ms</td>
+    </tr>
+  </tfoot>
+</table>
+
+<p>The histogram of performance data was:</p>
+
+<p><img src="/2019-04-chaos-engineering/baseline-one-node/histogram.png" alt="histogram" /></p>
+
+<p>And the overall behaviour over time was:</p>
+
+<p><img src="/2019-04-chaos-engineering/baseline-one-node/grafana.png" alt="grafana" /></p>
+
+<p>These were our main outputs from each test - a performance histogram, to identify how real performance was distributed, and a grafana graph (automatically captured as a screenshot) to see performance over time.  Note these use log scales! So small variations in graphs might actually be quite large.</p>
+
+<p>The grafana output shows a lot of data - note there are two Y axes, on the left is response times, with 9 filled curves (as the output was set up for 3 mongodb nodes); on the right is responses per second, with 4 solid lines for "create OK", "update OK", "read OK" and "failed".</p>
+
+<p>There are also two vertical lines to show when the nemesis started and finished - there was no nemesis in this run, so nothing happened at those times!</p>
+
+<p>Also the bottom third of the graph shows failures and their response times.</p>
+
+<hr />
+
+<p>For the baseline, it was pretty clear that reads took less than 1ms, creates and updates took around 20ms - there were a few spikes of slower responses, but only in the slowest 1% of responses, and many of those were during the initial setup time of the test.</p>
+
+<p>TODO: add a bit more discussion on generating the report from asciidoc?  Need to work out where to fit that in.</p>
+
+<hr />
+
+<p><strong>UP TO HERE</strong></p>
+
+<hr />
+
+<h2 id="headings-for-bits-still-to-write">Headings for bits still to write:</h2>
+
+<h3 id="nemeses">Nemeses</h3>
+
+<h3 id="monitoring-and-collecting-results">Monitoring and collecting results</h3>
+
+<h3 id="generating-the-reports---asciidoc-and-friends">Generating the reports - asciidoc and friends</h3>
+
+<h3 id="what-did-we-find">What did we find?</h3>
+
+<p>There is a <em>lot</em> that could be put here!</p>
+
+<p>(a warning note about how this may no longer apply to current mongo versions)</p>
+
+<h4 id="separate-sections-for-useful-things-from-our-report">(Separate sections for useful things from our report)</h4>
+
+<h3 id="also-tested---load-testing-queueing">Also tested - load testing, queueing</h3>
+
+<h2 id="what-didnt-we-get-to">What didn't we get to?</h2>
+
+<ul>
+  <li>testing client's pseudo-transactions fully</li>
+  <li>testing recovery</li>
+  <li>microservice interaction - including [whatever the patterns are for microservice interaction]</li>
+  <li>interaction of REST and Queues</li>
+</ul>
+
+<h2 id="what-i-would-do-next-time">What I would do next time</h2>
+
+<h3 id="new-tools">New tools</h3>
+
+<h3 id="focus-on-the-important-things">Focus on the important things</h3>
+
+<h3 id="evolutionary-architecture-and-continous-delivery">Evolutionary Architecture and Continous Delivery</h3>
+
+<h2 id="todo-other-things-to-put-somewhere-or-mention">TODO: Other things to put somewhere or mention</h2>
+<ul>
+  <li>general grammar fixes - choose a tense and stick to it!</li>
+  <li>
+    <p>better CSS for tables</p>
+  </li>
+  <li>AWS implications - availability zones, needing an odd number of nodes, using an arbiter</li>
+  <li>more on performance testing</li>
+  <li>more detailed version of our "incremental approach"</li>
+  <li>moving to production environment</li>
+</ul>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in the UK.  More info at
+<a href='http://korny.info'>
+http://korny.info
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">OCR Hack - grabbing text from the screen on a Macbook</a>
+<span>Apr  8</span>
+</li>
+<li>
+<a href="/2019/01/20/excel-life.html">Excel life</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/01/19/what-on-earth-happened.html">What on earth happened?</a>
+<span>Jan 19</span>
+</li>
+<li>
+<a href="/2018/11/24/its_alive.html">It's alive!</a>
+<span>Nov 24</span>
+</li>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/tech.html">tech</a>
+(2)
+</li>
+<li>
+<a href="/tags/life.html">life</a>
+(1)
+</li>
+<li>
+<a href="/tags/meta.html">meta</a>
+(1)
+</li>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2018
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>

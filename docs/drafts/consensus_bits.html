@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async='' src='https://www.googletagmanager.com/gtag/js?id=UA-137924462-1'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-137924462-1');
+</script>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><p>On our project we were looking at MongoDB initially - but a lot of distributed databases or queueing systems use a very similar broad architecture for replicating data if users want to have strong consistency guarantees:
+<img src="/2019-04-chaos-engineering/resiliency1.png" alt="Common resiliency architecture diagram" /></p>
+
+<ul>
+  <li>Several distributed nodes have databases operating on replicas of the same data</li>
+  <li>The databases have some sort of consensus mechanism that elects a "Primary" node on start-up, and after something goes wrong.</li>
+  <li>Clients use some kind of discovery mechanism to know which is the primary node currently - generally they will have a list of all of the nodes, so if for some reason they can't see the primary, or the primary has changed, they can switch to the new primary</li>
+  <li>Clients write data to the primary node only (though they may wait for it to be replicated before counting it as written)</li>
+  <li>Clients read critical data <em>from</em> the primary node only (some setups let you read non-critical data from other nodes)</li>
+  <li>Nodes communicate between themselves, to replicate data from the primary to other nodes, to check that everyone can see everyone else, and to handle problems as they arrive. Critically if they detect a network partition - if a node can't see all the other nodes - they need to handle the partition, and potentially elect a new primary.</li>
+</ul>
+
+<p><em>(Note that I'm mostly focusing on MongoDB here, thought the patterns it uses are similar to other distributed consensus systems.  Despite Mongo having a bit of a mixed reputation, and often having some quite terrible default settings, in my opinion is not as bad as many people seem to think - at least when it comes to replication and distribution.  As long as you can live with it's single-document-transaction model.)</em></p>
+
+<p>A network partition is where some or all nodes can't see each other.  A simple case is where some non-primary nodes are split from the rest:
+<img src="/2019-04-chaos-engineering/resiliency2.png" alt="Split with primary majority" /></p>
+
+<p>In this case, the left-hand network is OK - clients can still talk to the primary, these nodes might panic a bit: "We can't see two nodes! Oh no!" - but you still have more than 50% of the network available.  The right-hand two nodes will panic "we can't see the primary!" - they may even try to elect a new primary - but they only have 40% of the network available, so the election will fail.</p>
+
+<p>If the network comes back, the network can heal - data sent to the Primary can still be replicated to the nodes on the right, and eventually things will be OK.</p>
+
+<p>But what if the network splits like this?
+<img src="/2019-04-chaos-engineering/resiliency3.png" alt="Split with primary minority" /></p>
+
+<p>Now, the left-hand side initially looks OK - but the right-hand network has the majority of nodes.  It can only assume that the primary has crashed, and as more than 50% of nodes can be seen, they will elect a new primary.</p>
+
+<p>In MongoDB and similar libraries, the client can specify a <a href="https://docs.mongodb.com/manual/reference/write-concern/">write concern</a> - typically you can set a write concern of "majority" to indicate that a data write won't succeed until _more than 50% of nodes have acknowledged that the data was written".  So in the scenario shown above, writes will fail if they are written to a primary node, and that primary node can't see 50% of the total nodes.</p>
+
+<p>Reads are more complex - again you can specify a <a href="https://docs.mongodb.com/manual/reference/read-concern/">read concern</a> of "majority" to say "only return me data if the majority of nodes agree that they've seen it".  In the scenario above, this will fail as the primary can't confirm that all nodes have seen the data.</p>
+
+<p>This is where things get complex though - these conservative settings can be prohibitively slow.  Especially for reads - you might have to wait for a read to propagate over multiple nodes, when almost all the time it will be fine to read what is on the primary.  It can be tempting to say "I'm checking writes are sent to a majority - can't I just trust the Primary has this data?" - but actually, you might have client A writing data to the Primary, and client B reading it before it has been fully replicated.  Does MongoDB return the un-committed data that client A wrote?  Even if it might actually determine that it no longer has a majority, and <em>fail</em> the write call from client A?</p>
+
+<p>Well, that depends on several things - the version of MongoDB you are using, the journalling settings, and a bunch of other things well outside of the scope of this article.  Suffice to say - you are better off <em>testing</em> this, than relying on what I'm writing or what is in the manual!</p>
+
+<p><em>Note</em> - this is a deliberately brief and incomplete introduction to this topic.  I mostly want to talk about how to test this - If you want more gory details, you are far better off reading <a href="https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications">Martin Kleppmann's book mentioned earlier</a>) or other more detailed sources of information.</p>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in the UK.  More info at
+<a href='http://korny.info'>
+http://korny.info
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">OCR Hack - grabbing text from the screen on a Macbook</a>
+<span>Apr  8</span>
+</li>
+<li>
+<a href="/2019/01/20/excel-life.html">Excel life</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/01/19/what-on-earth-happened.html">What on earth happened?</a>
+<span>Jan 19</span>
+</li>
+<li>
+<a href="/2018/11/24/its_alive.html">It's alive!</a>
+<span>Nov 24</span>
+</li>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/tech.html">tech</a>
+(2)
+</li>
+<li>
+<a href="/tags/life.html">life</a>
+(1)
+</li>
+<li>
+<a href="/tags/meta.html">meta</a>
+(1)
+</li>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2018
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>
