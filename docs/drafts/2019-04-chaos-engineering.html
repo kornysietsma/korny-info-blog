@@ -65,26 +65,40 @@ Local url: http://127.0.0.1:4567/drafts/2019-04-chaos-engineering.html
     </ul>
   </li>
   <li><a href="#applying-this-in-practice---our-chaos-engineering-experience-report" id="markdown-toc-applying-this-in-practice---our-chaos-engineering-experience-report">Applying this in practice - our Chaos Engineering experience report</a>    <ul>
+      <li><a href="#a-warning-about-applying-these-results-too-literally" id="markdown-toc-a-warning-about-applying-these-results-too-literally">A warning about applying these results too literally</a></li>
       <li><a href="#what-is-jepsen" id="markdown-toc-what-is-jepsen">What is Jepsen?</a>        <ul>
           <li><a href="#how-is-a-jepsen-test-structured" id="markdown-toc-how-is-a-jepsen-test-structured">How is a Jepsen test structured?</a></li>
           <li><a href="#how-do-checkers-work" id="markdown-toc-how-do-checkers-work">How do checkers work?</a></li>
         </ul>
       </li>
       <li><a href="#early-testing---setup-and-exploration" id="markdown-toc-early-testing---setup-and-exploration">Early testing - setup and exploration</a></li>
-      <li><a href="#a-more-realistic-test---creating-and-updating-artificial-user-data" id="markdown-toc-a-more-realistic-test---creating-and-updating-artificial-user-data">A more realistic test - creating and updating artificial user data</a>        <ul>
-          <li><a href="#first-test---baselining-performance-on-one-node-with-no-nemesis" id="markdown-toc-first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</a></li>
+      <li><a href="#more-realistic-tests---creating-and-updating-artificial-user-data" id="markdown-toc-more-realistic-tests---creating-and-updating-artificial-user-data">More realistic tests - creating and updating artificial user data</a></li>
+      <li><a href="#first-test---baselining-performance-on-one-node-with-no-nemesis" id="markdown-toc-first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</a>        <ul>
+          <li><a href="#the-five-test-stages" id="markdown-toc-the-five-test-stages">The five test stages</a>            <ul>
+              <li><a href="#set-up-a-test-system-1" id="markdown-toc-set-up-a-test-system-1">1. Set up a test system</a></li>
+              <li><a href="#break-the-test-system-1" id="markdown-toc-break-the-test-system-1">2. Break the test system</a></li>
+              <li><a href="#analyse-the-results-1" id="markdown-toc-analyse-the-results-1">3. Analyse the results</a></li>
+              <li><a href="#document-the-results-1" id="markdown-toc-document-the-results-1">4. Document the results</a></li>
+              <li><a href="#iterate-1" id="markdown-toc-iterate-1">5. Iterate</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#more-baselining" id="markdown-toc-more-baselining">More baselining</a></li>
+      <li><a href="#first-nemeses---splitting-the-network" id="markdown-toc-first-nemeses---splitting-the-network">First nemeses - splitting the network</a></li>
+      <li><a href="#testing-on-a-more-realistic-network" id="markdown-toc-testing-on-a-more-realistic-network">Testing on a more realistic network</a></li>
+      <li><a href="#more-nemeses-more-tests" id="markdown-toc-more-nemeses-more-tests">More nemeses, more tests</a>        <ul>
+          <li><a href="#using-tls" id="markdown-toc-using-tls">Using TLS</a></li>
+          <li><a href="#running-out-of-disk-space" id="markdown-toc-running-out-of-disk-space">Running out of disk space</a></li>
+          <li><a href="#heavy-io-load" id="markdown-toc-heavy-io-load">Heavy I/O load</a></li>
+          <li><a href="#heavy-cpu-utilisation" id="markdown-toc-heavy-cpu-utilisation">Heavy CPU utilisation</a></li>
+          <li><a href="#corrupt-networks-packet-loss-increased-network-latency" id="markdown-toc-corrupt-networks-packet-loss-increased-network-latency">Corrupt networks, packet loss, increased network latency</a></li>
         </ul>
       </li>
     </ul>
   </li>
   <li><a href="#headings-for-bits-still-to-write" id="markdown-toc-headings-for-bits-still-to-write">Headings for bits still to write:</a>    <ul>
-      <li><a href="#nemeses" id="markdown-toc-nemeses">Nemeses</a></li>
-      <li><a href="#monitoring-and-collecting-results" id="markdown-toc-monitoring-and-collecting-results">Monitoring and collecting results</a></li>
-      <li><a href="#generating-the-reports---asciidoc-and-friends" id="markdown-toc-generating-the-reports---asciidoc-and-friends">Generating the reports - asciidoc and friends</a></li>
-      <li><a href="#what-did-we-find" id="markdown-toc-what-did-we-find">What did we find?</a>        <ul>
-          <li><a href="#separate-sections-for-useful-things-from-our-report" id="markdown-toc-separate-sections-for-useful-things-from-our-report">(Separate sections for useful things from our report)</a></li>
-        </ul>
-      </li>
+      <li><a href="#read-concerns" id="markdown-toc-read-concerns">Read Concerns</a></li>
       <li><a href="#also-tested---load-testing-queueing" id="markdown-toc-also-tested---load-testing-queueing">Also tested - load testing, queueing</a></li>
     </ul>
   </li>
@@ -224,6 +238,12 @@ Local url: http://127.0.0.1:4567/drafts/2019-04-chaos-engineering.html
 After our initial review of their plans we suggested that it would be best to actually <em>test</em> their approach, rather than just trying to reason about it.</p>
 
 <p>So we agreed to set up a small team to build out some tests.  We chose to initially use <a href="https://jepsen.io/">Jepsen</a> for a chaos engineering tool - we had some familiarity with Clojure, and it seemed like a good tool for our planned iterative approach; we also used the <a href="https://en.wikipedia.org/wiki/YCSB">Yahoo Cloud Serving Benchmark</a> for some load testing, though this article is mostly focusing on the Jepsen tests.</p>
+
+<h3 id="a-warning-about-applying-these-results-too-literally">A warning about applying these results too literally</h3>
+
+<p>My goal here is to talk about approaches and things to try.  I'm not trying to say "You should do X with MongoDB"!  This project was a couple of years ago - the particular results may depend on which version of MongoDB you run, on which client libraries you use, on what patterns of usage you have, and on what network topology you use.</p>
+
+<p>So don't act on any of my specific conclusions here - test things yourself, and find out what works in your environment.</p>
 
 <h3 id="what-is-jepsen">What is Jepsen?</h3>
 
@@ -391,7 +411,7 @@ After our initial review of their plans we suggested that it would be best to ac
 
 <p>This was mostly a learning exercise - appending to an array is an idempotent operation so we weren't testing linearizability or the like, just  "can we string together a pile of operations and see how they fail?".</p>
 
-<h3 id="a-more-realistic-test---creating-and-updating-artificial-user-data">A more realistic test - creating and updating artificial user data</h3>
+<h3 id="more-realistic-tests---creating-and-updating-artificial-user-data">More realistic tests - creating and updating artificial user data</h3>
 
 <p>For the bulk of our tests, we wanted to simulate realistic client behaviour, under reasonably heavy loads.  The main scope of our client's project was managing information about users - so we wanted to simulate reading and writing users, using MongoDB documents similar to those used by the client, and similar client logic. (As clojure runs on the JVM, and the client project was in Java, we could have directly called their code - but it was simple enough to replicate key parts in our tests, and made the tests less tightly coupled to their code, which was under active development)</p>
 
@@ -467,7 +487,7 @@ After our initial review of their plans we suggested that it would be best to ac
 
 <p><img src="/2019-04-chaos-engineering/histogram-ok.png" alt="HdrHistogram" /></p>
 
-<h4 id="first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</h4>
+<h3 id="first-test---baselining-performance-on-one-node-with-no-nemesis">First test - baselining performance on one node with no nemesis</h3>
 
 <p>This was our very first actually useful test - baselining how a normal set of user operations performed on a single-node network.</p>
 
@@ -486,13 +506,28 @@ After our initial review of their plans we suggested that it would be best to ac
   <li>Mongodb clients were set up with:
     <ul>
       <li>write-concern "majority"</li>
-      <li>read-concern "default"</li>
+      <li>read-concern "majority"</li>
       <li>read-preference "primary"</li>
     </ul>
   </li>
 </ul>
 
-<p>The actual operations performed were:</p>
+<h4 id="the-five-test-stages">The five test stages</h4>
+<p>I mentioned earlier the 5 iterative stages of our tests - in this case they were:</p>
+
+<h5 id="set-up-a-test-system-1">1. Set up a test system</h5>
+
+<p>We used Terraform and Ansible to set up the servers initially - Jepsen has some logic for server provisioning, but we preferred to use more mature tools.</p>
+
+<p>We didn't re-build the servers for every test - only when something fundamental changed like topology or storage media.</p>
+
+<h5 id="break-the-test-system-1">2. Break the test system</h5>
+
+<p>For this test we had no nemesis, so nothing broke.</p>
+
+<h5 id="analyse-the-results-1">3. Analyse the results</h5>
+
+<p>We used the checker described above for a high-level analysis, and an overall "Pass/Fail" rating - of course with no nemesis, this returned entirely successful results:</p>
 
 <table>
   <tbody>
@@ -525,27 +560,299 @@ After our initial review of their plans we suggested that it would be best to ac
   </tfoot>
 </table>
 
-<p>The histogram of performance data was:</p>
+<p>We also generated a histogram of performance timings using <a href="http://hdrhistogram.org/">HdrHistogram</a> :</p>
 
 <p><img src="/2019-04-chaos-engineering/baseline-one-node/histogram.png" alt="histogram" /></p>
 
-<p>And the overall behaviour over time was:</p>
+<p>And we generated Grafana charts of how the system operated over time:</p>
 
 <p><img src="/2019-04-chaos-engineering/baseline-one-node/grafana.png" alt="grafana" /></p>
 
-<p>These were our main outputs from each test - a performance histogram, to identify how real performance was distributed, and a grafana graph (automatically captured as a screenshot) to see performance over time.  Note these use log scales! So small variations in graphs might actually be quite large.</p>
+<p>Note both of these use log scales! It's hard to capture failures on a linear scale - one big result can dwarf normal results.  But this does mean you need take some care interpreting the charts.</p>
 
-<p>The grafana output shows a lot of data - note there are two Y axes, on the left is response times, with 9 filled curves (as the output was set up for 3 mongodb nodes); on the right is responses per second, with 4 solid lines for "create OK", "update OK", "read OK" and "failed".</p>
+<p>The grafana output shows a lot of data - note there are two Y axes, on the left is a log of response times, with 9 filled curves (as the output was set up for 3 mongodb nodes); on the right is a linear scale of responses per second, with 4 solid lines for "create OK", "update OK", "read OK" and "failed".</p>
 
-<p>There are also two vertical lines to show when the nemesis started and finished - there was no nemesis in this run, so nothing happened at those times!</p>
+<p>There are also two vertical lines to show when the nemesis started and finished - there was no nemesis in this run, so nothing happened at those times.</p>
 
-<p>Also the bottom third of the graph shows failures and their response times.</p>
+<p>Also the bottom third of the graph shows failures and their response times - again, empty for a run with no nemesis.</p>
+
+<h5 id="document-the-results-1">4. Document the results</h5>
+
+<p>Our test results needed to be analysed, understood, and most importantly <em>communicated</em>.  So as we ran tests, we generated documentation.</p>
+
+<p>We used ruby scripts based on the <a href="https://asciidoctor.org/">AsciiDoctor</a> library to generate our documentation - for this test our documentation template looked like:</p>
+
+<div class="highlight"><pre class="highlight plaintext"><code>= Baseline on a single node
+
+This scenario establishes baseline performance on a single MongoDB node.
+
+There is no nemesis as this is just to establish normal performance with this
+topology.
+
+== Operations performed
+
+[cols="&lt;,^,&gt;,&gt;"]
+|===
+|operation|result|count|50th pct
+|:read|:ok|1,066,947|0.6ms
+|:create|:ok|11,912|21ms
+|:update|:ok|120,175|22ms
+|===
+
+== Metrics
+[[img-grafana]]
+.results over time
+image::jepsen/baseline-one-node/grafana.png[scaledwidth=100%]
+
+== Latency graph
+[[img-histogram]]
+.latency histogram
+image::jepsen/baseline-one-node/histogram.png[scaledwidth=100%]
+</code></pre></div>
+<p>The first paragraph was hand-written, and the other sections could be tweaked from a basic template.  Images were copied from our test output, or generated - the <code>histogram.png</code> file was generated by a <a href="https://github.com/HdrHistogram/HdrHistogram/blob/master/gnuplotExample/make_percentile_plot">script similar to this one</a> which converted the HdrHistogram output to an image using <code>gnuplot</code>.</p>
+
+<h5 id="iterate-1">5. Iterate</h5>
+
+<p>The next stage was to iterate - to start breaking things and analysing the results!</p>
+
+<h3 id="more-baselining">More baselining</h3>
+
+<p>We also ran some baselines on other topologies - a 3-node replica set in one Availability Zone, and a 5-node replica set split across three Availability Zones.</p>
+
+<p>The results were actually very similar - when nothing goes wrong, even a 5-node cluster didn't perform much worse than a single node under these loads:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>operation</strong></td>
+      <td><strong>result</strong></td>
+      <td><strong>count</strong></td>
+      <td><strong>50th pct</strong></td>
+      <td><strong>95th pct</strong></td>
+      <td><strong>99.9th pct</strong></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td><code>:read</code></td>
+      <td><code>:ok</code></td>
+      <td>1064769</td>
+      <td>0.60ms</td>
+      <td>1.10ms</td>
+      <td>22.46ms</td>
+    </tr>
+    <tr>
+      <td><code>:update</code></td>
+      <td><code>:ok</code></td>
+      <td>119507</td>
+      <td>26.77ms</td>
+      <td>43.71ms</td>
+      <td>68.68ms</td>
+    </tr>
+    <tr>
+      <td><code>:create</code></td>
+      <td><code>:ok</code></td>
+      <td>12067</td>
+      <td>26.03ms</td>
+      <td>42.86ms</td>
+      <td>63.41ms</td>
+    </tr>
+  </tfoot>
+</table>
+
+<p>Across the baselines, it was pretty clear that most reads took around 1ms, most creates and updates took around 27ms - there were a few spikes of slower responses, but many of those were during the initial setup time of the test.  (In hindsight it would have been good to gather these stats ignoring the first few ms of data!)</p>
+
+<h3 id="first-nemeses---splitting-the-network">First nemeses - splitting the network</h3>
+
+<p>The first few nemeses we used were testing a range of network splits; we ran several different scenarios:</p>
+
+<ul>
+  <li>A network split on a 3-node network, with the Primary in the majority</li>
+  <li>A network split on a 3-node network, with the Primary in the minority</li>
+  <li>The same as the above, but tinkering with timeouts</li>
+  <li>Network splits on a 5-node network split across multiple availability zones</li>
+</ul>
+
+<p>This used a simple Jepsen nemesis:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">minority-partitioner</span><span class="w">
+  </span><span class="s">"partitions such that the primary is in the smaller partition"</span><span class="w">
+  </span><span class="p">[</span><span class="n">client</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="n">op</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">nodecount</span><span class="w"> </span><span class="p">(</span><span class="nb">count</span><span class="w"> </span><span class="p">(</span><span class="no">:nodes</span><span class="w"> </span><span class="nb">test</span><span class="p">))]</span><span class="w">
+    </span><span class="p">(</span><span class="nb">assert</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">nodecount</span><span class="p">))</span><span class="w">
+    </span><span class="p">(</span><span class="nb">assert</span><span class="w"> </span><span class="p">(</span><span class="nf">odd?</span><span class="w"> </span><span class="n">nodecount</span><span class="p">))</span><span class="w">
+
+    </span><span class="p">(</span><span class="nb">if-let</span><span class="w"> </span><span class="p">[</span><span class="n">primary</span><span class="w"> </span><span class="p">(</span><span class="nf">cluster/primary</span><span class="w"> </span><span class="n">client</span><span class="p">)]</span><span class="w">
+      </span><span class="p">(</span><span class="nf">do</span><span class="w">
+        </span><span class="p">(</span><span class="nf">info</span><span class="w"> </span><span class="s">"Minority partitioner using primary:"</span><span class="w"> </span><span class="n">primary</span><span class="p">)</span><span class="w">
+        </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">minority-size</span><span class="w"> </span><span class="p">(</span><span class="nb">/</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">(</span><span class="nb">dec</span><span class="w"> </span><span class="n">nodecount</span><span class="p">))</span><span class="w">
+              </span><span class="n">without-primary</span><span class="w"> </span><span class="p">(</span><span class="nb">remove</span><span class="w"> </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">primary</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="no">:nodes</span><span class="w"> </span><span class="nb">test</span><span class="p">))</span><span class="w">
+              </span><span class="p">[</span><span class="n">friends</span><span class="w"> </span><span class="n">foes</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">split-at</span><span class="w"> </span><span class="p">(</span><span class="nb">dec</span><span class="w"> </span><span class="n">minority-size</span><span class="p">)</span><span class="w"> </span><span class="n">without-primary</span><span class="p">)</span><span class="w">
+              </span><span class="n">grudge</span><span class="w"> </span><span class="p">[(</span><span class="nb">conj</span><span class="w"> </span><span class="n">friends</span><span class="w"> </span><span class="n">primary</span><span class="p">)</span><span class="w"> </span><span class="n">foes</span><span class="p">]</span><span class="w">
+              </span><span class="n">_</span><span class="w"> </span><span class="p">(</span><span class="nf">info</span><span class="w"> </span><span class="s">"partioning into:"</span><span class="w"> </span><span class="n">grudge</span><span class="p">)]</span><span class="w">
+          </span><span class="p">(</span><span class="nf">n/partition!</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="p">(</span><span class="nf">n/complete-grudge</span><span class="w"> </span><span class="n">grudge</span><span class="p">))</span><span class="w">
+          </span><span class="p">(</span><span class="nb">assoc</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="no">:value</span><span class="w"> </span><span class="p">(</span><span class="nb">str</span><span class="w"> </span><span class="s">"Cut off "</span><span class="w"> </span><span class="p">(</span><span class="nb">pr-str</span><span class="w"> </span><span class="n">grudge</span><span class="p">)))))</span><span class="w">
+      </span><span class="p">(</span><span class="nf">do</span><span class="w">
+        </span><span class="p">(</span><span class="nf">warn</span><span class="w"> </span><span class="s">"No primary known - can't partition"</span><span class="p">)</span><span class="w">
+        </span><span class="p">(</span><span class="nb">assoc</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="no">:value</span><span class="w"> </span><span class="p">(</span><span class="nb">str</span><span class="w"> </span><span class="s">"No primary known - can't partition"</span><span class="p">))))))</span><span class="w">
+</span></code></pre></div>
+<p>I'm not going to try to explain all of this, hopefully you can glean a general idea of how it might work:</p>
+
+<ul>
+  <li>Find the primary node (the MongoDB client should know this)</li>
+  <li>Remove the primary from the list of nodes</li>
+  <li>Bisect the remaining nodes into two random sub-lists</li>
+  <li>Add the primary back into one list</li>
+  <li>Split the network using <a href="https://github.com/jepsen-io/jepsen/blob/0.1.2/jepsen/src/jepsen/nemesis.clj#L21">partition!</a>  (note this is from Jepsen 0.1.2 - later versions have different function names here)
+    <ul>
+      <li>under the covers, this calls <code>iptables</code> on each of the servers to drop and recover network connections</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The first test was a fairly "safe" - there is a network split, but the primary node is not affected - it can't see some nodes, but it can still see a majority of nodes:</p>
+
+<p><img src="/2019-04-chaos-engineering/resiliency2.png" alt="Split with primary majority" /></p>
+
+<p>The result was, as expected, no real impact - individual MongoDB nodes had extra work recognising that a server was missing, and presumably that server had extra work catching up when it came back on line - but a majority of nodes could keep working without issues, so the client didn't even notice.</p>
+
+<p>The other tests were the more troublesome scenario, where the primary needs to change as it is in the smaller network:</p>
+
+<p><img src="/2019-04-chaos-engineering/resiliency3.png" alt="Split with primary minority" /></p>
+
+<p>On a 3-node network, this had a very clear dramatic effect:</p>
+
+<p><img src="/2019-04-chaos-engineering/primary-split/histogram.png" alt="histogram" /></p>
+
+<p>Quite a lot of Create and Update operations failed - and they took around 10 seconds to fail.  ("info" is roughly equivalent to "fail" here - it just means the failure was a socket timeout so the operation might have been committed before the connection died)</p>
+
+<p>Viewing grafana results shows how things behaved when the network was split:</p>
+
+<p><img src="/2019-04-chaos-engineering/primary-split/grafana.png" alt="grafana" /></p>
+
+<p>Zooming in to the time around the start of the split:</p>
+
+<p><img src="/2019-04-chaos-engineering/primary-split/grafana2.png" alt="grafana" /></p>
+
+<ul>
+  <li>At 14:50:30 the nemesis starts (note there are 2 start lines now - one for when the nemesis is triggered, and when it is complete.  ssh-ing to all the nodes and executing <code>iptables</code> isn't instantaneous)</li>
+  <li>the <code>create</code> and <code>update</code> response times drop off immediately (these are the filled curves - the solid unfilled lines are <em>counts</em> of responses, and have a 10-second granularity, so are not so useful here)</li>
+  <li>the <code>read</code> response times are initially OK - which might be surprising!  But the vast majority of our reads only need to read from the primary node.  Despite the <a href="https://docs.mongodb.com/manual/reference/read-concern-majority/#readconcern.%22majority%22">read concern of "majority"</a>, any data that has been written and replicated in the past, is available to read immediately.</li>
+  <li>around 14:50:40 there are spikes in read performances - this is presumably when the network election is starting, it's not clear whether they are struggling to find a primary to read from, or precisely what happens.</li>
+  <li>also around this time a bunch of <code>info</code> results show up in the bottom section - these are Jepsen's way of indicating indeterminite results.  These are <code>create</code> and <code>update</code> calls from around 14:50:30 that are now returning errors, 10 seconds after the nemesis started.</li>
+  <li>around 20 seconds in, at 14:50:50, some writes are starting to succeed - but these are quite slow responses, and it takes a while to stabilise. Things aren't really better until 14:51:10 - 40 seconds after the split.</li>
+</ul>
+
+<p>Fourty seconds is a <em>really long time</em> in user land.  We wanted to know why it took so long to recover - the new primary was elected after about 10 seconds, what was going on?</p>
+
+<p>From our investigations, it seemed that the problem might be the MongoDB client configuration - the client keeps a pool of connections to the Primary server, but it uses a heartbeat to poll the server for changes - and this <a href="http://mongodb.github.io/mongo-java-driver/3.8/javadoc/com/mongodb/MongoClientOptions.Builder.html#heartbeatFrequency-int-">heartbeat frequency</a> defaults to 10 seconds.  And the timeouts for connecting to the server and the default socket timeout are 20 seconds each - this means a client can spend quite a while not noticing that the topology has fixed itself.</p>
+
+<p>In the spirit of incremental change, we ran a test with smaller client timeouts:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>setting</td>
+      <td>default</td>
+      <td>new test</td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr>
+      <td>heartbeat-frequency</td>
+      <td>10,000ms</td>
+      <td>1000ms</td>
+    </tr>
+    <tr>
+      <td>heartbeat-connect-timeout</td>
+      <td>20,000ms</td>
+      <td>5000ms</td>
+    </tr>
+    <tr>
+      <td>heartbeat-socket-timeout</td>
+      <td>20,000ms</td>
+      <td>5000ms</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The results were much cleaner:</p>
+
+<p><img src="/2019-04-chaos-engineering/primary-split-short-timeouts/grafana2.png" alt="grafana" /></p>
+
+<p>It seems that tweaking the client timeouts definitely helped - writes recovered in around 23 seconds, compared to 40 seconds previously. (Of course there's a risk that in lowering timeouts, more accidental failures would occur in a flakey network)</p>
+
+<p>This was also a great validation of our test-driven approach.  It's very hard to read all the MongoDB documents, even with access to expert administrators and the like, and be completely sure of the implications of this sort of setting.  It's much more straightforward to evaluate these settings through tests.</p>
+
+<h3 id="testing-on-a-more-realistic-network">Testing on a more realistic network</h3>
+
+<p>So far, we were testing on three nodes in a single Amazon availability zone - effectively, three nodes in a single datacentre.  This isn't very useful for real resilience - the most likely cause of a network split is problems in the connections <em>between</em> datacentres, rather than within one.  Also network time between availability zones is always going to be significantly greater than within one zone.</p>
+
+<p>So we wanted to run MongoDB across two zones - but then there's a catch - you need an odd number of servers to have a quorum-based election, so you can be sure of a majority.  You shouldn't just put 3 nodes in one zone and 2 in another, either - if the larger zone had a serious problem, the smaller zone could not recover on it's own - it's better to be able to survive with any single zone unavailable.</p>
+
+<p>We had an extra twist on this project - at the time, Amazon only <em>had</em> two availability zones in the UK!  We could run servers in Ireland, but our client didn't want to store any data outside the UK.</p>
+
+<p>Enter the <a href="https://docs.mongodb.com/manual/tutorial/add-replica-set-arbiter/">Arbiter</a> node.  An Arbiter is basically a no-data-stored-here server - it participates in elections, so it can help recover a network when a whole zone goes away.  (It also counts towards the "majority" for write concerns - otherwise in this scenario it'd be impossible to write anything when one AZ goes down)  We can put an arbiter in Ireland without it storing any data:</p>
+
+<p><img src="/2019-04-chaos-engineering/multi-az.png" alt="multi-az topology" /></p>
+
+<p>The results of splitting with this topology were similar to the 3-node scenarios, but with somewhat longer recovery times and more errors:</p>
+
+<p><img src="/2019-04-chaos-engineering/ha-primary-split/grafana.png" alt="grafana" /></p>
+
+<p>We also started to notice some other ugly problems though in this scenario - our checker reported:</p>
+
+<div class="highlight"><pre class="highlight clojure"><code><span class="no">:database-irregularities</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="no">:not-in-db</span><span class="w"> </span><span class="p">[]</span><span class="n">,</span><span class="w"> 
+  </span><span class="no">:ok-mismatches</span><span class="w"> </span><span class="p">[]</span><span class="n">,</span><span class="w">
+  </span><span class="no">:info-mismatches</span><span class="w"> </span><span class="p">[</span><span class="mi">155890</span><span class="w"> </span><span class="mi">208477</span><span class="p">]</span><span class="n">,</span><span class="w">
+  </span><span class="no">:fail-mismatches</span><span class="w"> </span><span class="p">[]}}</span><span class="w">
+</span></code></pre></div>
+<p>This indicated that for two participants, the database had differences from our client's view of the world - the client saw <code>:info</code> errors, which generally means a <code>MongoSocketReadException</code> or similar, and it assumed these were failures - but the database indicated that these changes <em>had</em> been applied successfully.</p>
+
+<p>This was something we saw several times in other tests as well.  <em>You can't guarantee that a failed write actually failed</em> - there is a slim chance that the write succeeded, and was written to a majority of nodes, but something failed before that success was reported back to the client.</p>
+
+<p>This had significant implications for the application design - effectively the software design has to deal with uncertain results - either by retrying the operation until a conclusive result was returned (and this required operations to be idempotent!) or by making sure any error of this sort was able to be identified and fixed manually.</p>
+
+<h3 id="more-nemeses-more-tests">More nemeses, more tests</h3>
+
+<p>I'm not going to cover all the things we tested here - we generated a 133 page report, no-one wants to read all of that!  Hopefully by now you get the idea of the sort of outputs you can get from these tests.</p>
+
+<p>I will give a brief overview though of things we looked at.</p>
+
+<h4 id="using-tls">Using TLS</h4>
+
+<p>We wanted to know the impact of enabling TLS between the MongoDB nodes - by default MongoDB uses unencrypted connections between replicas for heartbeats and replication.</p>
+
+<p>Enabling TLS incurred a roughly 15% performance penalty on creates and updates, and a lower penalty on reads - for our client, they chose to accept this slowness in return for extra security.</p>
+
+<h4 id="running-out-of-disk-space">Running out of disk space</h4>
+
+<p>Running out of disk space can be messy - a server might think it's running just fine, but then be unable to write any logs…</p>
+
+<p>We tested both running out of space on the root volume, and on the <code>/journal</code> volume to simulate Mongo dying because it was writing too many journal entries.</p>
+
+<p>Interestingly, these tests had lots of problems - but not when the disk was full; the problems started much earlier, because filling a 25G journal disk incurred a lot of extra I/O load, and this itself caused a lot of slow-downs and failures.</p>
+
+<p>Which led to our next test:</p>
+
+<h4 id="heavy-io-load">Heavy I/O load</h4>
+
+<p>We tested this using the <a href="https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/burnio.sh">BurnIO</a> script from Netflix's Chaos Monkey (now Simian Army) tools - on the <code>/</code>, <code>/data</code> and <code>/journal</code> drives of our servers.</p>
+
+<p>As expected, this caused significant latency problems - but no actual errors.  Our main conclusion here was to monitor these volumes, and check the IOPS requirements more carefully under realistic loads in a performance test.</p>
+
+<h4 id="heavy-cpu-utilisation">Heavy CPU utilisation</h4>
+
+<p>Again we used the Chaos Monkey <a href="https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/burncpu.sh">BurnCPU</a> script for this test.</p>
+
+<p>Generally heavy CPU loads didn't impact MongoDB much - this was not a big concern.</p>
+
+<h4 id="corrupt-networks-packet-loss-increased-network-latency">Corrupt networks, packet loss, increased network latency</h4>
+
+<p>We ran tests using several other <a href="https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/">Chaos Monkey scripts</a> - most of them were informative, but generally MongoDB was pretty resilient to network issues; things slowed down but not dramatically, and no data was lost.</p>
 
 <hr />
-
-<p>For the baseline, it was pretty clear that reads took less than 1ms, creates and updates took around 20ms - there were a few spikes of slower responses, but only in the slowest 1% of responses, and many of those were during the initial setup time of the test.</p>
-
-<p>TODO: add a bit more discussion on generating the report from asciidoc?  Need to work out where to fit that in.</p>
 
 <hr />
 
@@ -555,19 +862,10 @@ After our initial review of their plans we suggested that it would be best to ac
 
 <h2 id="headings-for-bits-still-to-write">Headings for bits still to write:</h2>
 
-<h3 id="nemeses">Nemeses</h3>
+<h3 id="read-concerns">Read Concerns</h3>
+<p>We tested Jepsen only with "majority" - talk about why, and YCSB results.</p>
 
-<h3 id="monitoring-and-collecting-results">Monitoring and collecting results</h3>
-
-<h3 id="generating-the-reports---asciidoc-and-friends">Generating the reports - asciidoc and friends</h3>
-
-<h3 id="what-did-we-find">What did we find?</h3>
-
-<p>There is a <em>lot</em> that could be put here!</p>
-
-<p>(a warning note about how this may no longer apply to current mongo versions)</p>
-
-<h4 id="separate-sections-for-useful-things-from-our-report">(Separate sections for useful things from our report)</h4>
+<p>Also a gap in our analysis - should have tested write-then-read sometimes?</p>
 
 <h3 id="also-tested---load-testing-queueing">Also tested - load testing, queueing</h3>
 
