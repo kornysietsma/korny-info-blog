@@ -137,6 +137,12 @@ After our initial review of their plans we suggested that it would be best to ac
 
 So we agreed to set up a small team to build out some tests.  We chose to initially use [Jepsen](https://jepsen.io/) for a chaos engineering tool - we had some familiarity with Clojure, and it seemed like a good tool for our planned iterative approach; we also used the [Yahoo Cloud Serving Benchmark](https://en.wikipedia.org/wiki/YCSB) for some load testing, though this article is mostly focusing on the Jepsen tests.
 
+### A warning about applying these results too literally
+
+My goal here is to talk about approaches and things to try.  I'm not trying to say "You should do X with MongoDB"!  This project was a couple of years ago - the particular results may depend on which version of MongoDB you run, on which client libraries you use, on what patterns of usage you have, and on what network topology you use.
+
+So don't act on any of my specific conclusions here - test things yourself, and find out what works in your environment.
+
 ### What is Jepsen?
 
 Jepsen is an [open source](https://github.com/aphyr/jepsen) systems testing library, written in Clojure by Kyle Kingsbury aka [Aphyr](https://aphyr.com/about). It allows you to set up a distributed system, run a bunch of destructive operations against that system, and verify that the history of those operations make sense.
@@ -300,7 +306,7 @@ At the end of this test we had a straightforward checker that looked at the sing
 
 This was mostly a learning exercise - appending to an array is an idempotent operation so we weren't testing linearizability or the like, just  "can we string together a pile of operations and see how they fail?".
 
-### A more realistic test - creating and updating artificial user data
+### More realistic tests - creating and updating artificial user data
 
 For the bulk of our tests, we wanted to simulate realistic client behaviour, under reasonably heavy loads.  The main scope of our client's project was managing information about users - so we wanted to simulate reading and writing users, using MongoDB documents similar to those used by the client, and similar client logic. (As clojure runs on the JVM, and the client project was in Java, we could have directly called their code - but it was simple enough to replicate key parts in our tests, and made the tests less tightly coupled to their code, which was under active development)
 
@@ -380,7 +386,7 @@ One other thing in the test's checker is that call to `(histogram-producing-chec
 
 ![HdrHistogram](2019-04-chaos-engineering/histogram-ok.png)
 
-#### First test - baselining performance on one node with no nemesis
+### First test - baselining performance on one node with no nemesis
 
 This was our very first actually useful test - baselining how a normal set of user operations performed on a single-node network.
 
@@ -394,10 +400,25 @@ Settings were fairly simple:
   - so the result should be 2000 operations per second on average
 - Mongodb clients were set up with:
   - write-concern "majority"
-  - read-concern "default"
+  - read-concern "majority"
   - read-preference "primary"
 
-The actual operations performed were:
+#### The five test stages
+I mentioned earlier the 5 iterative stages of our tests - in this case they were:
+
+##### 1. Set up a test system
+
+We used Terraform and Ansible to set up the servers initially - Jepsen has some logic for server provisioning, but we preferred to use more mature tools.
+
+We didn't re-build the servers for every test - only when something fundamental changed like topology or storage media.
+
+##### 2. Break the test system
+
+For this test we had no nemesis, so nothing broke.
+
+##### 3. Analyse the results
+
+We used the checker described above for a high-level analysis, and an overall "Pass/Fail" rating - of course with no nemesis, this returned entirely successful results:
 
 |---
 |**operation**|**result**|**count**|**median response time**
@@ -407,28 +428,247 @@ The actual operations performed were:
 |:update|:ok|120,175|22ms
 |---
 
-The histogram of performance data was:
+We also generated a histogram of performance timings using [HdrHistogram](http://hdrhistogram.org/) :
 
 ![histogram](2019-04-chaos-engineering/baseline-one-node/histogram.png)
 
-
-And the overall behaviour over time was:
+And we generated Grafana charts of how the system operated over time:
 
 ![grafana](2019-04-chaos-engineering/baseline-one-node/grafana.png)
 
-These were our main outputs from each test - a performance histogram, to identify how real performance was distributed, and a grafana graph (automatically captured as a screenshot) to see performance over time.  Note these use log scales! So small variations in graphs might actually be quite large.
+Note both of these use log scales! It's hard to capture failures on a linear scale - one big result can dwarf normal results.  But this does mean you need take some care interpreting the charts.
 
-The grafana output shows a lot of data - note there are two Y axes, on the left is response times, with 9 filled curves (as the output was set up for 3 mongodb nodes); on the right is responses per second, with 4 solid lines for "create OK", "update OK", "read OK" and "failed".
+The grafana output shows a lot of data - note there are two Y axes, on the left is a log of response times, with 9 filled curves (as the output was set up for 3 mongodb nodes); on the right is a linear scale of responses per second, with 4 solid lines for "create OK", "update OK", "read OK" and "failed".
 
-There are also two vertical lines to show when the nemesis started and finished - there was no nemesis in this run, so nothing happened at those times!
+There are also two vertical lines to show when the nemesis started and finished - there was no nemesis in this run, so nothing happened at those times.
 
-Also the bottom third of the graph shows failures and their response times.
+Also the bottom third of the graph shows failures and their response times - again, empty for a run with no nemesis.
+
+##### 4. Document the results
+
+Our test results needed to be analysed, understood, and most importantly _communicated_.  So as we ran tests, we generated documentation.
+
+We used ruby scripts based on the [AsciiDoctor](https://asciidoctor.org/) library to generate our documentation - for this test our documentation template looked like:
+
+~~~
+= Baseline on a single node
+
+This scenario establishes baseline performance on a single MongoDB node.
+
+There is no nemesis as this is just to establish normal performance with this
+topology.
+
+== Operations performed
+
+[cols="<,^,>,>"]
+|===
+|operation|result|count|50th pct
+|:read|:ok|1,066,947|0.6ms
+|:create|:ok|11,912|21ms
+|:update|:ok|120,175|22ms
+|===
+
+== Metrics
+[[img-grafana]]
+.results over time
+image::jepsen/baseline-one-node/grafana.png[scaledwidth=100%]
+
+== Latency graph
+[[img-histogram]]
+.latency histogram
+image::jepsen/baseline-one-node/histogram.png[scaledwidth=100%]
+~~~
+
+The first paragraph was hand-written, and the other sections could be tweaked from a basic template.  Images were copied from our test output, or generated - the `histogram.png` file was generated by a [script similar to this one](https://github.com/HdrHistogram/HdrHistogram/blob/master/gnuplotExample/make_percentile_plot) which converted the HdrHistogram output to an image using `gnuplot`.
+
+##### 5. Iterate
+
+The next stage was to iterate - to start breaking things and analysing the results!
+
+### More baselining
+
+We also ran some baselines on other topologies - a 3-node replica set in one Availability Zone, and a 5-node replica set split across three Availability Zones.
+
+The results were actually very similar - when nothing goes wrong, even a 5-node cluster didn't perform much worse than a single node under these loads:
+
+|---
+|**operation**|**result**|**count**|**50th pct**|**95th pct**|**99.9th pct**
+|===
+|`:read`|`:ok`|1064769|0.60ms|1.10ms|22.46ms
+|`:update`|`:ok`|119507|26.77ms|43.71ms|68.68ms
+|`:create`|`:ok`|12067|26.03ms|42.86ms|63.41ms
+|---
+
+Across the baselines, it was pretty clear that most reads took around 1ms, most creates and updates took around 27ms - there were a few spikes of slower responses, but many of those were during the initial setup time of the test.  (In hindsight it would have been good to gather these stats ignoring the first few ms of data!)
+
+### First nemeses - splitting the network
+
+The first few nemeses we used were testing a range of network splits; we ran several different scenarios:
+
+- A network split on a 3-node network, with the Primary in the majority
+- A network split on a 3-node network, with the Primary in the minority
+- The same as the above, but tinkering with timeouts
+- Network splits on a 5-node network split across multiple availability zones
+
+This used a simple Jepsen nemesis:
+
+~~~clojure
+(defn minority-partitioner
+  "partitions such that the primary is in the smaller partition"
+  [client test op]
+  (let [nodecount (count (:nodes test))]
+    (assert (<= 3 nodecount))
+    (assert (odd? nodecount))
+
+    (if-let [primary (cluster/primary client)]
+      (do
+        (info "Minority partitioner using primary:" primary)
+        (let [minority-size (/ 2 (dec nodecount))
+              without-primary (remove (fn [x] (= x primary)) (:nodes test))
+              [friends foes] (split-at (dec minority-size) without-primary)
+              grudge [(conj friends primary) foes]
+              _ (info "partioning into:" grudge)]
+          (n/partition! test (n/complete-grudge grudge))
+          (assoc op :value (str "Cut off " (pr-str grudge)))))
+      (do
+        (warn "No primary known - can't partition")
+        (assoc op :value (str "No primary known - can't partition"))))))
+~~~
+
+I'm not going to try to explain all of this, hopefully you can glean a general idea of how it might work:
+
+- Find the primary node (the MongoDB client should know this)
+- Remove the primary from the list of nodes
+- Bisect the remaining nodes into two random sub-lists
+- Add the primary back into one list
+- Split the network using [partition!](https://github.com/jepsen-io/jepsen/blob/0.1.2/jepsen/src/jepsen/nemesis.clj#L21)  (note this is from Jepsen 0.1.2 - later versions have different function names here)
+  - under the covers, this calls `iptables` on each of the servers to drop and recover network connections
+
+The first test was a fairly "safe" - there is a network split, but the primary node is not affected - it can't see some nodes, but it can still see a majority of nodes:
+
+![Split with primary majority](2019-04-chaos-engineering/resiliency2.png)
+
+The result was, as expected, no real impact - individual MongoDB nodes had extra work recognising that a server was missing, and presumably that server had extra work catching up when it came back on line - but a majority of nodes could keep working without issues, so the client didn't even notice.
+
+The other tests were the more troublesome scenario, where the primary needs to change as it is in the smaller network:
+
+![Split with primary minority](2019-04-chaos-engineering/resiliency3.png)
+
+On a 3-node network, this had a very clear dramatic effect:
+
+![histogram](2019-04-chaos-engineering/primary-split/histogram.png)
+
+Quite a lot of Create and Update operations failed - and they took around 10 seconds to fail.  ("info" is roughly equivalent to "fail" here - it just means the failure was a socket timeout so the operation might have been committed before the connection died)
+
+Viewing grafana results shows how things behaved when the network was split:
+
+![grafana](2019-04-chaos-engineering/primary-split/grafana.png)
+
+Zooming in to the time around the start of the split:
+
+![grafana](2019-04-chaos-engineering/primary-split/grafana2.png)
+
+- At 14:50:30 the nemesis starts (note there are 2 start lines now - one for when the nemesis is triggered, and when it is complete.  ssh-ing to all the nodes and executing `iptables` isn't instantaneous)
+- the `create` and `update` response times drop off immediately (these are the filled curves - the solid unfilled lines are _counts_ of responses, and have a 10-second granularity, so are not so useful here)
+- the `read` response times are initially OK - which might be surprising!  But the vast majority of our reads only need to read from the primary node.  Despite the [read concern of "majority"](https://docs.mongodb.com/manual/reference/read-concern-majority/#readconcern.%22majority%22), any data that has been written and replicated in the past, is available to read immediately.
+- around 14:50:40 there are spikes in read performances - this is presumably when the network election is starting, it's not clear whether they are struggling to find a primary to read from, or precisely what happens.
+- also around this time a bunch of `info` results show up in the bottom section - these are Jepsen's way of indicating indeterminite results.  These are `create` and `update` calls from around 14:50:30 that are now returning errors, 10 seconds after the nemesis started.
+- around 20 seconds in, at 14:50:50, some writes are starting to succeed - but these are quite slow responses, and it takes a while to stabilise. Things aren't really better until 14:51:10 - 40 seconds after the split.
+
+Fourty seconds is a _really long time_ in user land.  We wanted to know why it took so long to recover - the new primary was elected after about 10 seconds, what was going on?
+
+From our investigations, it seemed that the problem might be the MongoDB client configuration - the client keeps a pool of connections to the Primary server, but it uses a heartbeat to poll the server for changes - and this [heartbeat frequency](http://mongodb.github.io/mongo-java-driver/3.8/javadoc/com/mongodb/MongoClientOptions.Builder.html#heartbeatFrequency-int-) defaults to 10 seconds.  And the timeouts for connecting to the server and the default socket timeout are 20 seconds each - this means a client can spend quite a while not noticing that the topology has fixed itself.
+
+In the spirit of incremental change, we ran a test with smaller client timeouts:
+
+|===
+|setting|default|new test
+|===
+|heartbeat-frequency|10,000ms|1000ms
+|heartbeat-connect-timeout|20,000ms|5000ms
+|heartbeat-socket-timeout|20,000ms|5000ms
+|===
+
+The results were much cleaner:
+
+![grafana](2019-04-chaos-engineering/primary-split-short-timeouts/grafana2.png)
+
+It seems that tweaking the client timeouts definitely helped - writes recovered in around 23 seconds, compared to 40 seconds previously. (Of course there's a risk that in lowering timeouts, more accidental failures would occur in a flakey network)
+
+This was also a great validation of our test-driven approach.  It's very hard to read all the MongoDB documents, even with access to expert administrators and the like, and be completely sure of the implications of this sort of setting.  It's much more straightforward to evaluate these settings through tests.
+
+### Testing on a more realistic network
+
+So far, we were testing on three nodes in a single Amazon availability zone - effectively, three nodes in a single datacentre.  This isn't very useful for real resilience - the most likely cause of a network split is problems in the connections _between_ datacentres, rather than within one.  Also network time between availability zones is always going to be significantly greater than within one zone.
+
+So we wanted to run MongoDB across two zones - but then there's a catch - you need an odd number of servers to have a quorum-based election, so you can be sure of a majority.  You shouldn't just put 3 nodes in one zone and 2 in another, either - if the larger zone had a serious problem, the smaller zone could not recover on it's own - it's better to be able to survive with any single zone unavailable.
+
+We had an extra twist on this project - at the time, Amazon only _had_ two availability zones in the UK!  We could run servers in Ireland, but our client didn't want to store any data outside the UK.
+
+Enter the [Arbiter](https://docs.mongodb.com/manual/tutorial/add-replica-set-arbiter/) node.  An Arbiter is basically a no-data-stored-here server - it participates in elections, so it can help recover a network when a whole zone goes away.  (It also counts towards the "majority" for write concerns - otherwise in this scenario it'd be impossible to write anything when one AZ goes down)  We can put an arbiter in Ireland without it storing any data:
+
+![multi-az topology](2019-04-chaos-engineering/multi-az.png)
+
+The results of splitting with this topology were similar to the 3-node scenarios, but with somewhat longer recovery times and more errors:
+
+![grafana](2019-04-chaos-engineering/ha-primary-split/grafana.png)
+
+We also started to notice some other ugly problems though in this scenario - our checker reported:
+
+~~~clojure
+:database-irregularities {
+  :not-in-db [], 
+  :ok-mismatches [],
+  :info-mismatches [155890 208477],
+  :fail-mismatches []}}
+~~~
+
+This indicated that for two participants, the database had differences from our client's view of the world - the client saw `:info` errors, which generally means a `MongoSocketReadException` or similar, and it assumed these were failures - but the database indicated that these changes _had_ been applied successfully.
+
+This was something we saw several times in other tests as well.  *You can't guarantee that a failed write actually failed* - there is a slim chance that the write succeeded, and was written to a majority of nodes, but something failed before that success was reported back to the client.
+
+This had significant implications for the application design - effectively the software design has to deal with uncertain results - either by retrying the operation until a conclusive result was returned (and this required operations to be idempotent!) or by making sure any error of this sort was able to be identified and fixed manually.
+
+### More nemeses, more tests
+
+I'm not going to cover all the things we tested here - we generated a 133 page report, no-one wants to read all of that!  Hopefully by now you get the idea of the sort of outputs you can get from these tests.
+
+I will give a brief overview though of things we looked at.
+
+#### Using TLS
+
+We wanted to know the impact of enabling TLS between the MongoDB nodes - by default MongoDB uses unencrypted connections between replicas for heartbeats and replication.
+
+Enabling TLS incurred a roughly 15% performance penalty on creates and updates, and a lower penalty on reads - for our client, they chose to accept this slowness in return for extra security.
+
+#### Running out of disk space
+
+Running out of disk space can be messy - a server might think it's running just fine, but then be unable to write any logs...
+
+We tested both running out of space on the root volume, and on the `/journal` volume to simulate Mongo dying because it was writing too many journal entries.
+
+Interestingly, these tests had lots of problems - but not when the disk was full; the problems started much earlier, because filling a 25G journal disk incurred a lot of extra I/O load, and this itself caused a lot of slow-downs and failures.
+
+Which led to our next test:
+
+#### Heavy I/O load
+
+We tested this using the [BurnIO](https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/burnio.sh) script from Netflix's Chaos Monkey (now Simian Army) tools - on the `/`, `/data` and `/journal` drives of our servers.
+
+As expected, this caused significant latency problems - but no actual errors.  Our main conclusion here was to monitor these volumes, and check the IOPS requirements more carefully under realistic loads in a performance test.
+
+#### Heavy CPU utilisation
+
+Again we used the Chaos Monkey [BurnCPU](https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/burncpu.sh) script for this test.
+
+Generally heavy CPU loads didn't impact MongoDB much - this was not a big concern.
+
+#### Corrupt networks, packet loss, increased network latency
+
+We ran tests using several other [Chaos Monkey scripts](https://github.com/Netflix/SimianArmy/blob/master/src/main/resources/scripts/) - most of them were informative, but generally MongoDB was pretty resilient to network issues; things slowed down but not dramatically, and no data was lost.
+
 
 ---
-
-For the baseline, it was pretty clear that reads took less than 1ms, creates and updates took around 20ms - there were a few spikes of slower responses, but only in the slowest 1% of responses, and many of those were during the initial setup time of the test.
-
-TODO: add a bit more discussion on generating the report from asciidoc?  Need to work out where to fit that in.
 
 ---
 
@@ -438,19 +678,10 @@ TODO: add a bit more discussion on generating the report from asciidoc?  Need to
 
 ## Headings for bits still to write:
 
-### Nemeses
+### Read Concerns
+We tested Jepsen only with "majority" - talk about why, and YCSB results.
 
-### Monitoring and collecting results
-
-### Generating the reports - asciidoc and friends
-
-### What did we find?
-
-There is a *lot* that could be put here!
-
-(a warning note about how this may no longer apply to current mongo versions)
-
-#### (Separate sections for useful things from our report)
+Also a gap in our analysis - should have tested write-then-read sometimes?
 
 ### Also tested - load testing, queueing
 
