@@ -56,7 +56,7 @@ A key consideration of "treating failure as a normal scenario" is that at any ti
 
 For our particular client there were a fairly obvious set of requirements; and these are quite common among normal business systems with large but not Facebook-scale numbers of users:
 
-- It had to have a good up-time - it needed to be distributed across multiple data centres, so even if a significant outage occured, users should be able to keep using the system to some degree, even if only to read data.
+- It had to have a good up-time - it needed to be distributed across multiple data centres, so even if a significant outage occurred, users should be able to keep using the system to some degree, even if only to read data.
 - It had to never lose committed user data - if a user hit a "save" button and the system responds with "OK", the data should be saved.
 - It had to recover from some faults automatically - intermittent failures should not cause major outages.
 - It had to handle exceptional situations well - if something goes badly wrong, we still want to be able to recover eventually, even if this involves manual steps.
@@ -140,7 +140,7 @@ This is a key part of our approach - as we work, we document what we did.  Again
 
 #### 5. Iterate!
 
-This isn't an approach you can plan and execute in a waterfall fashion.  By it's very nature, you need to incrementally grow a suite of things to test - you need to iterate on what failures to simulate, you need to iterate on your network topology, you need to iterate on the complexity of your tests - from simple "let's break a 3-node network" potentially all the way to "let's run tests in production"
+This isn't an approach you can plan and execute in a waterfall fashion.  By its very nature, you need to incrementally grow a suite of things to test - you need to iterate on what failures to simulate, you need to iterate on your network topology, you need to iterate on the complexity of your tests - from simple "let's break a 3-node network" potentially all the way to "let's run tests in production"
 
 ## Applying this in practice - our Chaos Engineering experience report
 
@@ -215,7 +215,7 @@ Once the generator runs out of new operations:
 
 #### How do checkers work?
 
-For rigourous tests of linearizability, Jepsen uses the [Knossos](https://github.com/jepsen-io/knossos) library to examine the entire history of a test run, and detect whether the history was actually linearizable.
+For rigorous tests of linearizability, Jepsen uses the [Knossos](https://github.com/jepsen-io/knossos) library to examine the entire history of a test run, and detect whether the history was actually linearizable.
 
 For most of our tests, this is overkill.  We aren't really trying to prove if our operations are strictly linearizable - we mostly wanted a broader understanding of how many operations failed/succeeded, which we could do by other cheaper approaches.  So we just created custom checkers to validate overall stats for each experiment.
 
@@ -392,7 +392,7 @@ The `checker` inspected the history log, and a supplementary `state` object, and
 - a list of any users where the value of the user in the database did not match what was expected from the Jepsen history
 - an overall "valid" status
 
-The overall validity was determined by not whether everything worked, but by whether everything was reliably reported - writes and updates either failed (and did not change the databse) or succeeded (and _did_ change the database).
+The overall validity was determined by not whether everything worked, but by whether everything was reliably reported - writes and updates either failed (and did not change the database) or succeeded (and _did_ change the database).
 
 One other thing in the test's checker is that call to `(histogram-producing-checker)` - this called the [HdrHistogram](http://hdrhistogram.org/) Java library, using timings from the Jepsen history logs, to produce `.hgrm` files which we could later use to produce timing plots like this one:
 
@@ -584,10 +584,10 @@ Zooming in to the time around the start of the split:
 - the `create` and `update` response times drop off immediately (these are the filled curves - the solid unfilled lines are _counts_ of responses, and have a 10-second granularity, so are not so useful here)
 - the `read` response times are initially OK - which might be surprising!  But the vast majority of our reads only need to read from the primary node.  Despite the [read concern of "majority"](https://docs.mongodb.com/manual/reference/read-concern-majority/#readconcern.%22majority%22), any data that has been written and replicated in the past, is available to read immediately.
 - around 14:50:40 there are spikes in read performances - this is presumably when the network election is starting, it's not clear whether they are struggling to find a primary to read from, or precisely what happens.
-- also around this time a bunch of `info` results show up in the bottom section - these are Jepsen's way of indicating indeterminite results.  These are `create` and `update` calls from around 14:50:30 that are now returning errors, 10 seconds after the nemesis started.
+- also around this time a bunch of `info` results show up in the bottom section - these are Jepsen's way of indicating indeterminate results.  These are `create` and `update` calls from around 14:50:30 that are now returning errors, 10 seconds after the nemesis started.
 - around 20 seconds in, at 14:50:50, some writes are starting to succeed - but these are quite slow responses, and it takes a while to stabilise. Things aren't really better until 14:51:10 - 40 seconds after the split.
 
-Fourty seconds is a _really long time_ in user land.  We wanted to know why it took so long to recover - the new primary was elected after about 10 seconds, what was going on?
+Forty seconds is a _really long time_ in user land.  We wanted to know why it took so long to recover - the new primary was elected after about 10 seconds, what was going on?
 
 From our investigations, it seemed that the problem might be the MongoDB client configuration - the client keeps a pool of connections to the Primary server, but it uses a heartbeat to poll the server for changes - and this [heartbeat frequency](http://mongodb.github.io/mongo-java-driver/3.8/javadoc/com/mongodb/MongoClientOptions.Builder.html#heartbeatFrequency-int-) defaults to 10 seconds.  And the timeouts for connecting to the server and the default socket timeout are 20 seconds each - this means a client can spend quite a while not noticing that the topology has fixed itself.
 
@@ -613,7 +613,7 @@ This was also a great validation of our test-driven approach.  It's very hard to
 
 So far, we were testing on three nodes in a single Amazon availability zone - effectively, three nodes in a single datacentre.  This isn't very useful for real resilience - the most likely cause of a network split is problems in the connections _between_ datacentres, rather than within one.  Also network time between availability zones is always going to be significantly greater than within one zone.
 
-So we wanted to run MongoDB across two zones - but then there's a catch - you need an odd number of servers to have a quorum-based election, so you can be sure of a majority.  You shouldn't just put 3 nodes in one zone and 2 in another, either - if the larger zone had a serious problem, the smaller zone could not recover on it's own - it's better to be able to survive with any single zone unavailable.
+So we wanted to run MongoDB across two zones - but then there's a catch - you need an odd number of servers to have a quorum-based election, so you can be sure of a majority.  You shouldn't just put 3 nodes in one zone and 2 in another, either - if the larger zone had a serious problem, the smaller zone could not recover on its own - it's better to be able to survive with any single zone unavailable.
 
 We had an extra twist on this project - at the time, Amazon only _had_ two availability zones in the UK!  We could run servers in Ireland, but our client didn't want to store any data outside the UK.
 
@@ -643,9 +643,9 @@ This had significant implications for the application design - effectively the s
 
 ### More nemeses, more tests
 
-I'm not going to cover all the things we tested here - we generated a 133 page report, no-one wants to read all of that!  Hopefully by now you get the idea of the sort of outputs you can get from these tests.
+I'm not going to cover all the things we tested here - we generated a 133 page report, no-one wants to read all of that!  Hopefully by now you get an idea of the sort of outputs you can get from these tests.
 
-I will give a brief overview though of things we looked at.
+I will however give a brief overview of other things we looked at.
 
 #### Using TLS
 
@@ -711,7 +711,7 @@ Also a gap in our analysis - should have tested write-then-read sometimes?
 
 ### Focus on the important things
 
-### Evolutionary Architecture and Continous Delivery
+### Evolutionary Architecture and Continuous Delivery
 
 
 
