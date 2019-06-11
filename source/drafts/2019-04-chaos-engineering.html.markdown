@@ -22,15 +22,17 @@ Local url: http://127.0.0.1:4567/drafts/2019-04-chaos-engineering.html
 {:toc}
 
 ## Introduction
-Chaos Engineering tools and techniques are extremely useful for anyone planning or operating a distributed system.  I want to talk about our experiences using Jepsen, and a bit of Chaos Monkey, to test-drive a client's architecture - enabling us to validate their plans, based on data derived from tests, rather than based on theorising or guessing.
+Chaos Engineering tools and techniques are extremely useful for anyone planning or operating a distributed system. And many of us are building distributed systems! As Martin Fowler notes [in his article about Microservice trade-offs](https://martinfowler.com/articles/microservice-trade-offs.html#distribution), Microservices architectures are inherently distributed, and we need to handle all the problems this entails.
 
-A lot of Chaos Engineering discussion talks about disrupting your systems in production - and while I think this is an excellent thing to do, we also found a lot of value _incrementally_ testing our systems - working out how they break in controlled simplified environments, before trying to identify failures in a genuine production configuration.
+In this article I want to talk about our experiences using Jepsen, and a bit of Chaos Monkey, to test-drive a client's architecture - enabling us to validate their plans, based on data derived from tests, rather than based on theorising or guessing.
+
+A lot of Chaos Engineering discussion talks about attacking your systems in production - and while I think this is an excellent thing to do, we also found a lot of value _incrementally_ testing our systems - working out how they break in controlled simplified environments, before trying to identify failures in a genuine production configuration.
 
 I also see these techniques as a great enabler for [evolutionary architecture](http://evolutionaryarchitecture.com/precis.html) - you can use chaos engineering to develop automated fitness functions, so you can be sure your systems are still resilient and reliable even as your architecture grows and evolves over time.
 
 ### What is Chaos Engineering?
 
-Frank Herbert had a concept in some of his Science Fiction stories of a ["Bureau of Sabotage"](https://en.wikipedia.org/wiki/Bureau_of_Sabotage) - a quasi-official group whose job was to interfere violently with the smooth workings of a futuristic perfect government.
+The Science Fiction author Frank Herbert wrote stories around a ["Bureau of Sabotage"](https://en.wikipedia.org/wiki/Bureau_of_Sabotage) - a quasi-official group whose job was to interfere violently with the smooth workings of a futuristic perfect government.
 
 [Chaos Engineering](https://en.wikipedia.org/wiki/Chaos_engineering) feels a bit similar - your goal is to deliberately break things, to mess up the smooth workings of your systems so you can see the hidden faults and failings; so you know how things will break before they break naturally.
 
@@ -42,19 +44,27 @@ Critically, you don't need to be building a massively complex system to benefit 
 
 ### What does "resilience" mean?
 
-*TODO: look up a nice definition?*
+[Database Reliability Engineering](https://www.goodreads.com/book/show/36523657-database-reliability-engineering) describes resilient systems as having three specific traits:
 
-This is a very complex question! If you want to know more, you could check out [Aphyr's detailed hierarchy of consistency models](https://jepsen.io/consistency) or there is some great coverage in [Martin Kleppmann's "Designing Data-Intensive Applications"](https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications).  TODO: other references?  Is Aphyr too low level?  Does Martin have anything?
+- Low MRRT (mean time to recover) due to automated remediation to well-monitored failure scenarios.
+- Low impact during failures due to distributed and redundant environments.
+- The ability to treat failure as a normal scenario in the system, ensuring that automated and manual remediation is well documented, solidly engineered, practiced, and integrated into normal day-to-day operations.
 
-For our specific purposes, we were helping a client evaluate a system with fairly standard requirements:
+A key consideration of "treating failure as a normal scenario" is that at any time, in any failure scenario, you want to be sure your system is appropriately _consistent_ - when a user has made changes, those changes should be made or not made.  Potentially you might have some level of eventual consistency - a change might be on a queue or partially distributed - but you don't want the user to be told "sure, your data was saved" and then find it has been lost in transit.
 
-- It has to have a good up-time - it needs to be distributed across multiple data centres, so even if a significant outage occurs, users should be able to keep using the system to some degree, even if only to read data.
-- It has to never lose committed user data - if a user hit a "save" button and the system responds with "OK", the data should be saved.
-- It has to recover from some faults automatically - intermittent failures should not cause major outages.
-- It has to handle exceptional situations well - if something goes badly wrong, we still want to be able to manually recover.
+(Note that this is a very complex area!  If you want to know more, you could check out [Aphyr's detailed hierarchy of consistency models](https://jepsen.io/consistency) or there is some great coverage in [Martin Kleppmann's "Designing Data-Intensive Applications"](https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications))
 
-#### Dealing with Partitions
-There are a lot of things that can go wrong in a distributed system, but often it's worth focusing on one of the worst situations - a network partition.  Other problems like having a server crash can be dangerous, but not as complex to solve as when your servers are alive, but not talking to each other - this can lead to a "split brain" situation where your distributed system has two or more views of reality, and all consensus is lost.
+For our particular client there were a fairly obvious set of requirements; and these are quite common among normal business systems with large but not Facebook-scale numbers of users:
+
+- It had to have a good up-time - it needed to be distributed across multiple data centres, so even if a significant outage occured, users should be able to keep using the system to some degree, even if only to read data.
+- It had to never lose committed user data - if a user hit a "save" button and the system responds with "OK", the data should be saved.
+- It had to recover from some faults automatically - intermittent failures should not cause major outages.
+- It had to handle exceptional situations well - if something goes badly wrong, we still want to be able to recover eventually, even if this involves manual steps.
+
+#### Focusing on Partitions
+There are a lot of things that can go wrong in a distributed system, but often it's worth focusing on one of the worst situations - a network partition.  This is when some parts of your network lose connectivity with other parts of your network.  If you are distributed across more than one physical location, this is all too possible!
+
+Other problems like having a single server fail can be dangerous, and we did test these - but it's useful to start with a worst-case scenario early on.  The absolute worst case is if your network is split and you end up with a "split brain" situation where you have two partial networks with diverging views of reality!
 
 #### Doesn't CAP theorem mean ... 
 
@@ -78,7 +88,7 @@ MongoDB uses a quorum-based consensus approach - this is quite common among dist
   - Clients may get less critical data in other ways for better performance - monthly reports might not need to be 
 - Nodes communicate between themselves, to replicate data and to detect and handle failures
 
-A network partition is where some or all nodes can't see each other.  A simple case is where some non-primary nodes are split from the rest:
+A simple kind of network partition is where some non-primary nodes are split from the rest:
 ![Split with primary majority](2019-04-chaos-engineering/resiliency2.png)
 
 In this case, the left-hand network is OK - clients can still talk to the primary, these nodes might panic a bit: "We can't see some nodes! Oh no!" - but you still have more than 50% of the network available.  This is how consensus systems work - the majority of nodes can see each other, they can maintain consensus about the state of the data.
@@ -94,7 +104,9 @@ A client connected to the old primary will need to be redirected somehow to the 
 
 You can increase the reliability of writes and reads, at the expense of performance, by tweaking how you trust the distributed network.  In MongoDB you can use [write concerns](https://docs.mongodb.com/manual/reference/write-concern/) to say "Don't count data as written successfully until the majority of nodes have confirmed they have seen it", and similarly [read concerns](https://docs.mongodb.com/manual/reference/read-concern/) to say "Don't return un-committed data from queries".  Tweaking these options is complex though - which is why it's good to test them!  I'll try to cover a few more specific examples later in this article.
 
-*Note* - this is a deliberately brief and incomplete introduction to this topic.  If you want more gory details, you are far better off reading [Martin Kleppmann's book mentioned earlier](https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications)) or *TODO* suggest other background reading
+<!-- TODO: I'm removing this as it got linked above - if the above link got removed again, this should be _somewhere_
+
+*Note* - this is a deliberately brief and incomplete introduction to this topic.  If you want more gory details, you are far better off reading [Martin Kleppmann's book mentioned earlier](https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications) or *TODO* suggest other background reading -->
 
 ### So how do you test this?
 
@@ -132,14 +144,14 @@ This isn't an approach you can plan and execute in a waterfall fashion.  By it's
 
 ## Applying this in practice - our Chaos Engineering experience report
 
-A few years ago one of our large clients was in the process of building a new system based on a microservices architecture, and they asked us to provide an early review of their planned approach, especially how they planned to use MongoDB as a distributed store for their user data.
+One of our large clients was in the process of building a new system based on a microservices architecture, and they asked us to provide an early review of their planned approach, especially how they planned to use MongoDB as a distributed store for their user data.
 After our initial review of their plans we suggested that it would be best to actually _test_ their approach, rather than just trying to reason about it.
 
 So we agreed to set up a small team to build out some tests.  We chose to initially use [Jepsen](https://jepsen.io/) for a chaos engineering tool - we had some familiarity with Clojure, and it seemed like a good tool for our planned iterative approach; we also used the [Yahoo Cloud Serving Benchmark](https://en.wikipedia.org/wiki/YCSB) for some load testing, though this article is mostly focusing on the Jepsen tests.
 
 ### A warning about applying these results too literally
 
-My goal here is to talk about approaches and things to try.  I'm not trying to say "You should do X with MongoDB"!  This project was a couple of years ago - the particular results may depend on which version of MongoDB you run, on which client libraries you use, on what patterns of usage you have, and on what network topology you use.
+My goal here is to talk about approaches and things to try.  I'm not trying to say "You should do X with MongoDB"!  This analysis was done a while ago - the particular results may depend on which version of MongoDB you run, on which client libraries you use, on what patterns of usage you have, and on what network topology you use.
 
 So don't act on any of my specific conclusions here - test things yourself, and find out what works in your environment.
 
@@ -299,7 +311,7 @@ This returns an infinite sequence:
   {:type  :invoke
    :f     :add
    :value 1}
-   ... and so on
+  ; ... and so on
 ~~~
 
 At the end of this test we had a straightforward checker that looked at the single `:read` result, and at the history, and identified all mismatches between the history of (apparently) successful writes and the actual final value in mongodb.
@@ -687,6 +699,7 @@ Also a gap in our analysis - should have tested write-then-read sometimes?
 
 ## What didn't we get to?
 
+- testing microservice comms - circuit breakers, other stuff mentioned in Release It! and Martin's article
 - testing client's pseudo-transactions fully
 - testing recovery
 - microservice interaction - including [whatever the patterns are for microservice interaction]
@@ -707,6 +720,21 @@ Also a gap in our analysis - should have tested write-then-read sometimes?
 * better CSS for tables
 
 * AWS implications - availability zones, needing an odd number of nodes, using an arbiter
+* mention the benefits in forcing you to have good monitoring and alerting!!!
 * more on performance testing
 * more detailed version of our "incremental approach"
 * moving to production environment
+
+
+# References
+
+[Martin Kleppmann's "Designing Data-Intensive Applications"](https://www.goodreads.com/book/show/23463279-designing-data-intensive-applications)
+
+[Database Reliability Engineering](https://www.goodreads.com/book/show/36523657-database-reliability-engineering)
+
+Aphyr's websites
+
+Martin's articles
+
+Release It!
+
