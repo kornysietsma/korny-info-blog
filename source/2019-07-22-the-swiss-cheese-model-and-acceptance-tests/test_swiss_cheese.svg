@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-53 164 1281 906" width="1281" height="906">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-53 164 1281 950" width="1281" height="950">
   <defs>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -2 5 4" markerWidth="5" markerHeight="4" color="#5f5fbe">
       <g>
@@ -17,9 +17,14 @@
         <font-face-name name="HelveticaNeue"/>
       </font-face-src>
     </font-face>
+    <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
   </defs>
   <metadata> Produced by OmniGraffle 7.8.1 
-    <dc:date>2019-12-23 14:21:59 +0000</dc:date>
+    <dc:date>2019-12-23 15:28:07 +0000</dc:date>
   </metadata>
   <g id="layers_no_bugs" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1" fill="none">
     <title>layers no bugs</title>
@@ -197,6 +202,13 @@
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x="17.01" y="42.56">Slower feedback</tspan>
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x="39.04" y="66.119995">More fragile</tspan>
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x=".12" y="89.67999">More like production</tspan>
+        </text>
+      </g>
+      <g id="Graphic_234">
+        <text transform="translate(-45.99999 1074.4961)" fill="#ebebeb">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="60.7385" y="9">Image by Korny Sietsma</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="11.7335" y="20.252">This work is licensed under a Creative Commons </tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="14.3165" y="31.503998">Attribution-ShareAlike 4.0 International License.</tspan>
         </text>
       </g>
     </g>
