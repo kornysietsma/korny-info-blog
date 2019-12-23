@@ -22,19 +22,24 @@
         <font-face-name name="HelveticaNeue"/>
       </font-face-src>
     </font-face>
+    <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
   </defs>
   <metadata> Produced by OmniGraffle 7.8.1 
-    <dc:date>2019-08-02 16:30:52 +0000</dc:date>
+    <dc:date>2019-12-23 15:28:07 +0000</dc:date>
   </metadata>
-  <g id="bug_catching" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1" fill="none">
-    <title>bug catching</title>
-    <g id="bug_catching: bottom">
+  <g id="bug_catching_2" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1" fill="none">
+    <title>bug catching 2</title>
+    <g id="bug_catching_2: bottom">
       <title>bottom</title>
       <g id="Line_210">
         <line x1="500" y1="46" x2="500.9827" y2="1120.0948" marker-end="url(#FilledArrow_Marker)" stroke="#5f5fbe" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
       </g>
     </g>
-    <g id="bug_catching: shadow">
+    <g id="bug_catching_2: shadow">
       <title>shadow</title>
       <g id="Group_30">
         <title>Graphic_16</title>
@@ -81,7 +86,7 @@
         </g>
       </g>
     </g>
-    <g id="bug_catching: 4th">
+    <g id="bug_catching_2: 4th">
       <title>4th</title>
       <g id="Group_194">
         <title>Graphic_58</title>
@@ -108,7 +113,7 @@
         </g>
       </g>
     </g>
-    <g id="bug_catching: 3rd">
+    <g id="bug_catching_2: 3rd">
       <title>3rd</title>
       <g id="Group_164">
         <title>Graphic_30</title>
@@ -135,13 +140,13 @@
         </g>
       </g>
     </g>
-    <g id="bug_catching: under_2nd">
+    <g id="bug_catching_2: under_2nd">
       <title>under_2nd</title>
       <g id="Line_217">
         <line x1="687" y1="116" x2="686.0349" y2="639.1" marker-end="url(#FilledArrow_Marker)" stroke="#5f5fbe" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
       </g>
     </g>
-    <g id="bug_catching: 2nd">
+    <g id="bug_catching_2: 2nd">
       <title>2nd</title>
       <g id="Group_125">
         <title>Graphic_44</title>
@@ -168,13 +173,13 @@
         </g>
       </g>
     </g>
-    <g id="bug_catching: under_top">
+    <g id="bug_catching_2: under_top">
       <title>under_top</title>
       <g id="Line_207">
         <line x1="280.83333" y1="96" x2="280.83333" y2="378.6" marker-end="url(#FilledArrow_Marker)" stroke="#5f5fbe" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
       </g>
     </g>
-    <g id="bug_catching: Top">
+    <g id="bug_catching_2: Top">
       <title>Top</title>
       <g id="Group_95">
         <title>Graphic_16</title>
@@ -201,7 +206,7 @@
         </g>
       </g>
     </g>
-    <g id="bug_catching: bugs">
+    <g id="bug_catching_2: bugs">
       <title>bugs</title>
       <g id="Graphic_45">
         <title>Bug Report</title>
@@ -267,6 +272,13 @@
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x="17.01" y="42.56">Slower feedback</tspan>
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x="39.04" y="66.119995">More fragile</tspan>
           <tspan font-family="Helvetica Neue" font-size="20" font-weight="400" fill="black" x=".12" y="89.67999">More like production</tspan>
+        </text>
+      </g>
+      <g id="Graphic_236">
+        <text transform="translate(-45.99999 1074.4961)" fill="#ebebeb">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="60.7385" y="9">Image by Korny Sietsma</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="11.7335" y="20.252">This work is licensed under a Creative Commons </tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="400" fill="#ebebeb" x="14.3165" y="31.503998">Attribution-ShareAlike 4.0 International License.</tspan>
         </text>
       </g>
     </g>
