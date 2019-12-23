@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async='' src='https://www.googletagmanager.com/gtag/js?id=UA-137924462-1'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-137924462-1');
+</script>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><h2 id="testing-and-agile">Testing and Agile</h2>
+<p>I've seen testing, especially acceptance testing, done horribly wrongly over the years, and sadly I often see the same anti-patterns repeated over and over; so I thought it'd be worth talking about my perspectives on this thorny subject.</p>
+
+<p>First off, I think it's worth emphasising that <em>automated testing is at the heart of agile software development</em>.  I've seen places with <em>no</em> tests, or nothing but a suite of slow fragile end-to-end tests run on a snowflake environment, who want to "go agile".  You can't just "go agile" without a solid underpinning of low-level tests, built and maintained by an autonomous development team, that <em>enable</em> you to move fast without breaking things.  Going agile without good tests is like embracing modern surgery but skipping all that pointless handwashing stuff.</p>
+
+<h2 id="the-test-pyramid">The test pyramid</h2>
+
+<p>A classic metaphor in automated testing is <a href="https://martinfowler.com/bliki/TestPyramid.html">the test pyramid:</a></p>
+
+<p><img src="/2019-07-22-the-swiss-cheese-model-and-acceptance-tests/Testing_Pyramid.svg" alt="test pyramid" /></p>
+
+<p>it's been a useful model for ages, and still a good conversation starter, but it lacks a few things:</p>
+
+<ul>
+  <li>It isn't clear really what the horizontal dimension is - does wider mean more tests? More test scenarios? More features tested?</li>
+  <li>It isn't clear what the vertical dimension is - where do contract tests fit? What about chaos engineering / resiliency tests?  What if you test at an API not a UI?  Should you test in a particular order?</li>
+  <li>In many cases the best shape is nothing like a pyramid - some systems are well suited to integration tests, and tend to a pear-shape.  Some systems are more of an hourglass, with lots of UI/API tests and lots of unit tests and not much between.</li>
+</ul>
+
+<p>I've seen people tweak the pyramid - adding layers, adding axes, adding explanations - but fundamentally I think it's a bit flawed.</p>
+
+<h2 id="a-different-perspective---swiss-cheese">A different perspective - Swiss Cheese</h2>
+
+<p>I recently came across a new-ish metaphor: the Swiss Cheese model of testing - which I quite like; it's a lot more nuanced than the old Test Pyramid, and helpful when it comes to talking about both <em>why</em> we test, and <em>how</em> we should test.</p>
+
+<p>The basic idea is: consider your tests like a big stack of swiss cheese slices - you know, the kind with holes in them:</p>
+
+<p><img src="/2019-07-22-the-swiss-cheese-model-and-acceptance-tests/Swiss_cheese.jpg" alt="swiss cheese" /></p>
+
+<p>Now layer those cheese slices vertically - each layer represents a different kind of tests.  Order them in the order you run them - usually simplest, fastest feedback first, then slower layers below them:</p>
+
+<p><img src="/2019-07-22-the-swiss-cheese-model-and-acceptance-tests/test_swiss_cheese.svg" alt="swiss cheese slices" /></p>
+
+<p>You can imagine defects as physical bugs which fall down the diagram, and are caught at different levels - different slices of cheese.</p>
+
+<p>Some bugs might fall all the way through a series of holes and not get caught.  This is bad.</p>
+
+<p><img src="/2019-07-22-the-swiss-cheese-model-and-acceptance-tests/bug_catching.svg" alt="swiss cheese slices" /></p>
+
+<p>Each layer, and each kind of test, has different tradeoffs such as:</p>
+
+<ul>
+  <li><em>How fast is the feedback cycle?</em> Can developers know they have a problem <em>as they type</em> (e.g. with a linter), or as soon as they save a file, or <a href="https://blog.ploeh.dk/2012/05/24/TDDtestsuitesshouldrunin10secondsorless/">when they run a 10 second test suite</a>? Or do they have to wait until the evening after they pushed their code changes?  Continuous Integration is what we'd like - every commit runs every test - but some layers are going to be slow or expensive.</li>
+  <li><em>How fragile are the tests?</em> - do they fail in confusing and obscure ways? Are they reliable, failing the same way from the same problem?</li>
+  <li><em>How expensive are the tests?</em> - do they take a lot of effort to write? Do they need re-writing whenever you change code?</li>
+</ul>
+
+<p>And each layer has holes - things that are not sensible to test at that level.  You don't test your exception handling in a browser test.  You don't test your microservice interactions in a unit test.</p>
+
+<p><em>Note</em> I haven't prescribed what the precise test phases are - there's a lot of "it depends" on choosing your tests.  There's a whole other blog post to be written about my preferred test layers!</p>
+
+<p>A basic principle here though is - <em>_don't repeat yourself_</em>. There's not a lot of value testing the same thing multiple times.  The cheese layers will always overlap a bit - but if you have a fast simple unit test to verify the text of a validation message, don't also have a slow fragile browser-based end-to-end test that verifies the same thing!</p>
+
+<p>This is especially true of manual tests - the typical top of the classical "test pyramid".  You shouldn't manually re-test what you have automatically tested.  You might "kick the tyres" to make sure that everything works OK.  You might test in production, relying on monitoring and A/B testing to identify problems early.  But you really want to catch everything you can before that point!</p>
+
+<p>Also it's somewhat up to you to decide what is most appropriate for which layer.  Fast feedback is good, but so are clear expressive tests that are easy to change.  A classic example is database interactions - it's almost always better to test against a real database, possibly an in-memory one, than to try to mock it out.</p>
+
+<h1 id="acceptance-tests">Acceptance tests</h1>
+
+<p>One "cheese slice" I definitely <em>don't</em> want to see is the "acceptance tests" slice.  Don't get me wrong, I love acceptance tests, I love the idea of defining "done" for a user story by clear unambiguous tests.</p>
+
+<p>But too many people assume there must be an accepance test stage - a single "slice" in this model - which means those tests usually end up near the bottom of the pile, in a suite of large slow expensive browser-driven tests, that have to run against a production-like environment.</p>
+
+<p>Sure, that's appealing - lots of us started like that, learning the magic of BDD and Cucumber and Selenium, building amazing suites of exhaustive browser-based tests.  But that magic was <em>slow</em>, and <em>fragile</em> - and no amount of tinkering with clever setups and special approaches got past the fact that the tests took far far too long to run, and were fragile, and hampered rapid development.</p>
+
+<p>Besides, they encouraged people to only think of "acceptance" in terms of "clicks and buttons" - where were the tests for "it should handle network failures gracefully" or "it should send exception logs to the auditing system"?</p>
+
+<p>(I do think there's value in <em>some</em> browser-driven end-to-end tests - there are bugs you can only catch that way.  But call them "smoke tests" or "end-to-end tests" or something, not "acceptance tests".)</p>
+
+<p>In my opinion, acceptance criteria should be tested at <em>whatever level is most effective</em> for testing that requirement:</p>
+
+<p><img src="/2019-07-22-the-swiss-cheese-model-and-acceptance-tests/acceptance_tests.svg" alt="acceptance tests" /></p>
+
+<p>If the acceptance criterion is "it should have the title <code>Fnord Motor Company</code>" then that can be a simple browser-based test against a stubbed back end.  If the acceptance criterion is "it should not accept a password shorter than 10 characters" then that might be a pair of unit tests, one to check that the UI validation is good, and one to check that the server-side validation is good. If the acceptance criterion is  "it should respond within 30ms under peak load" then that might be part of a performance test suite.</p>
+
+<p>If you really feel the need to trace acceptance tests back to stories, you can probably work out a way to tag the tests and report on them somehow - but I'd ask, why bother?  Are you ever going to use that information?  Maybe it's sufficient to just list the tests in the stories, and check they are there as part of signing the story as done, and not try to track the relationship beyond that.</p>
+
+<p>Besides, the tests will change.  At the time of finishing a story, the tests will prove it works - but the next story, or the one after that, might change the tested behaviour - and those tests might go away.</p>
+
+<h1 id="tldr">TL;DR</h1>
+
+<ul>
+  <li>Write tests at as low a level as is sensible.</li>
+  <li>Write tests that cover all the things that could go wrong.  Where you can.</li>
+  <li>Don't repeat yourself!</li>
+  <li>Integrate continuously - and run all the tests on each commit.  Or as many as you can.</li>
+  <li>Define acceptance criteria, and write acceptance tests, at the lowest level that makes sense.</li>
+</ul>
+
+<hr />
+
+<p>Various references:</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Swiss_cheese_model">Wikipedia</a> has an article about this metaphor in accident causation - this seems to date the idea back to 1990, when looking at layered threat mitigations</p>
+
+<p><a href="https://blog.feabhas.com/2011/12/effective-testing-the-swiss-cheese-model/">Glennan Carnie - the Swiss Cheese Model</a> is a good introduction to the metaphor, but seems to talk more about static analysis than kinds of tests</p>
+
+<p>[My colleague Sarah Hutchins wrote this article recently about the Swiss Cheese Model]https://semblanceoffunctionality.com/swiss-cheese-model/ - with a bit of a different focus, looking at strategic decisions about what to test where.</p>
+
+<p><a href="https://martinfowler.com/bliki/TestPyramid.html">Martin Fowler</a> has a good basic article about the Test Pyramid in his bliki, and the same site also has <a href="https://martinfowler.com/articles/practical-test-pyramid.html">Ham Vocke's article with more practical examples</a></p>
+
+<p>I also quite like <a href="https://gerg.dev/2018/05/testing-is-like-a-box-of-rocks/">Gregory Paciga's "testing is like a box of rocks" metaphor</a></p>
+
+<p>Image sources:</p>
+
+<p><a href="https://commons.wikimedia.org/wiki/File:Swiss_cheese.jpg">Swiss cheese</a> image by <a href="https://commons.wikimedia.org/wiki/User:Ekg917">Ekg917</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode" rel="license">CC BY-SA 4.0</a></p>
+
+<p>Test Pyramid image by Abbe98 [<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>], <a href="https://commons.wikimedia.org/wiki/File:Testing_Pyramid.svg">via Wikimedia Commons</a></p>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in the UK.  More info at
+<a href='http://korny.info'>
+http://korny.info
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">OCR Hack - grabbing text from the screen on a Macbook</a>
+<span>Apr  8</span>
+</li>
+<li>
+<a href="/2019/01/20/excel-life.html">Excel life</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/01/19/what-on-earth-happened.html">What on earth happened?</a>
+<span>Jan 19</span>
+</li>
+<li>
+<a href="/2018/11/24/its_alive.html">It's alive!</a>
+<span>Nov 24</span>
+</li>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/tech.html">tech</a>
+(2)
+</li>
+<li>
+<a href="/tags/life.html">life</a>
+(1)
+</li>
+<li>
+<a href="/tags/meta.html">meta</a>
+(1)
+</li>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2018
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>
