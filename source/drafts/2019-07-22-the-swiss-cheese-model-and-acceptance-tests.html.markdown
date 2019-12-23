@@ -97,7 +97,7 @@ Various references:
 
 [Glennan Carnie - the Swiss Cheese Model](https://blog.feabhas.com/2011/12/effective-testing-the-swiss-cheese-model/) is a good introduction to the metaphor, but seems to talk more about static analysis than kinds of tests
 
-[My colleague Sarah Hutchins wrote this article recently about the Swiss Cheese Model]https://semblanceoffunctionality.com/swiss-cheese-model/ - with a bit of a different focus, looking at strategic decisions about what to test where. 
+[My colleague Sarah Hutchins wrote this article recently about the Swiss Cheese Model](https://semblanceoffunctionality.com/swiss-cheese-model/) - with a bit of a different focus, looking at strategic decisions about what to test where. 
 
 [Martin Fowler](https://martinfowler.com/bliki/TestPyramid.html) has a good basic article about the Test Pyramid in his bliki, and the same site also has [Ham Vocke's article with more practical examples](https://martinfowler.com/articles/practical-test-pyramid.html)
 
