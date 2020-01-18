@@ -12,3 +12,7 @@ gem 'kramdown'
 gem "middleman-blog"
 gem "middleman-syntax"
 gem "builder"
+
+gem "asciidoctor"
+
+gem "asciidoctor-diagram"
