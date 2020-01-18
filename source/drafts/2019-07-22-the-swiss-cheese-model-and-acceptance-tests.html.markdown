@@ -122,7 +122,7 @@ The "Accelerate" [^accelerate] folks put it better than I can:
 The best QAs I've worked with were awesome assets to the team.  They didn't write that many tests on their own though - instead they worked closelt with developers to ensure that they understood their tests, that the tests covered as many cheese holes
 as possible, and that the test fitted in with their big-picture vision of the overall testing suite - Were tests at the right level? Was enough being tested?  Were acceptance criteria being met? And what areas would still need exploratory testing?
 
-# TL;DR
+# In summary
 
 * Write tests at as low a level as is sensible.
 * Write tests that cover all the things that could go wrong.  Where you can.
@@ -130,6 +130,8 @@ as possible, and that the test fitted in with their big-picture vision of the ov
 * Integrate continuously - and run all the tests on each commit.  Or as many as you can.
 * Define acceptance criteria, and write acceptance tests, at the lowest level that makes sense.
 * Let the QAs overview the tests, let the developers write them, work as a team.
+
+Comments? Questions? See the comments section at the bottom of this page.
 
 ----
 
