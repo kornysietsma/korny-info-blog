@@ -1,7 +1,7 @@
 ---
 
 title: The swiss cheese model and acceptance tests
-date: 2019-07-22 16:35 GMT
+date: 2020-01-20 08:13 GMT
 tags: testing tech 
 
 ---
@@ -55,9 +55,9 @@ And each layer has holes - things that are not sensible to test at that level.  
 
 _Note_ I haven't prescribed what the precise test phases are - there's a lot of "it depends" on choosing your tests.  There's a whole other blog post to be written about my preferred test layers!
 
-A basic principle here though is - *don't repeat yourself*. There's not a lot of value testing the same thing multiple times.  The cheese layers will always overlap a bit - but if you have a fast simple unit test to verify the text of a validation message, don't also have a slow fragile browser-based end-to-end test that verifies the same thing!
+A basic principle here though is - *don't repeat yourself*. There's not a lot of value testing the same thing multiple times.  The cheese layers will always overlap a bit - but if you have a fast simple unit test to verify the text of a validation message, don't also have a slow fragile browser-based end-to-end test that verifies the same thing.
 
-This is especially true of manual tests - the typical top of the classical test pyramid.  You shouldn't manually re-test what you have automatically tested.  You might "kick the tyres" to make sure that everything works OK.  You might test in production, relying on monitoring and A/B testing to identify problems early.  But you really want to catch everything you can before that point!
+This is especially true of manual tests - the typical top of the classical test pyramid.  You shouldn't manually re-test what you have automatically tested.  You might "kick the tyres" to make sure that everything works OK.  You might test in production, relying on monitoring and A/B testing to identify problems early.  But you really want to catch everything you can before that point.
 
 Also it's somewhat up to you to decide what is most appropriate for which layer.  Fast feedback is good, but so are clear expressive tests that are easy to change.  A classic example is database interactions - it's almost always better to test against a real database, possibly an in-memory one, than to try to mock it out.
 
