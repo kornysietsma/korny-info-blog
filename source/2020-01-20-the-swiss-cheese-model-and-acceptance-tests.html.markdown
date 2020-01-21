@@ -119,7 +119,7 @@ The "Accelerate" [^accelerate] folks put it better than I can:
 
 > None of this means that we should be getting rid of testers.  Testers serve an essential role in the software delivery lifecycle, performing manual testing such as exploratory, usability, and acceptance testing, and *helping to create and evolve suites of automated tests by working alongside developers*.
 
-The best QAs I've worked with were awesome assets to the team.  They didn't write that many tests on their own though - instead they worked closelt with developers to ensure that they understood their tests, that the tests covered as many cheese holes
+The best QAs I've worked with were awesome assets to the team.  They didn't write that many tests on their own though - instead they worked closely with developers to ensure that they understood their tests, that the tests covered as many cheese holes
 as possible, and that the test fitted in with their big-picture vision of the overall testing suite - Were tests at the right level? Was enough being tested?  Were acceptance criteria being met? And what areas would still need exploratory testing?
 
 # In summary
