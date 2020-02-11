@@ -23,7 +23,7 @@ This is the easiest fix, but it does break some tools that don't understand ssh 
 
 Recent openssh versions let you specify host aliases - if you set up your `~/.ssh/config` as follows:
 
-```
+~~~
 Host github.com
   HostName github.com
   User git
@@ -33,7 +33,7 @@ Host github.com_foobar
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa_foobar
-```
+~~~
 
 Then ssh recognises `github.com_foobar` as an alias for `github.com` but with a different identity.  So `git clone git@github.com_foobar:foo/bar` will use the `id_rsa_foobar` identity file!
 
@@ -43,22 +43,22 @@ The main problem here is that `github.com_foobar` doesn't exist - it's not a rea
 ### Approach two: Overriding the ssh command
 You can also tell `git` to use a different `ssh` command:
 
-```
+~~~
 GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
-```
+~~~
 
 This works nicely - but you need to override the ssh command every time you interact with a remote repository.  You can set the command for a specific repository once you have a local clone with:
 
-```
+~~~
 git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
-```
+~~~
 
 This modifies the file `.git/config` and adds a section like:
 
-```
+~~~
 [core]
     sshCommand = ssh -i ~/.ssh/id_rsa_foobar
-```
+~~~
 
 You can also override this for a specific directory path, in your git config - more on the per-path settings below.
 
@@ -79,39 +79,39 @@ But if you want to cache the username/password, then you'll have the same proble
 
 This is a more subtle problem.  Generally you want to have commit logs against your name and email, so you run something like:
 
-```
+~~~
 git config --global user.name "Korny Sietsma"
 git config --global user.email "korny@sietsma.com"
-```
+~~~
 
 But then when you push to a repo you cloned as "Fnordo the Terrible", it will still see that global config and your commit logs will have "Korny Sietsma" all over them.  (Note there are ways to retrospectively fix that, but they are very fiddly)
 
 You can set the same config locally on each repo:
 
-```
+~~~
 git config --local user.name "Fnordo the Terrible"
 git config --global user.email "terrible@foobar.com"
-```
+~~~
 
 but you need to remember this for every repo.
 
 An alternative with recent git versions is, you can edit the global git config and add _per directory settings_ - put something like this in `~/.gitconfig` :
 
-```
+~~~
 [user]
     name = Korny Sietsma
     email = korny@sietsma.com
 [includeIf "gitdir:~/projects/foobar/"]
     path = ~/projects/foobar/custom_gitconfig
-```
+~~~
 
 and then in the file `~/projects/foobar/custom_gitconfig` you can provide overrides _which apply for any git project under `~/projects/foobar/` !_
 
-```
+~~~
 [user]
     name = Fnordo the Terrible
     email = terrible@foobar.com
-```
+~~~
 
 This trick also applies to ssh settings - you can add a core.sshCommand as described above to your custom git config.
 
@@ -127,20 +127,20 @@ It's also worth reading [Chris Beams' article](https://chris.beams.io/posts/git-
 
 You can do this by setting the `commit.template` config setting to point to a template file - and you can do this in your per-project include file:
 
-```
+~~~
 [commit]
         template = ~/projects/foobar/commit_template.txt
-```
+~~~
 
 Then make a template file like:
-```
+~~~
 GTFO-XXXX Change description
 
 more details
 
 Co-authored-by: Fnordo the Terrible <terrible@foobar.com>
 Co-authored-by: Siobhan the Unpronounceable <siobhan@foobar.com>
-```
+~~~
 
 You can even write your own scripts to build these templates yourself.
 
