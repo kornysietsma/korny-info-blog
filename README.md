@@ -9,10 +9,12 @@ it'll do for now.
 
 This is more notes to my future self:
 
-`middleman article TITLE` generates a new article
-`middleman serve` serves up locally
-`middleman build` builds static html etc
+`bundle exec middleman article "TITLE"` generates a new article
+`bundle exec middleman serve` serves up locally
+`bundle exec middleman build` builds static html etc
 then `git add, commit and push` to update https://blog.korny.info
+
+`./republish.sh` combines build and add into a single command.
 
 That's about it.
 
