@@ -56,18 +56,16 @@
 
 <p>Recent openssh versions let you specify host aliases - if you set up your <code>~/.ssh/config</code> as follows:</p>
 
-<p>```
-Host github.com
+<div class="highlight"><pre class="highlight plaintext"><code>Host github.com
   HostName github.com
   User git
-  IdentityFile ~/.ssh/id_rsa</p>
+  IdentityFile ~/.ssh/id_rsa
 
-<p>Host github.com_foobar
+Host github.com_foobar
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa_foobar
-```</p>
-
+</code></pre></div>
 <p>Then ssh recognises <code>github.com_foobar</code> as an alias for <code>github.com</code> but with a different identity.  So <code>git clone git@github.com_foobar:foo/bar</code> will use the <code>id_rsa_foobar</code> identity file!</p>
 
 <h4 id="problems">problems</h4>
@@ -76,23 +74,17 @@ Host github.com
 <h3 id="approach-two-overriding-the-ssh-command">Approach two: Overriding the ssh command</h3>
 <p>You can also tell <code>git</code> to use a different <code>ssh</code> command:</p>
 
-<p><code>
-GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
-</code></p>
-
+<div class="highlight"><pre class="highlight plaintext"><code>GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
+</code></pre></div>
 <p>This works nicely - but you need to override the ssh command every time you interact with a remote repository.  You can set the command for a specific repository once you have a local clone with:</p>
 
-<p><code>
-git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
-</code></p>
-
+<div class="highlight"><pre class="highlight plaintext"><code>git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
+</code></pre></div>
 <p>This modifies the file <code>.git/config</code> and adds a section like:</p>
 
-<p><code>
-[core]
+<div class="highlight"><pre class="highlight plaintext"><code>[core]
     sshCommand = ssh -i ~/.ssh/id_rsa_foobar
-</code></p>
-
+</code></pre></div>
 <p>You can also override this for a specific directory path, in your git config - more on the per-path settings below.</p>
 
 <h4 id="problems-1">problems</h4>
@@ -112,40 +104,32 @@ git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
 
 <p>This is a more subtle problem.  Generally you want to have commit logs against your name and email, so you run something like:</p>
 
-<p><code>
-git config --global user.name "Korny Sietsma"
+<div class="highlight"><pre class="highlight plaintext"><code>git config --global user.name "Korny Sietsma"
 git config --global user.email "korny@sietsma.com"
-</code></p>
-
+</code></pre></div>
 <p>But then when you push to a repo you cloned as "Fnordo the Terrible", it will still see that global config and your commit logs will have "Korny Sietsma" all over them.  (Note there are ways to retrospectively fix that, but they are very fiddly)</p>
 
 <p>You can set the same config locally on each repo:</p>
 
-<p><code>
-git config --local user.name "Fnordo the Terrible"
+<div class="highlight"><pre class="highlight plaintext"><code>git config --local user.name "Fnordo the Terrible"
 git config --global user.email "terrible@foobar.com"
-</code></p>
-
+</code></pre></div>
 <p>but you need to remember this for every repo.</p>
 
 <p>An alternative with recent git versions is, you can edit the global git config and add <em>per directory settings</em> - put something like this in <code>~/.gitconfig</code> :</p>
 
-<p><code>
-[user]
+<div class="highlight"><pre class="highlight plaintext"><code>[user]
     name = Korny Sietsma
     email = korny@sietsma.com
 [includeIf "gitdir:~/projects/foobar/"]
     path = ~/projects/foobar/custom_gitconfig
-</code></p>
-
+</code></pre></div>
 <p>and then in the file <code>~/projects/foobar/custom_gitconfig</code> you can provide overrides <em>which apply for any git project under <code>~/projects/foobar/</code> !</em></p>
 
-<p><code>
-[user]
+<div class="highlight"><pre class="highlight plaintext"><code>[user]
     name = Fnordo the Terrible
     email = terrible@foobar.com
-</code></p>
-
+</code></pre></div>
 <p>This trick also applies to ssh settings - you can add a core.sshCommand as described above to your custom git config.</p>
 
 <p><strong>Note</strong> however this config applies to git repositories under <code>~/projects/foobar</code> - but not to arbitrary directories not yet in git.  So if you CD to <code>~/projects/foobar/</code> and then run <code>git clone</code> it won't be smart enough to clone with an overridden ssh command.</p>
@@ -160,20 +144,18 @@ git config --global user.email "terrible@foobar.com"
 
 <p>You can do this by setting the <code>commit.template</code> config setting to point to a template file - and you can do this in your per-project include file:</p>
 
-<p><code>
-[commit]
+<div class="highlight"><pre class="highlight plaintext"><code>[commit]
         template = ~/projects/foobar/commit_template.txt
-</code></p>
-
+</code></pre></div>
 <p>Then make a template file like:
-```
+~~~
 GTFO-XXXX Change description</p>
 
 <p>more details</p>
 
 <p>Co-authored-by: Fnordo the Terrible <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#116;&#101;&#114;&#114;&#105;&#098;&#108;&#101;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;">&#116;&#101;&#114;&#114;&#105;&#098;&#108;&#101;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;</a>
 Co-authored-by: Siobhan the Unpronounceable <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#105;&#111;&#098;&#104;&#097;&#110;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;">&#115;&#105;&#111;&#098;&#104;&#097;&#110;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;</a>
-```</p>
+~~~</p>
 
 <p>You can even write your own scripts to build these templates yourself.</p>
 

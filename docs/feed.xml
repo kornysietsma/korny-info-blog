@@ -40,18 +40,16 @@
 
 &lt;p&gt;Recent openssh versions let you specify host aliases - if you set up your &lt;code&gt;~/.ssh/config&lt;/code&gt; as follows:&lt;/p&gt;
 
-&lt;p&gt;```
-Host github.com
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;Host github.com
   HostName github.com
   User git
-  IdentityFile ~/.ssh/id_rsa&lt;/p&gt;
+  IdentityFile ~/.ssh/id_rsa
 
-&lt;p&gt;Host github.com_foobar
+Host github.com_foobar
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa_foobar
-```&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then ssh recognises &lt;code&gt;github.com_foobar&lt;/code&gt; as an alias for &lt;code&gt;github.com&lt;/code&gt; but with a different identity.  So &lt;code&gt;git clone git@github.com_foobar:foo/bar&lt;/code&gt; will use the &lt;code&gt;id_rsa_foobar&lt;/code&gt; identity file!&lt;/p&gt;
 
 &lt;h4 id="problems"&gt;problems&lt;/h4&gt;
@@ -60,23 +58,17 @@ Host github.com
 &lt;h3 id="approach-two-overriding-the-ssh-command"&gt;Approach two: Overriding the ssh command&lt;/h3&gt;
 &lt;p&gt;You can also tell &lt;code&gt;git&lt;/code&gt; to use a different &lt;code&gt;ssh&lt;/code&gt; command:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This works nicely - but you need to override the ssh command every time you interact with a remote repository.  You can set the command for a specific repository once you have a local clone with:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This modifies the file &lt;code&gt;.git/config&lt;/code&gt; and adds a section like:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-[core]
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;[core]
     sshCommand = ssh -i ~/.ssh/id_rsa_foobar
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You can also override this for a specific directory path, in your git config - more on the per-path settings below.&lt;/p&gt;
 
 &lt;h4 id="problems-1"&gt;problems&lt;/h4&gt;
@@ -96,40 +88,32 @@ git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
 
 &lt;p&gt;This is a more subtle problem.  Generally you want to have commit logs against your name and email, so you run something like:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-git config --global user.name "Korny Sietsma"
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;git config --global user.name "Korny Sietsma"
 git config --global user.email "korny@sietsma.com"
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;But then when you push to a repo you cloned as "Fnordo the Terrible", it will still see that global config and your commit logs will have "Korny Sietsma" all over them.  (Note there are ways to retrospectively fix that, but they are very fiddly)&lt;/p&gt;
 
 &lt;p&gt;You can set the same config locally on each repo:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-git config --local user.name "Fnordo the Terrible"
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;git config --local user.name "Fnordo the Terrible"
 git config --global user.email "terrible@foobar.com"
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;but you need to remember this for every repo.&lt;/p&gt;
 
 &lt;p&gt;An alternative with recent git versions is, you can edit the global git config and add &lt;em&gt;per directory settings&lt;/em&gt; - put something like this in &lt;code&gt;~/.gitconfig&lt;/code&gt; :&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-[user]
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;[user]
     name = Korny Sietsma
     email = korny@sietsma.com
 [includeIf "gitdir:~/projects/foobar/"]
     path = ~/projects/foobar/custom_gitconfig
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;and then in the file &lt;code&gt;~/projects/foobar/custom_gitconfig&lt;/code&gt; you can provide overrides &lt;em&gt;which apply for any git project under &lt;code&gt;~/projects/foobar/&lt;/code&gt; !&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-[user]
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;[user]
     name = Fnordo the Terrible
     email = terrible@foobar.com
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This trick also applies to ssh settings - you can add a core.sshCommand as described above to your custom git config.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; however this config applies to git repositories under &lt;code&gt;~/projects/foobar&lt;/code&gt; - but not to arbitrary directories not yet in git.  So if you CD to &lt;code&gt;~/projects/foobar/&lt;/code&gt; and then run &lt;code&gt;git clone&lt;/code&gt; it won't be smart enough to clone with an overridden ssh command.&lt;/p&gt;
@@ -144,20 +128,18 @@ git config --global user.email "terrible@foobar.com"
 
 &lt;p&gt;You can do this by setting the &lt;code&gt;commit.template&lt;/code&gt; config setting to point to a template file - and you can do this in your per-project include file:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-[commit]
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;[commit]
         template = ~/projects/foobar/commit_template.txt
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then make a template file like:
-```
+~~~
 GTFO-XXXX Change description&lt;/p&gt;
 
 &lt;p&gt;more details&lt;/p&gt;
 
 &lt;p&gt;Co-authored-by: Fnordo the Terrible &lt;a href="&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#116;&amp;#101;&amp;#114;&amp;#114;&amp;#105;&amp;#098;&amp;#108;&amp;#101;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;"&gt;&amp;#116;&amp;#101;&amp;#114;&amp;#114;&amp;#105;&amp;#098;&amp;#108;&amp;#101;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;
 Co-authored-by: Siobhan the Unpronounceable &lt;a href="&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#115;&amp;#105;&amp;#111;&amp;#098;&amp;#104;&amp;#097;&amp;#110;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;"&gt;&amp;#115;&amp;#105;&amp;#111;&amp;#098;&amp;#104;&amp;#097;&amp;#110;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;
-```&lt;/p&gt;
+~~~&lt;/p&gt;
 
 &lt;p&gt;You can even write your own scripts to build these templates yourself.&lt;/p&gt;
 
