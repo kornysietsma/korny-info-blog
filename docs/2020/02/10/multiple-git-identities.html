@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async='' src='https://www.googletagmanager.com/gtag/js?id=UA-137924462-1'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-137924462-1');
+</script>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><article>
+<header>
+<h1>multiple git identities</h1>
+<time>Feb 10 2020</time>
+</header>
+<p>This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.</p>
+
+<p><em>Note</em> this post assumes recent versions of <code>git</code> and <code>openssh</code> - and the approaches don't always work with tools that do their own git or ssh manipulation, such as IDEs; if they don't read system git/ssh configs, you might be out of luck.  (also this assumes a un*x/Mac operating system, not sure if any of this works on Windows though the same principles probably apply)</p>
+
+<h2 id="the-problem">The problem</h2>
+
+<p>Regularly, I want to have more than one git identity - often on the same host, such as github.  A classic example is when I was working at GDS - they have open-source code on public github repositories, but in order to keep my home git separate from my work git, I wanted to use a different ssh key and email for GDS repos than for my own.</p>
+
+<h3 id="problem-one---ssh-identity">Problem one - ssh identity</h3>
+
+<p>Under the covers, when you run <code>git clone git@github.com:foo/bar</code> it actually uses <code>ssh</code> - more, it uses <code>ssh git@github.com</code> passing a public key file (typically <code>~/.ssh/id_rsa.pub</code>) as your identity.  And these tools tend to assume that "git@github.com" is one person with one identity, not some sort of Jekyll and Hyde mess.</p>
+
+<p>(Note: I strongly suggest you use <code>ssh-agent</code> and <code>ssh-add</code> to store keys in the agent - but that's a digression)</p>
+
+<h3 id="approach-one-multiple-ssh-host-aliases">Approach one: multiple ssh host aliases</h3>
+<p>This is the easiest fix, but it does break some tools that don't understand ssh configs.</p>
+
+<p>Recent openssh versions let you specify host aliases - if you set up your <code>~/.ssh/config</code> as follows:</p>
+
+<p>```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa</p>
+
+<p>Host github.com_foobar
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_foobar
+```</p>
+
+<p>Then ssh recognises <code>github.com_foobar</code> as an alias for <code>github.com</code> but with a different identity.  So <code>git clone git@github.com_foobar:foo/bar</code> will use the <code>id_rsa_foobar</code> identity file!</p>
+
+<h4 id="problems">problems</h4>
+<p>The main problem here is that <code>github.com_foobar</code> doesn't exist - it's not a real host that exists in DNS.  Git understands this, but there's a chance that other tools won't look in git config, or will do a host lookup or something, and fail.  (This is happening less as more people start using ssh aliases, but it definitely still happens)</p>
+
+<h3 id="approach-two-overriding-the-ssh-command">Approach two: Overriding the ssh command</h3>
+<p>You can also tell <code>git</code> to use a different <code>ssh</code> command:</p>
+
+<p><code>
+GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
+</code></p>
+
+<p>This works nicely - but you need to override the ssh command every time you interact with a remote repository.  You can set the command for a specific repository once you have a local clone with:</p>
+
+<p><code>
+git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
+</code></p>
+
+<p>This modifies the file <code>.git/config</code> and adds a section like:</p>
+
+<p><code>
+[core]
+    sshCommand = ssh -i ~/.ssh/id_rsa_foobar
+</code></p>
+
+<p>You can also override this for a specific directory path, in your git config - more on the per-path settings below.</p>
+
+<h4 id="problems-1">problems</h4>
+<p>Again, many tools won't look in your git config - especially as this is quite a new git feature.  This probably works a bit less often than overriding the host - and may fail in more strange ways, at least overriding the host can give you a clear error like "no such host github.com_foobar"!  But at least it won't fail if something tries to check the host exists.</p>
+
+<h3 id="approach-three---switching-your-key-files-around">Approach three - switching your key files around</h3>
+
+<p>This is probably the least recommended option, as it's fiddly and easy to get wrong.  But if all else fails, you can always store your <code>id_rsa_foobar</code> and normal <code>id_rsa</code> files somewhere outside <code>~/.ssh</code> and write scripts to copy the correct file in when you want to change identity.  Obviously this is hacky and global - and easy to forget that you changed it and didn't change it back.</p>
+
+<h3 id="what-about-https-urls">What about HTTPS URLs?</h3>
+
+<p>If you don't mind entering your git username and password every time, https makes this easy!</p>
+
+<p>But if you want to cache the username/password, then you'll have the same problem - you'll need to fiddle around with how to get the git credential helper to cache different values depending on your repo; I haven't really played with that area so can't help you!</p>
+
+<h2 id="problem-two---name-and-email-in-git-logs">Problem two - name and email in git logs</h2>
+
+<p>This is a more subtle problem.  Generally you want to have commit logs against your name and email, so you run something like:</p>
+
+<p><code>
+git config --global user.name "Korny Sietsma"
+git config --global user.email "korny@sietsma.com"
+</code></p>
+
+<p>But then when you push to a repo you cloned as "Fnordo the Terrible", it will still see that global config and your commit logs will have "Korny Sietsma" all over them.  (Note there are ways to retrospectively fix that, but they are very fiddly)</p>
+
+<p>You can set the same config locally on each repo:</p>
+
+<p><code>
+git config --local user.name "Fnordo the Terrible"
+git config --global user.email "terrible@foobar.com"
+</code></p>
+
+<p>but you need to remember this for every repo.</p>
+
+<p>An alternative with recent git versions is, you can edit the global git config and add <em>per directory settings</em> - put something like this in <code>~/.gitconfig</code> :</p>
+
+<p><code>
+[user]
+    name = Korny Sietsma
+    email = korny@sietsma.com
+[includeIf "gitdir:~/projects/foobar/"]
+    path = ~/projects/foobar/custom_gitconfig
+</code></p>
+
+<p>and then in the file <code>~/projects/foobar/custom_gitconfig</code> you can provide overrides <em>which apply for any git project under <code>~/projects/foobar/</code> !</em></p>
+
+<p><code>
+[user]
+    name = Fnordo the Terrible
+    email = terrible@foobar.com
+</code></p>
+
+<p>This trick also applies to ssh settings - you can add a core.sshCommand as described above to your custom git config.</p>
+
+<p><strong>Note</strong> however this config applies to git repositories under <code>~/projects/foobar</code> - but not to arbitrary directories not yet in git.  So if you CD to <code>~/projects/foobar/</code> and then run <code>git clone</code> it won't be smart enough to clone with an overridden ssh command.</p>
+
+<h2 id="bonus-prize---other-per-directory-configurations">Bonus prize - other per-directory configurations</h2>
+
+<p>Once you can set git config per directory tree, there are some very handy things you can do.</p>
+
+<p>For instance, I like to set a default git commit template - especially if you are pair or mob programming, it's good to add <code>&lt;Co-authored-by&gt;</code> tags at the end. <a href="https://help.github.com/en/github/committing-changes-to-your-project/creating-a-commit-with-multiple-authors">Github understands these and will show all listed people as authors.</a> Apparently <a href="https://gitlab.com/gitlab-org/gitlab-foss/-/merge_requests/17919">GitLab supports these as well</a>. If you are interested there are also a <a href="https://git.wiki.kernel.org/index.php/CommitMessageConventions">number of other similar conventions</a> - but don't go overboard!</p>
+
+<p>It's also worth reading <a href="https://chris.beams.io/posts/git-commit/">Chris Beams' article</a> on how to write a good commit message.  This is much easier if you have a template to work from!</p>
+
+<p>You can do this by setting the <code>commit.template</code> config setting to point to a template file - and you can do this in your per-project include file:</p>
+
+<p><code>
+[commit]
+        template = ~/projects/foobar/commit_template.txt
+</code></p>
+
+<p>Then make a template file like:
+```
+GTFO-XXXX Change description</p>
+
+<p>more details</p>
+
+<p>Co-authored-by: Fnordo the Terrible <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#116;&#101;&#114;&#114;&#105;&#098;&#108;&#101;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;">&#116;&#101;&#114;&#114;&#105;&#098;&#108;&#101;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;</a>
+Co-authored-by: Siobhan the Unpronounceable <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#105;&#111;&#098;&#104;&#097;&#110;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;">&#115;&#105;&#111;&#098;&#104;&#097;&#110;&#064;&#102;&#111;&#111;&#098;&#097;&#114;&#046;&#099;&#111;&#109;</a>
+```</p>
+
+<p>You can even write your own scripts to build these templates yourself.</p>
+
+<p>The possibilities of per-directory git config are endless - you can also set up project-level pre-commit or other hooks in a similar way.  (Hooks are also great for making sure you format commit messages correctly! But that's a whole different subject)</p>
+
+<h2 id="problem-3---web-browser-identity">Problem 3 - web browser identity</h2>
+
+<p>There are still some headaches with multiple git identites if you use a web browser to open https://github.com and don't remember who you are logged in as.  Github (and other git hosts) have all sorts of UI tools for commits, PRs etc., and they will identify you by your current browser cookies.</p>
+
+<p>My preferred approach here is to set up my browser with multiple segregated sandboxes - I'm not going to go into all the details here, but take a look at <a href="https://support.google.com/chrome/answer/2364824">Profiles</a> if you are using Google Chrome, or <a href="https://addons.mozilla.org/en-GB/firefox/addon/multi-account-containers/">Multi-account containers</a> if you are using FireFox.  Both of these let you keep one set of browser tabs logged in as your private identity, and one as your work identity.</p>
+
+<p>They are also great for walling off apps like Facebook from other websites.  If only one profile is logged in on Facebook, other profiles won't be leaking identity accidentally.</p>
+
+<p>I hope this is useful to people out there - feel free to comment below!</p>
+
+<div id='disqus_thread'></div>
+<script>
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'kornyblog';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>
+Please enable JavaScript to view the
+<a href='http://disqus.com/?ref_noscript'>comments powered by Disqus.</a>
+</noscript>
+<a class='dsq-brlink' href='http://disqus.com'>
+comments powered by
+<span class='logo-disqus'>Disqus</span>
+</a>
+</article>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in the UK.  More info at
+<a href='http://korny.info'>
+https://korny.info
+</a>
+or
+<a href='https://twitter.com/kornys'>
+kornys on twitter
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2020/02/10/multiple-git-identities.html">multiple git identities</a>
+<span>Feb 10</span>
+</li>
+<li>
+<a href="/2020/01/20/the-swiss-cheese-model-and-acceptance-tests.html">The swiss cheese model and acceptance tests</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">OCR Hack - grabbing text from the screen on a Macbook</a>
+<span>Apr  8</span>
+</li>
+<li>
+<a href="/2019/01/20/excel-life.html">Excel life</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/01/19/what-on-earth-happened.html">What on earth happened?</a>
+<span>Jan 19</span>
+</li>
+<li>
+<a href="/2018/11/24/its_alive.html">It's alive!</a>
+<span>Nov 24</span>
+</li>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/tech.html">tech</a>
+(3)
+</li>
+<li>
+<a href="/tags/testing-tech.html">testing tech</a>
+(1)
+</li>
+<li>
+<a href="/tags/life.html">life</a>
+(1)
+</li>
+<li>
+<a href="/tags/meta.html">meta</a>
+(1)
+</li>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2020
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>

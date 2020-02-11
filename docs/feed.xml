@@ -5,10 +5,175 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2020-01-20T08:13:00+00:00</updated>
+  <updated>2020-02-10T08:18:00+00:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>multiple git identities</title>
+    <link rel="alternate" href="/2020/02/10/multiple-git-identities.html"/>
+    <id>/2020/02/10/multiple-git-identities.html</id>
+    <published>2020-02-10T08:18:00+00:00</published>
+    <updated>2020-02-10T08:18:00+00:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt; this post assumes recent versions...&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt; this post assumes recent versions of &lt;code&gt;git&lt;/code&gt; and &lt;code&gt;openssh&lt;/code&gt; - and the approaches don't always work with tools that do their own git or ssh manipulation, such as IDEs; if they don't read system git/ssh configs, you might be out of luck.  (also this assumes a un*x/Mac operating system, not sure if any of this works on Windows though the same principles probably apply)&lt;/p&gt;
+
+&lt;h2 id="the-problem"&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;Regularly, I want to have more than one git identity - often on the same host, such as github.  A classic example is when I was working at GDS - they have open-source code on public github repositories, but in order to keep my home git separate from my work git, I wanted to use a different ssh key and email for GDS repos than for my own.&lt;/p&gt;
+
+&lt;h3 id="problem-one---ssh-identity"&gt;Problem one - ssh identity&lt;/h3&gt;
+
+&lt;p&gt;Under the covers, when you run &lt;code&gt;git clone git@github.com:foo/bar&lt;/code&gt; it actually uses &lt;code&gt;ssh&lt;/code&gt; - more, it uses &lt;code&gt;ssh git@github.com&lt;/code&gt; passing a public key file (typically &lt;code&gt;~/.ssh/id_rsa.pub&lt;/code&gt;) as your identity.  And these tools tend to assume that "git@github.com" is one person with one identity, not some sort of Jekyll and Hyde mess.&lt;/p&gt;
+
+&lt;p&gt;(Note: I strongly suggest you use &lt;code&gt;ssh-agent&lt;/code&gt; and &lt;code&gt;ssh-add&lt;/code&gt; to store keys in the agent - but that's a digression)&lt;/p&gt;
+
+&lt;h3 id="approach-one-multiple-ssh-host-aliases"&gt;Approach one: multiple ssh host aliases&lt;/h3&gt;
+&lt;p&gt;This is the easiest fix, but it does break some tools that don't understand ssh configs.&lt;/p&gt;
+
+&lt;p&gt;Recent openssh versions let you specify host aliases - if you set up your &lt;code&gt;~/.ssh/config&lt;/code&gt; as follows:&lt;/p&gt;
+
+&lt;p&gt;```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa&lt;/p&gt;
+
+&lt;p&gt;Host github.com_foobar
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_foobar
+```&lt;/p&gt;
+
+&lt;p&gt;Then ssh recognises &lt;code&gt;github.com_foobar&lt;/code&gt; as an alias for &lt;code&gt;github.com&lt;/code&gt; but with a different identity.  So &lt;code&gt;git clone git@github.com_foobar:foo/bar&lt;/code&gt; will use the &lt;code&gt;id_rsa_foobar&lt;/code&gt; identity file!&lt;/p&gt;
+
+&lt;h4 id="problems"&gt;problems&lt;/h4&gt;
+&lt;p&gt;The main problem here is that &lt;code&gt;github.com_foobar&lt;/code&gt; doesn't exist - it's not a real host that exists in DNS.  Git understands this, but there's a chance that other tools won't look in git config, or will do a host lookup or something, and fail.  (This is happening less as more people start using ssh aliases, but it definitely still happens)&lt;/p&gt;
+
+&lt;h3 id="approach-two-overriding-the-ssh-command"&gt;Approach two: Overriding the ssh command&lt;/h3&gt;
+&lt;p&gt;You can also tell &lt;code&gt;git&lt;/code&gt; to use a different &lt;code&gt;ssh&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_foobar" git clone git@github.com_foobar:foo/bar
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This works nicely - but you need to override the ssh command every time you interact with a remote repository.  You can set the command for a specific repository once you have a local clone with:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+git config core.sshCommand "ssh -i ~/.ssh/id_rsa_foobar"
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This modifies the file &lt;code&gt;.git/config&lt;/code&gt; and adds a section like:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+[core]
+    sshCommand = ssh -i ~/.ssh/id_rsa_foobar
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;You can also override this for a specific directory path, in your git config - more on the per-path settings below.&lt;/p&gt;
+
+&lt;h4 id="problems-1"&gt;problems&lt;/h4&gt;
+&lt;p&gt;Again, many tools won't look in your git config - especially as this is quite a new git feature.  This probably works a bit less often than overriding the host - and may fail in more strange ways, at least overriding the host can give you a clear error like "no such host github.com_foobar"!  But at least it won't fail if something tries to check the host exists.&lt;/p&gt;
+
+&lt;h3 id="approach-three---switching-your-key-files-around"&gt;Approach three - switching your key files around&lt;/h3&gt;
+
+&lt;p&gt;This is probably the least recommended option, as it's fiddly and easy to get wrong.  But if all else fails, you can always store your &lt;code&gt;id_rsa_foobar&lt;/code&gt; and normal &lt;code&gt;id_rsa&lt;/code&gt; files somewhere outside &lt;code&gt;~/.ssh&lt;/code&gt; and write scripts to copy the correct file in when you want to change identity.  Obviously this is hacky and global - and easy to forget that you changed it and didn't change it back.&lt;/p&gt;
+
+&lt;h3 id="what-about-https-urls"&gt;What about HTTPS URLs?&lt;/h3&gt;
+
+&lt;p&gt;If you don't mind entering your git username and password every time, https makes this easy!&lt;/p&gt;
+
+&lt;p&gt;But if you want to cache the username/password, then you'll have the same problem - you'll need to fiddle around with how to get the git credential helper to cache different values depending on your repo; I haven't really played with that area so can't help you!&lt;/p&gt;
+
+&lt;h2 id="problem-two---name-and-email-in-git-logs"&gt;Problem two - name and email in git logs&lt;/h2&gt;
+
+&lt;p&gt;This is a more subtle problem.  Generally you want to have commit logs against your name and email, so you run something like:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+git config --global user.name "Korny Sietsma"
+git config --global user.email "korny@sietsma.com"
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;But then when you push to a repo you cloned as "Fnordo the Terrible", it will still see that global config and your commit logs will have "Korny Sietsma" all over them.  (Note there are ways to retrospectively fix that, but they are very fiddly)&lt;/p&gt;
+
+&lt;p&gt;You can set the same config locally on each repo:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+git config --local user.name "Fnordo the Terrible"
+git config --global user.email "terrible@foobar.com"
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;but you need to remember this for every repo.&lt;/p&gt;
+
+&lt;p&gt;An alternative with recent git versions is, you can edit the global git config and add &lt;em&gt;per directory settings&lt;/em&gt; - put something like this in &lt;code&gt;~/.gitconfig&lt;/code&gt; :&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+[user]
+    name = Korny Sietsma
+    email = korny@sietsma.com
+[includeIf "gitdir:~/projects/foobar/"]
+    path = ~/projects/foobar/custom_gitconfig
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;and then in the file &lt;code&gt;~/projects/foobar/custom_gitconfig&lt;/code&gt; you can provide overrides &lt;em&gt;which apply for any git project under &lt;code&gt;~/projects/foobar/&lt;/code&gt; !&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+[user]
+    name = Fnordo the Terrible
+    email = terrible@foobar.com
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This trick also applies to ssh settings - you can add a core.sshCommand as described above to your custom git config.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; however this config applies to git repositories under &lt;code&gt;~/projects/foobar&lt;/code&gt; - but not to arbitrary directories not yet in git.  So if you CD to &lt;code&gt;~/projects/foobar/&lt;/code&gt; and then run &lt;code&gt;git clone&lt;/code&gt; it won't be smart enough to clone with an overridden ssh command.&lt;/p&gt;
+
+&lt;h2 id="bonus-prize---other-per-directory-configurations"&gt;Bonus prize - other per-directory configurations&lt;/h2&gt;
+
+&lt;p&gt;Once you can set git config per directory tree, there are some very handy things you can do.&lt;/p&gt;
+
+&lt;p&gt;For instance, I like to set a default git commit template - especially if you are pair or mob programming, it's good to add &lt;code&gt;&amp;lt;Co-authored-by&amp;gt;&lt;/code&gt; tags at the end. &lt;a href="https://help.github.com/en/github/committing-changes-to-your-project/creating-a-commit-with-multiple-authors"&gt;Github understands these and will show all listed people as authors.&lt;/a&gt; Apparently &lt;a href="https://gitlab.com/gitlab-org/gitlab-foss/-/merge_requests/17919"&gt;GitLab supports these as well&lt;/a&gt;. If you are interested there are also a &lt;a href="https://git.wiki.kernel.org/index.php/CommitMessageConventions"&gt;number of other similar conventions&lt;/a&gt; - but don't go overboard!&lt;/p&gt;
+
+&lt;p&gt;It's also worth reading &lt;a href="https://chris.beams.io/posts/git-commit/"&gt;Chris Beams' article&lt;/a&gt; on how to write a good commit message.  This is much easier if you have a template to work from!&lt;/p&gt;
+
+&lt;p&gt;You can do this by setting the &lt;code&gt;commit.template&lt;/code&gt; config setting to point to a template file - and you can do this in your per-project include file:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+[commit]
+        template = ~/projects/foobar/commit_template.txt
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then make a template file like:
+```
+GTFO-XXXX Change description&lt;/p&gt;
+
+&lt;p&gt;more details&lt;/p&gt;
+
+&lt;p&gt;Co-authored-by: Fnordo the Terrible &lt;a href="&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#116;&amp;#101;&amp;#114;&amp;#114;&amp;#105;&amp;#098;&amp;#108;&amp;#101;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;"&gt;&amp;#116;&amp;#101;&amp;#114;&amp;#114;&amp;#105;&amp;#098;&amp;#108;&amp;#101;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;
+Co-authored-by: Siobhan the Unpronounceable &lt;a href="&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#115;&amp;#105;&amp;#111;&amp;#098;&amp;#104;&amp;#097;&amp;#110;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;"&gt;&amp;#115;&amp;#105;&amp;#111;&amp;#098;&amp;#104;&amp;#097;&amp;#110;&amp;#064;&amp;#102;&amp;#111;&amp;#111;&amp;#098;&amp;#097;&amp;#114;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;
+```&lt;/p&gt;
+
+&lt;p&gt;You can even write your own scripts to build these templates yourself.&lt;/p&gt;
+
+&lt;p&gt;The possibilities of per-directory git config are endless - you can also set up project-level pre-commit or other hooks in a similar way.  (Hooks are also great for making sure you format commit messages correctly! But that's a whole different subject)&lt;/p&gt;
+
+&lt;h2 id="problem-3---web-browser-identity"&gt;Problem 3 - web browser identity&lt;/h2&gt;
+
+&lt;p&gt;There are still some headaches with multiple git identites if you use a web browser to open https://github.com and don't remember who you are logged in as.  Github (and other git hosts) have all sorts of UI tools for commits, PRs etc., and they will identify you by your current browser cookies.&lt;/p&gt;
+
+&lt;p&gt;My preferred approach here is to set up my browser with multiple segregated sandboxes - I'm not going to go into all the details here, but take a look at &lt;a href="https://support.google.com/chrome/answer/2364824"&gt;Profiles&lt;/a&gt; if you are using Google Chrome, or &lt;a href="https://addons.mozilla.org/en-GB/firefox/addon/multi-account-containers/"&gt;Multi-account containers&lt;/a&gt; if you are using FireFox.  Both of these let you keep one set of browser tabs logged in as your private identity, and one as your work identity.&lt;/p&gt;
+
+&lt;p&gt;They are also great for walling off apps like Facebook from other websites.  If only one profile is logged in on Facebook, other profiles won't be leaking identity accidentally.&lt;/p&gt;
+
+&lt;p&gt;I hope this is useful to people out there - feel free to comment below!&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>The swiss cheese model and acceptance tests</title>
     <link rel="alternate" href="/2020/01/20/the-swiss-cheese-model-and-acceptance-tests.html"/>
