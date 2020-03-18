@@ -9,7 +9,7 @@ This isn't actually all that new - I hacked this together during a
 [global day of coderetreat](https://www.coderetreat.org/) in Melbourne in 2012 - but I've mentioned it
 to a few people, and thought it'd be fun to put here:
 
-[Conway's Game of Life in Excel](2019-01-20-excel-life-files/life_in_excel.xslx)
+[Conway's Game of Life in Excel](/2019-01-20-excel-life-files/life_in_excel.xslx)
 
 Yes, it's a functioning chunk of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) cellular automaton in
 fairly vanilla Excel spreadsheets.
