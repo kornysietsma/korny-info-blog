@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async='' src='https://www.googletagmanager.com/gtag/js?id=UA-137924462-1'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-137924462-1');
+</script>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<title>Korny's Blog</title>
+<meta content='' name='description'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href='/favicon.ico' rel='icon' type='image/ico'>
+<link href='/favicon.ico' rel='shortcut' type='image/ico'>
+<link href='http://blog.korny.info/feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://blog.korny.info/clojure-feed.xml' rel='alternate' type='application/atom+xml'>
+<link href='http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' type='text/css'>
+<link href="/stylesheets/site.css" rel="stylesheet" />
+</head>
+<body>
+<!--[if lt IE 9]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
+<section class='container'>
+<header>
+<h1>
+<a href='http://blog.korny.info'>Korny's Blog</a>
+</h1>
+</header>
+<section class='blog'>
+<div class='main' role='main'><p>(TL;DR - you can jump ahead to the sample site at https://kornysietsma.github.io/digital-garden-sample/ based on source and content at https://github.com/kornysietsma/digital-garden-sample )</p>
+
+<p>For a very long time, I've used a wide range of different tools to try to manage my digital information - all sorts of digital information, the boundaries are fuzzy, but samples of the kinds of things I want to keep are:</p>
+
+<ul>
+  <li>That interesting thought that occured to me for a future project</li>
+  <li>My code snippets from a recent cool problem I solved, in case I want to solve it again</li>
+  <li>Personal reflections on things in my life - the classic diary entry</li>
+  <li>Daily notes on my current client - stuff that usually goes in physical notebooks that I file and never open again</li>
+  <li>Mentoring and leadership notes on people who I'm trying to assist</li>
+  <li>That recipe I found in a cookbook that I like</li>
+  <li>The link that someone shared on social media that I'd like to read later - or at least, I'd like to be able to <em>find</em> it later on the slim chance I decide to read it</li>
+  <li>My bookmarks of useful links for a particular tech stack</li>
+</ul>
+
+<p>and so on, and so on.  A lot of this is fuzzy and unstructured really; the lines are blurry.</p>
+
+<h2 id="some-history">Some history</h2>
+
+<p>I've used a bunch of things over the years - Evernote at one stage, and similar online tools; browser bookmarks which grow endlessly and often get lost when changing browsers (and often that's good, they date quickly and Google/Ecosia/whatever can find the links faster most of the time), archive folders on disk, and on DropBox, and on Google Drive; Github gists, Trello boards, Pocket and a bunch of other bookmark managers…</p>
+
+<p>About 6 years ago when I was doing a lot of clojure, I got into Emacs and did a lot in the wonderful <a href="https://orgmode.org/">org-mode</a> - it kind-of covers most of this, especially when combined with <a href="http://www.orgzly.com">orgzly on my phone</a> - but I found it increasingly hard to use smoothly.  If I'm not using emacs all the time I forget the keystrokes; and (sorry emacs fans) the whole multiple-text-pane-ui thing just doesn't cut it for me any more.</p>
+
+<p>About 2 years ago I realised that the blogging tools I've been using actually do a lot of what I want - if I dump <em>everything</em> as Markdown or Asciidoc in a Jekyll site, then host it locally on my laptop, it's not bad - at least for capturing things daily as I go.  It became my digital diary - bookmarks and firehose stuff and long-term notes were still in org-mode, short-term planning was still in Trello, but the Jekyll diary worked quite well.</p>
+
+<h2 id="advantages-of-a-text-based-information-store">Advantages of a text-based information store</h2>
+
+<ul>
+  <li>It doesn't take much storage</li>
+  <li>It can be bulk-searched easily.  Want to find that rant I wrote about ESBs? Open a text editor or a shell, and search.</li>
+  <li>It's easy to script - every scripting language can manipulate structured text files with ease</li>
+  <li>It's easy to encrypt and back up - no binary files</li>
+  <li>It doesn't get out of date easily.  If I change tools or platforms, I can write a script to merge the files into whatever the new tool needs.  This is a biggy, and my main problem with things like Evernote - I don't want to get locked in to a platform forever!  And worst case, if I find these files on an old disk in 20 years, I can still read them!  (I have email archives from the '90s somewhere, that I want to read, but I need to reverse engineer the Agent newsreader app's file format first…)</li>
+</ul>
+
+<h2 id="enter-gatsby">Enter Gatsby</h2>
+
+<p>The Jekyll solution was doing OK as a place to put thoughts and information, and basic searching was ok in a text editor - but I was finding the web interface not awfully useful, and it was hard to organise things.</p>
+
+<p>Then I was reading up on <a href="https://www.gatsbyjs.org/">GatsbyJS</a>, and I came across <a href="https://github.com/johno/digital-garden">this sample digital garden</a> and associated articles, and I thought "I could move my diary to gatsby" - so here we are.   (See below for more on digital gardens.)</p>
+
+<p>Gatsby is basically a clever idea - instead of going straight from markdown to html like Jekyll and others do, and building every other customisation by hand, why not add a couple of layers - a graphql data representation, and a JavaScript/React html production layer?</p>
+
+<p>The basic flow of content then goes:</p>
+
+<ol>
+  <li>Base content is one of a range of formats - markdown, JSON files, images, or sourced from a CMS. (Don't get distracted by all the CMS talk - for most purposes you can just use the file system for sources)</li>
+  <li>You use one of a range of plugins, or custom code, to represent that data as a graphql layer.  Note this is still at build time! You don't need graphql at runtime.</li>
+  <li>You generate pages, still at build time, using JavaScript code which queries the GraphQL data and creates HTML pages. This all uses React for page creation, so you have a lot of power over templating, styling, and all the magic that React gives you.</li>
+</ol>
+
+<p>That's about it. The end result is mostly static html+css. (it also includes React for things you might want to change at runtime, but the basic site works fine with JavaScript off)</p>
+
+<p>And at build time you can use custom scripts to do all sorts of stuff with those static pages.</p>
+
+<p>You can look at a sanitised clone of my site at https://kornysietsma.github.io/digital-garden-sample/ - source at https://github.com/kornysietsma/digital-garden-sample - the real one has a lot more content! But this hopefully shows the idea. (Note - it is designed for a wide laptop, there's no mobile support at all yet!)</p>
+
+<p>The build-time page generation is in <a href="https://github.com/kornysietsma/digital-garden-sample/blob/master/gatsby-node.js">gatsby-node.js</a> - this is what does the "magic" of converting all the files under <code>/content</code> into a mix of <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-01-01-first-post/">diary entries</a>, <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/wiki/about/">wiki pages</a>, and <a href="https://kornysietsma.github.io/digital-garden-sample/firehose/tech/-">firehose lists</a> - plus a whole tagging and categorising system.</p>
+
+<h2 id="whats-all-this-digital-garden-stuff">What's all this "digital garden" stuff?</h2>
+
+<p>The digital garden - and I may be misusing the term, it's all a bit new to me - is a place where your information resides - it's not necessarily time-based like a blog, it's also a network of information, more like a wiki.</p>
+
+<p>There's a good description at <a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a> - which I found from browsing the gatsby sample at <a href="https://github.com/johno/digital-garden">https://github.com/johno/digital-garden</a> - both of those link to the earlier articles <a href="https://tomcritchlow.com/2019/02/17/building-digital-garden/">Building a digital garden</a> and <a href="https://tomcritchlow.com/2018/10/10/of-gardens-and-wikis/">Of gardens and wikis</a> by Tom Critchlow.  You can keep following links to fascinating articles from here!</p>
+
+<p>I also love <a href="https://www.martinfowler.com/bliki">Martin Fowler's bliki</a> which is something very similar - a combination blog and wiki.  <a href="https://www.martinfowler.com/bliki/WhatIsaBliki.html">Martin writes</a> 
+&gt;I decided I wanted something that was a cross between a wiki and a blog - which Ward Cunningham immediately dubbed a bliki. Like a blog, it allows me to post short thoughts when I have them. Like a wiki it will build up a body of cross-linked pieces that I hope will still be interesting in a year's time."</p>
+
+<p>My "digital garden" isn't public - there's too much confidential, or just plain half-baked, to make it public.  I might turn my blog into a garden at some stage though.  (I'm a little hesitant, because so far I've follow the mantra "use boring tools" - I want to keep my blog low-maintenance, and Gatsby is still new and rapidly changing)</p>
+
+<h2 id="my-categorisation-scheme">My categorisation scheme</h2>
+
+<p>I didn't want to go wild with hierarchies or massive structures - I've made that mistake enough times in the past!</p>
+
+<p>Basically I have three types of content at the moment:</p>
+
+<ol>
+  <li>Diary entries - Markdown pages with a 'date' in the metadata - which get shown in reverse chronological order</li>
+  <li>Wiki pages - which are just Markdown pages with no date!  I do use naming conventions for where they are stored and how they are named, but otherwise they are just the same as diary entries, but they get shown alphabetically in different bits of the UI.  (and there's no magic shortcut to link to them - yet).</li>
+  <li>Firehose entries - which are tiny snippets, mostly URLs or brief notes - are just JSON.  All JSON files in the <code>/content</code> directory are assumed to be firehose data (more on that later) and get slurped in together.</li>
+</ol>
+
+<p>And then I have two kinds of categorisation:</p>
+
+<ul>
+  <li>Categories are a simple top-level category choice.  It's a bit arbitrary, the idea is to be able to browse just "work" or just "play" or just "tech" stuff.  I like single layers of organsation, it stops me over-complicating things.</li>
+  <li>Tags are anything else.  Any content can have zero or more tags; I'm working out what tags work as I go.  You can currently only filter by a single tag at a time.</li>
+</ul>
+
+<h3 id="handling-state-through-urls">Handling state through URLs</h3>
+
+<p>I did have a snag with my categories and tags - how do you keep track of state?  I wanted to say "browse all pages in the "work" category" - but I wanted that selected category to be remembered. There is no "state" in a Gatsby site - it's all static HTML, remember?  I could use tweaks like # URL suffixes but it all looked quite complex, and I'm a fan of simple.  So I just went for a routing scheme - most urls are of the form <code>/[category]/[tag]/page</code> - so if a page is accessed via <code>/work/fish/wish-i-was-fishing</code> I know it should show the <code>work</code> category and <code>fish</code> tag as highlighted.  (and yes, that means each page is rendered mulitple times for every category and tag.  But it's at build time and it's fast, so I don't really care)</p>
+
+<p>(Disclaimer time - I'm a total Gatsby newbie, with no spare time so doing whatever seems to work - there may be dramatically easier ways to do this!)</p>
+
+<h3 id="a-bit-more-on-the-firehose">A bit more on the firehose</h3>
+
+<p>The firehose is where I dump the continuous deluge of stuff that I have spent decades trying to capture.  I know by now that 90% of things I see - bookmarks, video links, "to_read" entries, articles in pocket, etc - will never be looked at again.  But I like to capture them anyway, so when I go "I saw a cool thing a week ago - where is it?" I can find it.</p>
+
+<p>Firehose entries are implemented as JSON snippets like this:</p>
+
+<div class="highlight"><pre class="highlight plaintext"><code>  {
+    "title": "https://www.devops-research.com/research.html",
+    "date": "2020-02-06",
+    "category": "tech",
+    "tags": ["dora", "devops", "cd"],
+    "lines": ["nice diagram summary of DORA Devops stuff"]
+  },
+</code></pre></div>
+<p>I don't generally write JSON by hand though - on my phone I run <a href="http://www.orgzly.com/">orgzly</a> and then I have a script to convert that to JSON every now and then; and I have this alias in my <code>.zshrc</code> so I can add entries from a terminal by running the <code>firehose</code> command:</p>
+
+<div class="highlight"><pre class="highlight shell"><code>firehose<span class="o">()</span> <span class="o">{</span>
+  <span class="nb">pushd</span> ~/path/to/garden
+
+    <span class="nb">echo</span> <span class="s2">"Title: "</span>
+    <span class="nb">read </span>title
+    <span class="nb">echo</span> <span class="s2">"Tags: (comma separated) "</span>
+    <span class="nb">read </span>tags
+    <span class="nv">jtags</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">"</span><span class="nv">$tags</span><span class="s2">"</span> | jq <span class="nt">-R</span> <span class="s1">'split(",")'</span><span class="k">)</span><span class="s2">"</span>
+    <span class="nb">echo</span> <span class="s2">"Category: (tech, work, personal, play, world, meta, family, other)"</span>
+    <span class="nb">read </span>category
+    <span class="nb">echo</span> <span class="s2">"url or text:"</span>
+    <span class="nb">read </span>url
+
+    <span class="nv">pdate</span><span class="o">=</span><span class="sb">`</span>date +%Y-%m-%d<span class="sb">`</span>
+
+    <span class="nb">echo</span> <span class="s2">"[{
+</span><span class="se">\"</span><span class="s2">title</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="nv">$title</span><span class="se">\"</span><span class="s2">,
+</span><span class="se">\"</span><span class="s2">category</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="nv">$category</span><span class="se">\"</span><span class="s2">,
+</span><span class="se">\"</span><span class="s2">date</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="nv">$pdate</span><span class="se">\"</span><span class="s2">,
+</span><span class="se">\"</span><span class="s2">tags</span><span class="se">\"</span><span class="s2">: </span><span class="k">${</span><span class="nv">jtags</span><span class="k">}</span><span class="s2">,
+</span><span class="se">\"</span><span class="s2">lines</span><span class="se">\"</span><span class="s2">: [</span><span class="se">\"</span><span class="k">${</span><span class="nv">url</span><span class="k">}</span><span class="se">\"</span><span class="s2">]
+}]"</span> <span class="o">&gt;</span> /tmp/fhbit.json
+
+<span class="nv">INBOX</span><span class="o">=</span>content/firehose/laptop/inbox.json
+jq <span class="nt">-s</span> add <span class="nv">$INBOX</span> /tmp/fhbit.json <span class="o">&gt;</span> /tmp/fh.json
+cp /tmp/fh.json <span class="nv">$INBOX</span>
+
+    <span class="nb">echo</span> <span class="s2">"updated </span><span class="nv">$INBOX</span><span class="s2">"</span>
+<span class="o">}</span>
+</code></pre></div><p>Of course it's pretty easy to convert any other stuff to JSON as needed.</p>
+
+<p>And that's the thing I'm really enjoying about Gatsby - I have control_ - whatever bits and bobs I might want to add in the future - maybe an image gallery, maybe ebook categorisation - it's very tweakable.</p>
+
+<h2 id="other-neat-gatsby-things">Other neat Gatsby things</h2>
+<p>There are some very cool plugins available for all sorts of neat things.  I'm generating <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-01-03-diagrams/">graphviz and mermaidjs diagrams</a> embedded in markdown files.  <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-01-02-images/">Images</a> are automatically scaled and made responsive.  And of course <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-03-14-demonstrating-source-code/">source code formatting</a> is straightforward.</p>
+
+<h2 id="downsides-of-gatsby">Downsides of Gatsby</h2>
+
+<p>First, it's pretty new - and being in node.js land, I'm regularly updating packages; even right now <code>npm audit</code> is showing a vulnerability because several libraries use <code>decompress</code> which <a href="https://npmjs.com/advisories/1217">has a known defect</a> - this isn't a problem for me as I only run this code on my laptop when I rebuild the site, but would be more concerning if you were using this somewhere big.</p>
+
+<p>Also, I found that a lot of the themes and starters are, frankly, more useful as demos than actual fully featured sites.  They tend to have pretty horrible CSS - not just per-component CSS, I've come to terms with that; but inline css in the middle of JSX files, and some obvious "we hacked this together until it looks OK on our machine" stuff.  They also often include all sorts of things that you might not want, or might want differently.  I tried using about 4 different quite popular starters, before I gave up and worked from the default tutorial instead.</p>
+
+<p>Overall, though, it's pretty neat - I'd definitely be interested in using this on a client site, especially hooked up to a nice headless CMS.  And I'm going to keep tweaking my own gatsby digital garden for a while!  (no guaranteeing that I won't be praising some completely different alternative in another 5 years, of course)</p>
+</div>
+<aside>
+<h2>About Me</h2>
+<p>
+Korny (full name Kornelis Sietsma) is an Australian software developer currently working
+for ThoughtWorks in the UK.  More info at
+<a href='http://korny.info'>
+https://korny.info
+</a>
+or
+<a href='https://twitter.com/kornys'>
+kornys on twitter
+</a>
+</p>
+<h2>Recent Articles</h2>
+<ol>
+<li>
+<a href="/2020/02/10/multiple-git-identities.html">multiple git identities</a>
+<span>Feb 10</span>
+</li>
+<li>
+<a href="/2020/01/20/the-swiss-cheese-model-and-acceptance-tests.html">The swiss cheese model and acceptance tests</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">OCR Hack - grabbing text from the screen on a Macbook</a>
+<span>Apr  8</span>
+</li>
+<li>
+<a href="/2019/01/20/excel-life.html">Excel life</a>
+<span>Jan 20</span>
+</li>
+<li>
+<a href="/2019/01/19/what-on-earth-happened.html">What on earth happened?</a>
+<span>Jan 19</span>
+</li>
+<li>
+<a href="/2018/11/24/its_alive.html">It's alive!</a>
+<span>Nov 24</span>
+</li>
+<li>
+<a href="/2014/05/11/snippets.html">Clojure snippets</a>
+<span>May 11</span>
+</li>
+<li>
+<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
+<span>Apr 12</span>
+</li>
+<li>
+<a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
+<span>Mar  8</span>
+</li>
+<li>
+<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
+<span>Aug  4</span>
+</li>
+</ol>
+<h2>Tags</h2>
+<ol>
+<li>
+<a href="/tags/tech.html">tech</a>
+(3)
+</li>
+<li>
+<a href="/tags/testing-tech.html">testing tech</a>
+(1)
+</li>
+<li>
+<a href="/tags/life.html">life</a>
+(1)
+</li>
+<li>
+<a href="/tags/meta.html">meta</a>
+(1)
+</li>
+<li>
+<a href="/tags/clojure.html">clojure</a>
+(3)
+</li>
+</ol>
+</aside>
+</section>
+<footer>
+<p>
+Copyright
+<a href='http://korny.info'>Kornelis Sietsma</a>
+2013-2020
+</p>
+</footer>
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.1.min.js"><\/script>')
+</script>
+<script src="/javascripts/site.js"></script>
+</body>
+</html>
