@@ -32,28 +32,36 @@
 </h1>
 </header>
 <section class='blog'>
-<div class='main' role='main'><p>(TL;DR - you can jump ahead to the sample site at https://kornysietsma.github.io/digital-garden-sample/ based on source and content at https://github.com/kornysietsma/digital-garden-sample )</p>
+<div class='main' role='main'><article>
+<header>
+<h1>Building a personal digital garden with Gatsby</h1>
+<time>Mar 19 2020</time>
+</header>
+<p>(TL;DR - you can jump ahead to the sample site at https://kornysietsma.github.io/digital-garden-sample/ based on source and content at https://github.com/kornysietsma/digital-garden-sample )</p>
 
 <p>For a very long time, I've used a wide range of different tools to try to manage my digital information - all sorts of digital information, the boundaries are fuzzy, but samples of the kinds of things I want to keep are:</p>
 
 <ul>
-  <li>That interesting thought that occured to me for a future project</li>
+  <li>That interesting thought that occured to me on the train for something I might do in my vast spare time</li>
   <li>My code snippets from a recent cool problem I solved, in case I want to solve it again</li>
   <li>Personal reflections on things in my life - the classic diary entry</li>
   <li>Daily notes on my current client - stuff that usually goes in physical notebooks that I file and never open again</li>
   <li>Mentoring and leadership notes on people who I'm trying to assist</li>
+  <li>Draft versions of blog posts I'll finish in 6 months time</li>
   <li>That recipe I found in a cookbook that I like</li>
   <li>The link that someone shared on social media that I'd like to read later - or at least, I'd like to be able to <em>find</em> it later on the slim chance I decide to read it</li>
   <li>My bookmarks of useful links for a particular tech stack</li>
 </ul>
 
-<p>and so on, and so on.  A lot of this is fuzzy and unstructured really; the lines are blurry.</p>
+<p>and so on, and so on.  A lot of this is fuzzy and unstructured really; the lines are blurry.  The common thread is, I collect a lot of junk that sometimes I want to find again.</p>
 
 <h2 id="some-history">Some history</h2>
 
-<p>I've used a bunch of things over the years - Evernote at one stage, and similar online tools; browser bookmarks which grow endlessly and often get lost when changing browsers (and often that's good, they date quickly and Google/Ecosia/whatever can find the links faster most of the time), archive folders on disk, and on DropBox, and on Google Drive; Github gists, Trello boards, Pocket and a bunch of other bookmark managers…</p>
+<p>I've used a bunch of things over the years - Evernote and Pocket and similar semi-commercial tools; browser bookmarks which grow endlessly and often get lost when changing browsers (and often that's good, they date quickly and Google/Ecosia/whatever can find the links faster most of the time), archive folders on disk, and on DropBox, and on Google Drive; Github gists, Remember The Milk, Trello boards.  And of course the classic - 80 open browser tabs + a "bookmarks" with folders and sub-folders and a folder "bookmarks from old laptop" and another "bookmarks from the laptop before that"</p>
 
-<p>About 6 years ago when I was doing a lot of clojure, I got into Emacs and did a lot in the wonderful <a href="https://orgmode.org/">org-mode</a> - it kind-of covers most of this, especially when combined with <a href="http://www.orgzly.com">orgzly on my phone</a> - but I found it increasingly hard to use smoothly.  If I'm not using emacs all the time I forget the keystrokes; and (sorry emacs fans) the whole multiple-text-pane-ui thing just doesn't cut it for me any more.</p>
+<p>This has been going on for <em>decades</em> - I remember having a public bookmarks web page about 20 years ago.</p>
+
+<p>About 5 years ago when I was doing a lot of clojure, I got into Emacs and did a lot in the wonderful <a href="https://orgmode.org/">org-mode</a> - it kind-of covers most of this, especially when combined with <a href="http://www.orgzly.com">orgzly on my phone</a> - but I found it increasingly hard to use smoothly.  If I'm not using emacs all the time I forget the keystrokes; and (sorry emacs fans) the whole multiple-text-pane-ui thing just doesn't cut it for me any more.  And integration with anything means tweaking elisp and other arcane things.  If I used emacs 100% of the time this might be OK, but as an occasional user, it isn't cutting it.</p>
 
 <p>About 2 years ago I realised that the blogging tools I've been using actually do a lot of what I want - if I dump <em>everything</em> as Markdown or Asciidoc in a Jekyll site, then host it locally on my laptop, it's not bad - at least for capturing things daily as I go.  It became my digital diary - bookmarks and firehose stuff and long-term notes were still in org-mode, short-term planning was still in Trello, but the Jekyll diary worked quite well.</p>
 
@@ -64,7 +72,7 @@
   <li>It can be bulk-searched easily.  Want to find that rant I wrote about ESBs? Open a text editor or a shell, and search.</li>
   <li>It's easy to script - every scripting language can manipulate structured text files with ease</li>
   <li>It's easy to encrypt and back up - no binary files</li>
-  <li>It doesn't get out of date easily.  If I change tools or platforms, I can write a script to merge the files into whatever the new tool needs.  This is a biggy, and my main problem with things like Evernote - I don't want to get locked in to a platform forever!  And worst case, if I find these files on an old disk in 20 years, I can still read them!  (I have email archives from the '90s somewhere, that I want to read, but I need to reverse engineer the Agent newsreader app's file format first…)</li>
+  <li>It doesn't get out of date easily.  If I change tools or platforms, I can write a script to merge the files into whatever the new tool needs.  This is a biggy, and my main problem with things like Evernote - I don't want to get locked in to a platform forever!  And worst case, if I find these files on an old disk in 20 years, I can still read them.  (I have email archives from the '90s somewhere, that I want to read, but I need to reverse engineer the Agent newsreader app's file format first…)</li>
 </ul>
 
 <h2 id="enter-gatsby">Enter Gatsby</h2>
@@ -141,7 +149,7 @@
     "lines": ["nice diagram summary of DORA Devops stuff"]
   },
 </code></pre></div>
-<p>I don't generally write JSON by hand though - on my phone I run <a href="http://www.orgzly.com/">orgzly</a> and then I have a script to convert that to JSON every now and then; and I have this alias in my <code>.zshrc</code> so I can add entries from a terminal by running the <code>firehose</code> command:</p>
+<p>I don't generally write JSON by hand though - on my phone I run <a href="http://www.orgzly.com/">orgzly</a> and then I have a script to convert that to JSON every now and then; and I have this function in my <code>.zshrc</code> so I can add entries from a terminal by running the <code>firehose</code> command:</p>
 
 <div class="highlight"><pre class="highlight shell"><code>firehose<span class="o">()</span> <span class="o">{</span>
   <span class="nb">pushd</span> ~/path/to/garden
@@ -166,15 +174,15 @@
 </span><span class="se">\"</span><span class="s2">lines</span><span class="se">\"</span><span class="s2">: [</span><span class="se">\"</span><span class="k">${</span><span class="nv">url</span><span class="k">}</span><span class="se">\"</span><span class="s2">]
 }]"</span> <span class="o">&gt;</span> /tmp/fhbit.json
 
-<span class="nv">INBOX</span><span class="o">=</span>content/firehose/laptop/inbox.json
-jq <span class="nt">-s</span> add <span class="nv">$INBOX</span> /tmp/fhbit.json <span class="o">&gt;</span> /tmp/fh.json
-cp /tmp/fh.json <span class="nv">$INBOX</span>
+    <span class="nv">INBOX</span><span class="o">=</span>content/firehose/laptop/inbox.json
+    jq <span class="nt">-s</span> add <span class="nv">$INBOX</span> /tmp/fhbit.json <span class="o">&gt;</span> /tmp/fh.json
+    cp /tmp/fh.json <span class="nv">$INBOX</span>
 
     <span class="nb">echo</span> <span class="s2">"updated </span><span class="nv">$INBOX</span><span class="s2">"</span>
 <span class="o">}</span>
-</code></pre></div><p>Of course it's pretty easy to convert any other stuff to JSON as needed.</p>
+</code></pre></div><p>Of course it's pretty easy to convert any other stuff I might have lying around to JSON or Markdown - both are easy to create.</p>
 
-<p>And that's the thing I'm really enjoying about Gatsby - I have control_ - whatever bits and bobs I might want to add in the future - maybe an image gallery, maybe ebook categorisation - it's very tweakable.</p>
+<p>And that's the thing I'm really enjoying about Gatsby - I have <em>control</em> - whatever bits and bobs I might want to add in the future - maybe an image gallery, maybe ebook categorisation - it's very tweakable.</p>
 
 <h2 id="other-neat-gatsby-things">Other neat Gatsby things</h2>
 <p>There are some very cool plugins available for all sorts of neat things.  I'm generating <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-01-03-diagrams/">graphviz and mermaidjs diagrams</a> embedded in markdown files.  <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-01-02-images/">Images</a> are automatically scaled and made responsive.  And of course <a href="https://kornysietsma.github.io/digital-garden-sample/-/-/diary/2020-03-14-demonstrating-source-code/">source code formatting</a> is straightforward.</p>
@@ -186,6 +194,28 @@ cp /tmp/fh.json <span class="nv">$INBOX</span>
 <p>Also, I found that a lot of the themes and starters are, frankly, more useful as demos than actual fully featured sites.  They tend to have pretty horrible CSS - not just per-component CSS, I've come to terms with that; but inline css in the middle of JSX files, and some obvious "we hacked this together until it looks OK on our machine" stuff.  They also often include all sorts of things that you might not want, or might want differently.  I tried using about 4 different quite popular starters, before I gave up and worked from the default tutorial instead.</p>
 
 <p>Overall, though, it's pretty neat - I'd definitely be interested in using this on a client site, especially hooked up to a nice headless CMS.  And I'm going to keep tweaking my own gatsby digital garden for a while!  (no guaranteeing that I won't be praising some completely different alternative in another 5 years, of course)</p>
+
+<div id='disqus_thread'></div>
+<script>
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'kornyblog';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>
+Please enable JavaScript to view the
+<a href='http://disqus.com/?ref_noscript'>comments powered by Disqus.</a>
+</noscript>
+<a class='dsq-brlink' href='http://disqus.com'>
+comments powered by
+<span class='logo-disqus'>Disqus</span>
+</a>
+</article>
 </div>
 <aside>
 <h2>About Me</h2>
@@ -202,6 +232,10 @@ kornys on twitter
 </p>
 <h2>Recent Articles</h2>
 <ol>
+<li>
+<a href="/2020/03/19/gatsby-digital-garden.html">Building a personal digital garden with Gatsby</a>
+<span>Mar 19</span>
+</li>
 <li>
 <a href="/2020/02/10/multiple-git-identities.html">multiple git identities</a>
 <span>Feb 10</span>
@@ -238,16 +272,12 @@ kornys on twitter
 <a href="/2014/03/08/xml-for-fun-and-profit.html">Xml manipulation in clojure</a>
 <span>Mar  8</span>
 </li>
-<li>
-<a href="/2013/08/04/new_blog.html">A wild blog appears!</a>
-<span>Aug  4</span>
-</li>
 </ol>
 <h2>Tags</h2>
 <ol>
 <li>
 <a href="/tags/tech.html">tech</a>
-(3)
+(4)
 </li>
 <li>
 <a href="/tags/testing-tech.html">testing tech</a>
