@@ -3,7 +3,7 @@ title: Building a personal digital garden with Gatsby
 date: 2020-03-19 19:53 GMT
 tags: tech
 ---
-(TL;DR - you can jump ahead to the sample site at https://kornysietsma.github.io/digital-garden-sample/ based on source and content at https://github.com/kornysietsma/digital-garden-sample )
+(TL;DR - you can jump ahead to the sample site at <https://kornysietsma.github.io/digital-garden-sample/> based on source and content at <https://github.com/kornysietsma/digital-garden-sample> )
 
 For a very long time, I've used a wide range of different tools to try to manage my digital information - all sorts of digital information, the boundaries are fuzzy, but samples of the kinds of things I want to keep are:
 
@@ -65,7 +65,8 @@ The digital garden - and I may be misusing the term, it's all a bit new to me - 
 
 There's a good description at <https://joelhooks.com/digital-garden> - which I found from browsing the gatsby sample at <https://github.com/johno/digital-garden> - both of those link to the earlier articles [Building a digital garden](https://tomcritchlow.com/2019/02/17/building-digital-garden/) and [Of gardens and wikis](https://tomcritchlow.com/2018/10/10/of-gardens-and-wikis/) by Tom Critchlow.  You can keep following links to fascinating articles from here!
 
-I also love [Martin Fowler's bliki](https://www.martinfowler.com/bliki) which is something very similar - a combination blog and wiki.  [Martin writes](https://www.martinfowler.com/bliki/WhatIsaBliki.html) 
+I also love [Martin Fowler's bliki](https://www.martinfowler.com/bliki) which is something very similar - a combination blog and wiki.  [Martin writes](https://www.martinfowler.com/bliki/WhatIsaBliki.html)
+
 >I decided I wanted something that was a cross between a wiki and a blog - which Ward Cunningham immediately dubbed a bliki. Like a blog, it allows me to post short thoughts when I have them. Like a wiki it will build up a body of cross-linked pieces that I hope will still be interesting in a year's time."
 
 My "digital garden" isn't public - there's too much confidential, or just plain half-baked, to make it public.  I might turn my blog into a garden at some stage though.  (I'm a little hesitant, because so far I've follow the mantra "use boring tools" - I want to keep my blog low-maintenance, and Gatsby is still new and rapidly changing)
@@ -97,7 +98,7 @@ The firehose is where I dump the continuous deluge of stuff that I have spent de
 
 Firehose entries are implemented as JSON snippets like this:
 
-~~~JSON
+~~~javascript
   {
     "title": "https://www.devops-research.com/research.html",
     "date": "2020-02-06",
