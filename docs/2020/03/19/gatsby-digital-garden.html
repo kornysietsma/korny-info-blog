@@ -37,7 +37,7 @@
 <h1>Building a personal digital garden with Gatsby</h1>
 <time>Mar 19 2020</time>
 </header>
-<p>(TL;DR - you can jump ahead to the sample site at https://kornysietsma.github.io/digital-garden-sample/ based on source and content at https://github.com/kornysietsma/digital-garden-sample )</p>
+<p>(TL;DR - you can jump ahead to the sample site at <a href="https://kornysietsma.github.io/digital-garden-sample/">https://kornysietsma.github.io/digital-garden-sample/</a> based on source and content at <a href="https://github.com/kornysietsma/digital-garden-sample">https://github.com/kornysietsma/digital-garden-sample</a> )</p>
 
 <p>For a very long time, I've used a wide range of different tools to try to manage my digital information - all sorts of digital information, the boundaries are fuzzy, but samples of the kinds of things I want to keep are:</p>
 
@@ -105,8 +105,11 @@
 
 <p>There's a good description at <a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a> - which I found from browsing the gatsby sample at <a href="https://github.com/johno/digital-garden">https://github.com/johno/digital-garden</a> - both of those link to the earlier articles <a href="https://tomcritchlow.com/2019/02/17/building-digital-garden/">Building a digital garden</a> and <a href="https://tomcritchlow.com/2018/10/10/of-gardens-and-wikis/">Of gardens and wikis</a> by Tom Critchlow.  You can keep following links to fascinating articles from here!</p>
 
-<p>I also love <a href="https://www.martinfowler.com/bliki">Martin Fowler's bliki</a> which is something very similar - a combination blog and wiki.  <a href="https://www.martinfowler.com/bliki/WhatIsaBliki.html">Martin writes</a> 
-&gt;I decided I wanted something that was a cross between a wiki and a blog - which Ward Cunningham immediately dubbed a bliki. Like a blog, it allows me to post short thoughts when I have them. Like a wiki it will build up a body of cross-linked pieces that I hope will still be interesting in a year's time."</p>
+<p>I also love <a href="https://www.martinfowler.com/bliki">Martin Fowler's bliki</a> which is something very similar - a combination blog and wiki.  <a href="https://www.martinfowler.com/bliki/WhatIsaBliki.html">Martin writes</a></p>
+
+<blockquote>
+  <p>I decided I wanted something that was a cross between a wiki and a blog - which Ward Cunningham immediately dubbed a bliki. Like a blog, it allows me to post short thoughts when I have them. Like a wiki it will build up a body of cross-linked pieces that I hope will still be interesting in a year's time."</p>
+</blockquote>
 
 <p>My "digital garden" isn't public - there's too much confidential, or just plain half-baked, to make it public.  I might turn my blog into a garden at some stage though.  (I'm a little hesitant, because so far I've follow the mantra "use boring tools" - I want to keep my blog low-maintenance, and Gatsby is still new and rapidly changing)</p>
 
@@ -141,13 +144,13 @@
 
 <p>Firehose entries are implemented as JSON snippets like this:</p>
 
-<div class="highlight"><pre class="highlight plaintext"><code>  {
-    "title": "https://www.devops-research.com/research.html",
-    "date": "2020-02-06",
-    "category": "tech",
-    "tags": ["dora", "devops", "cd"],
-    "lines": ["nice diagram summary of DORA Devops stuff"]
-  },
+<div class="highlight"><pre class="highlight javascript"><code>  <span class="p">{</span>
+    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"https://www.devops-research.com/research.html"</span><span class="p">,</span>
+    <span class="s2">"date"</span><span class="p">:</span> <span class="s2">"2020-02-06"</span><span class="p">,</span>
+    <span class="s2">"category"</span><span class="p">:</span> <span class="s2">"tech"</span><span class="p">,</span>
+    <span class="s2">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"dora"</span><span class="p">,</span> <span class="s2">"devops"</span><span class="p">,</span> <span class="s2">"cd"</span><span class="p">],</span>
+    <span class="s2">"lines"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"nice diagram summary of DORA Devops stuff"</span><span class="p">]</span>
+  <span class="p">},</span>
 </code></pre></div>
 <p>I don't generally write JSON by hand though - on my phone I run <a href="http://www.orgzly.com/">orgzly</a> and then I have a script to convert that to JSON every now and then; and I have this function in my <code>.zshrc</code> so I can add entries from a terminal by running the <code>firehose</code> command:</p>
 
