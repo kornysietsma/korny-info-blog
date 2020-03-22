@@ -5,6 +5,10 @@ tags: tech
 ---
 (TL;DR - you can jump ahead to the sample site at <https://kornysietsma.github.io/digital-garden-sample/> based on source and content at <https://github.com/kornysietsma/digital-garden-sample> )
 
+**Update:** I've also used these techniques to build a covid19 info dump site: <https://covid19.korny.info>
+
+---
+
 For a very long time, I've used a wide range of different tools to try to manage my digital information - all sorts of digital information, the boundaries are fuzzy, but samples of the kinds of things I want to keep are:
 
 * That interesting thought that occured to me on the train for something I might do in my vast spare time
