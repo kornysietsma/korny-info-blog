@@ -5,10 +5,278 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2020-03-19T19:53:00+00:00</updated>
+  <updated>2020-07-19T19:41:00+01:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>Better D3 sites with react</title>
+    <link rel="alternate" href="/2020/07/19/better-d3-with-react.html"/>
+    <id>/2020/07/19/better-d3-with-react.html</id>
+    <published>2020-07-19T19:41:00+01:00</published>
+    <updated>2020-07-19T19:41:00+01:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;h2 id="disclaimers"&gt;Disclaimers&lt;/h2&gt;
+
+&lt;p&gt;I'm not a React nor a D3 expert.  I'm too much of a generalist these days to consider myself an expert in anything really!  I am happy to be told how to correct or improve any of these examples, and of course don't just copy me - take...&lt;/p&gt;</summary>
+    <content type="html">&lt;h2 id="disclaimers"&gt;Disclaimers&lt;/h2&gt;
+
+&lt;p&gt;I'm not a React nor a D3 expert.  I'm too much of a generalist these days to consider myself an expert in anything really!  I am happy to be told how to correct or improve any of these examples, and of course don't just copy me - take what is useful from my stuff, and build your own, better things!&lt;/p&gt;
+
+&lt;p&gt;Also note I built my sample code using &lt;code&gt;create-react-app&lt;/code&gt; - and I haven't cleaned out all the files that creates, so there might be some junk hanging around.&lt;/p&gt;
+
+&lt;p&gt;TL;DR: my sample code is at &lt;a href="https://github.com/kornysietsma/d3-react-demo"&gt;https://github.com/kornysietsma/d3-react-demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id="the-ancient-past---tinkering"&gt;The ancient past - tinkering&lt;/h2&gt;
+
+&lt;p&gt;I've been playing with D3 for quite a while now - I tinkered with D3 on a clojure server &lt;a href="https://github.com/kornysietsma/d3spike"&gt;in 2013&lt;/a&gt; and &lt;a href="https://github.com/kornysietsma/d3-modern-demo"&gt;in 2018&lt;/a&gt; I shared an approach that mostly worked for me - using modern JavaScript and CSS, ditching JQuery or other frameworks, and going serverless, because in most cases having a purely static site worked for me, and made it much easier to host and share visualisations.&lt;/p&gt;
+
+&lt;p&gt;However it was always painful to build the non-SVG parts of my visualisations.  Forms, inputs, sliders, and the like, are a hassle to build yourself once you get any complexity at all.&lt;/p&gt;
+
+&lt;p&gt;What I needed was to integrate with a more modern JavaScript framework - in 2019 I finally found time to learn some React, and I decided it'd be good to combine the two.&lt;/p&gt;
+
+&lt;h2 id="the-recent-past---adding-react"&gt;The recent past - adding React&lt;/h2&gt;
+
+&lt;p&gt;Unfortunately, it's not that straightforward to do so.  Basically React likes to control the DOM - tracking state changes, diffing a virtual DOM with the real DOM, and the like.  D3 also likes to control the DOM - and you need to work out how to stop them fighting.&lt;/p&gt;
+
+&lt;p&gt;There are several approaches that can be used here - there's a nice overview in &lt;a href="https://www.smashingmagazine.com/2018/02/react-d3-ecosystem/"&gt;"Bringing Together React, D3, And Their Ecosystem" by Marcos Iglesias&lt;/a&gt; - basically there's a spectrum from letting React and D3 largely own their own parts of the DOM, through to letting React look after all the DOM and just using D3 to do D3 special bits.  I was more keen on letting them be largely isolated - D3 is very good at what it does, and the less react-y it is, the more you can reuse some of the millions of great D3 examples that are out there.&lt;/p&gt;
+
+&lt;p&gt;I also found this great article: &lt;a href="https://towardsdatascience.com/react-d3-the-macaroni-and-cheese-of-the-data-visualization-world-12bafde1f922"&gt;"React + D3 - the Macaroni and Cheese of the Data Visualization World" by Leigh Steiner&lt;/a&gt; which was extremely helpful, and the basis of most of my approach.&lt;/p&gt;
+
+&lt;p&gt;However, it didn't go into all that much detail - and also, despite mentioning the newer React functional style and hooks, most of it was based on old &lt;code&gt;componentDidUpdate&lt;/code&gt; logic.  And state handling seemed tricky.&lt;/p&gt;
+
+&lt;p&gt;Also, another big thing for me, is it didn't explain how to work with &lt;a href="https://bost.ocks.org/mike/join/"&gt;the D3 join model&lt;/a&gt; (D3 examples often don't, sadly).  The idea is, done properly, D3 rendering can detect changed in a diagram's underlying data, and cleanly handle adding new elements, updating changed elements, and deleting removed elements - with transitions if you want.  &lt;a href="https://github.com/d3/d3-selection#joining-data"&gt;D3 recently added a cool &lt;code&gt;join&lt;/code&gt; function&lt;/a&gt; which makes this even easier.&lt;/p&gt;
+
+&lt;p&gt;So I started tinkering with making this work my way…&lt;/p&gt;
+
+&lt;h2 id="the-present---react--d3-with-hooks"&gt;The present - React + D3 with hooks&lt;/h2&gt;
+
+&lt;p&gt;My current approach is at &lt;a href="https://github.com/kornysietsma/d3-react-demo"&gt;https://github.com/kornysietsma/d3-react-demo&lt;/a&gt; - to be precise, this article is based on code &lt;a href="https://github.com/kornysietsma/d3-react-demo/tree/d0c64f59351f8d1e73053ae57cc1c2e8569dc7af"&gt;at this commit&lt;/a&gt; in case the repo has moved on by the time you read this.&lt;/p&gt;
+
+&lt;h3 id="the-d3-parts"&gt;The D3 parts&lt;/h3&gt;
+
+&lt;p&gt;D3 only exists in the &lt;a href="https://github.com/kornysietsma/d3-react-demo/blob/bdeb31c93a27a958bf4864b6ffedc9ef6157f10f/src/Viz.js"&gt;Viz.js&lt;/a&gt; file - everything else is React.  The &lt;code&gt;Viz&lt;/code&gt; component creates a single &lt;code&gt;svg&lt;/code&gt; element:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight html"&gt;&lt;code&gt;    &lt;span class="nt"&gt;&amp;lt;aside&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s"&gt;"Viz"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;svg&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s"&gt;"chart"&lt;/span&gt; &lt;span class="na"&gt;ref=&lt;/span&gt;&lt;span class="s"&gt;{d3Container}&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/aside&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;That &lt;code&gt;ref={d3Container}&lt;/code&gt; means React creates a reference to this DOM element for manipulation by the &lt;code&gt;Viz&lt;/code&gt; component - see &lt;a href="https://reactjs.org/docs/refs-and-the-dom.html"&gt;Refs and the DOM&lt;/a&gt; in the react docs for more.&lt;/p&gt;
+
+&lt;p&gt;The heart of the &lt;code&gt;Viz&lt;/code&gt; component uses &lt;code&gt;useEffect()&lt;/code&gt; as mentioned in the Macaroni and Cheese article, to trigger changes to the D3 component as a side-effect - if and only if the data being referenced has changed.  The core of the &lt;code&gt;Viz&lt;/code&gt; update logic is this code:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight jsx"&gt;&lt;code&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;Viz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;props&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;d3Container&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;useRef&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;dispatch&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;props&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;prevState&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;usePrevious&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="nx"&gt;useEffect&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="c1"&gt;// d3 update logic hidden&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;prevState&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;aside&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s2"&gt;"Viz"&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;svg&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s2"&gt;"chart"&lt;/span&gt; &lt;span class="na"&gt;ref=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;d3Container&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;aside&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;UseEffect takes four properties - and will only be called if any of these has changed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;dataRef&lt;/code&gt; is another ref - in this case to the raw data to be visualised.  More on that later.  As it's a reference (think pointer) it doesn't actually change, it's included here to avoid React complaining&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;state&lt;/code&gt; is where I put &lt;em&gt;all&lt;/em&gt; the visualisation state - what to show, what colours to use, interactions etc.  Generally it's the only thing that might change&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;dispatch&lt;/code&gt; is a global dispatch function that D3 can use to make changes to the state - more on that later.  Again, it shouldn't change, so it's just here to keep d3 happy.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;prevState&lt;/code&gt; is the &lt;em&gt;previous state&lt;/em&gt; - this is a trick I got from &lt;a href="https://stackoverflow.com/questions/53446020/how-to-compare-oldvalues-and-newvalues-on-react-hooks-useeffect"&gt;this Stack Overflow question&lt;/a&gt; - it stores the value of &lt;code&gt;state&lt;/code&gt; from last time &lt;code&gt;Viz&lt;/code&gt; was shown, allowing me to detect what has really changed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="initial-setup-cheap-changes-and-expensive-changes"&gt;Initial setup, cheap changes, and expensive changes&lt;/h3&gt;
+
+&lt;p&gt;One thing I wanted to handle was to separate out different kinds of visualisation updates.  For simple things this is complete overkill - but I often find that my UI changes fall into two categories:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Cheap changes that really just need to update some colours or highlights, really quickly&lt;/li&gt;
+  &lt;li&gt;Expensive changes that need more serious processing, possibly with some delay&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For example, dragging a colour slider to change colours might be so cheap you want it to happen on every mouse drag.  But changing a date selector might mean re-processing the underlying data for some reason, and that might be slow.&lt;/p&gt;
+
+&lt;p&gt;There are also the things you do once and only once - adding &lt;code&gt;svg&lt;/code&gt; groups, for example.&lt;/p&gt;
+
+&lt;p&gt;So the code looks at the &lt;code&gt;state&lt;/code&gt;, and the &lt;code&gt;previousState&lt;/code&gt;, and works out what has changed:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;prevState&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="kc"&gt;undefined&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;isEqual&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;prevState&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;expensiveConfig&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                          &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;expensiveConfig&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;draw&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;isEqual&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;prevState&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                          &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;redraw&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// nothing to do&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I'm using &lt;a href="https://lodash.com/"&gt;lodash&lt;/a&gt; to do object comparison - &lt;code&gt;state&lt;/code&gt; can be deeply nested, and JavaScript doesn't have a reliable way to do deep object comparison.&lt;/p&gt;
+
+&lt;p&gt;I won't go much into the &lt;code&gt;initialize&lt;/code&gt;, &lt;code&gt;draw&lt;/code&gt; and &lt;code&gt;redraw&lt;/code&gt; functions at this stage - they are relatively straightforward.  I don't even actually use the cheap/expensive code in the demo - &lt;code&gt;draw&lt;/code&gt; just calls &lt;code&gt;redraw&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The only interesting thing to note is how to interact with the world outside D3 - using the &lt;code&gt;dispatch&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"click"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;nodeList&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"selectData"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;How this works will be covered later.&lt;/p&gt;
+
+&lt;h3 id="loading-the-data"&gt;Loading the data&lt;/h3&gt;
+
+&lt;p&gt;The data for my demo is in a JSON file - you could just &lt;code&gt;import&lt;/code&gt; it, but that'd load it synchronously - fine for small amounts of data, but for larger datasets I want to be able to warn the user that data is loading.&lt;/p&gt;
+
+&lt;p&gt;So instead of the default &lt;code&gt;App&lt;/code&gt; component, I have a &lt;code&gt;Loader&lt;/code&gt;, which again uses &lt;code&gt;useEffect&lt;/code&gt; to load the initial data as a side-effect of rendering:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight jsx"&gt;&lt;code&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;Loader&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;`&lt;/span&gt;&lt;span class="p"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;process&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;PUBLIC_URL&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;/data.json`&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;dataRef&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;useRef&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;useFetch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;current&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Loading...&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nc"&gt;App&lt;/span&gt; &lt;span class="na"&gt;dataRef=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;useFetch&lt;/code&gt; is a function that makes a &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"&gt;fetch&lt;/a&gt; call (the modern alternative to &lt;code&gt;XMLHttpRequest&lt;/code&gt;) to get the raw JSON data, and apply any needed postprocessing.&lt;/p&gt;
+
+&lt;p&gt;This again uses &lt;code&gt;useEffect&lt;/code&gt; - see &lt;a href="https://reactjs.org/docs/hooks-effect.html"&gt;the react docs on this&lt;/a&gt; for more background.  Effectively, the first time the &lt;code&gt;Loader&lt;/code&gt; component is rendered, it will call &lt;code&gt;useFetch&lt;/code&gt; which actually returns have no &lt;code&gt;data&lt;/code&gt; so will show &lt;code&gt;&amp;lt;div&amp;gt;Loading...&amp;lt;/div&amp;gt;&lt;/code&gt; - and kick off &lt;code&gt;useFetch&lt;/code&gt; which returns a &lt;code&gt;null&lt;/code&gt; response.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;useFetch&lt;/code&gt; looks like this:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;useFetch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;setData&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;useState&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="nx"&gt;useEffect&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;fetchData&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kr"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;fetch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;json&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kr"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;json&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+      &lt;span class="c1"&gt;// postprocessing removed for clarity&lt;/span&gt;
+      &lt;span class="nx"&gt;setData&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="cm"&gt;/* stuff */&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="nx"&gt;fetchData&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In this code, &lt;code&gt;useEffect&lt;/code&gt; takes a parameter &lt;code&gt;[url]&lt;/code&gt; - this means it will only be run if the URL has changed (which should never happen in this example) so it runs once.  When it has fetched the data, it calls &lt;code&gt;setData&lt;/code&gt; which sets the &lt;code&gt;data&lt;/code&gt; state - which triggers a re-render of the &lt;code&gt;Loader&lt;/code&gt; (see &lt;a href="https://reactjs.org/docs/hooks-reference.html#usestate"&gt;the react docs for useState&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;The second time &lt;code&gt;Loader&lt;/code&gt; is rendered, the call to &lt;code&gt;useFetch&lt;/code&gt; effectively does nothing, as the value of &lt;code&gt;[url]&lt;/code&gt; has not changed. (If it changed it could get into a loop, which would be bad).  But it will return the updated &lt;code&gt;data&lt;/code&gt; value, which I put into yet another &lt;code&gt;ref&lt;/code&gt;: &lt;code&gt;dataRef&lt;/code&gt; and pass to the &lt;code&gt;App&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;App&lt;/span&gt; &lt;span class="na"&gt;dataRef=&lt;/span&gt;&lt;span class="s"&gt;{dataRef}&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I'm using a ref here so the &lt;code&gt;App&lt;/code&gt; doesn't need to check the whole &lt;code&gt;data&lt;/code&gt; object to see if it should be re-rendered.  (This may be unnecessary - I'm not clear enough about react internals to be sure what would happen if I just passed &lt;code&gt;data&lt;/code&gt; around - it may have no real overhead?)&lt;/p&gt;
+
+&lt;h3 id="showing-the-app"&gt;Showing the App&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;App&lt;/code&gt; is fairly straightforward, with a bit of magic to set up the state and dispatch mechanisms:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight jsx"&gt;&lt;code&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;App&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;props&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;dataRef&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;props&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;vizState&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;useReducer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="nx"&gt;globalDispatchReducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;initialiseGlobalState&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s2"&gt;"App"&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;header&lt;/span&gt; &lt;span class="na"&gt;className=&lt;/span&gt;&lt;span class="s2"&gt;"App-header"&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;h1&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Korny&lt;span class="ni"&gt;&amp;amp;apos;&lt;/span&gt;s D3 React Demo&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;h1&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;header&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nc"&gt;Viz&lt;/span&gt; &lt;span class="na"&gt;dataRef=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;state=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;vizState&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;dispatch=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nc"&gt;Controller&lt;/span&gt; &lt;span class="na"&gt;dataRef=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;state=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;vizState&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;dispatch=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nc"&gt;Inspector&lt;/span&gt; &lt;span class="na"&gt;dataRef=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dataRef&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;state=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;vizState&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="na"&gt;dispatch=&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The UI is basically three components, &lt;code&gt;Viz&lt;/code&gt; which is the D3 visualisation, &lt;code&gt;Controller&lt;/code&gt; for the user controls on the left panel, &lt;code&gt;Inspector&lt;/code&gt; to inspect a particular data point.  They all take the same parameters - &lt;code&gt;dataRef&lt;/code&gt; for the raw data, &lt;code&gt;state&lt;/code&gt; for the current state, and &lt;code&gt;dispatch&lt;/code&gt; for updating the state.&lt;/p&gt;
+
+&lt;h3 id="state-and-dispatching"&gt;State and Dispatching&lt;/h3&gt;
+
+&lt;p&gt;State management is done through &lt;code&gt;useReducer&lt;/code&gt; - see &lt;a href="https://reactjs.org/docs/hooks-reference.html#usereducer"&gt;the react docs&lt;/a&gt; for more.  Basically it takes three parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the reducer function, &lt;code&gt;globalDispatchReducer&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;the initial data, &lt;code&gt;dataRef&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;an initialising function &lt;code&gt;initialiseGlobalState&lt;/code&gt; - this allows for lazy calculation of the initial state.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The initialise function creates the initial state object - it has a shape roughly like this:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;  &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nl"&gt;config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// cheap state&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="nx"&gt;expensiveConfig&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// expensive state&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="nx"&gt;constants&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// state that never changes&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;As discussed earlier, I split the state into cheap and expensive, and rendering is different depending on what changes.  There is also a &lt;code&gt;constants&lt;/code&gt; section - this doesn't really need to be in the state, but it's useful, especially as sometimes something starts off as constant (like margins, in this example) but later might become modifiable, at which time you can move it somewhere else in the state.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;globalDispatchReducer&lt;/code&gt; is what gets called whenever anything calls &lt;code&gt;dispatch()&lt;/code&gt; - earlier there was an example of an &lt;code&gt;onClick&lt;/code&gt; handler which called &lt;code&gt;dispatch({ type: "selectData", payload: node.id })&lt;/code&gt; - the &lt;code&gt;Controller&lt;/code&gt; also calls &lt;code&gt;dispatch&lt;/code&gt; whenever a user clicks a control.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;globalDispatchReducer&lt;/code&gt; is basically a large &lt;code&gt;switch&lt;/code&gt; statement:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;globalDispatchReducer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="s2"&gt;"selectData"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;cloneDeep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;selected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="c1"&gt;// rest removed for clarity&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It takes the current &lt;code&gt;state&lt;/code&gt; and an &lt;code&gt;action&lt;/code&gt; - which is &lt;code&gt;{ type: "selectData", payload: node.id }&lt;/code&gt; in the example above.  Whatever it returns is set as the new state, which will trigger re-rendering of any affected react components.&lt;/p&gt;
+
+&lt;p&gt;I'm using &lt;a href="https://lodash.com/"&gt;lodash&lt;/a&gt; to clone the state here - alternatively you can just use es6 destructuring assignment, such as:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;selected&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;payload&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;However this gets hairy for deeply nested structures, as the returned object is &lt;em&gt;not&lt;/em&gt; a deep clone of the original object - in the above example, &lt;code&gt;state.expensiveConfig.dateRange&lt;/code&gt; would be a shared reference between the original state and the new state, rather than an actual new object.  That might be OK, but it can be quite counterintuitive - it's caught me out before, so I like to use &lt;code&gt;cloneDeep&lt;/code&gt; and be explicit.  (It'd be nice to rework this with &lt;code&gt;immutable.js&lt;/code&gt; but that's a rabbit hole I don't have time for now)&lt;/p&gt;
+
+&lt;h3 id="the-overall-event-flow"&gt;The overall event flow&lt;/h3&gt;
+
+&lt;p&gt;The above might be a bit confusing - in a nutshell, I pass a &lt;code&gt;dispatch&lt;/code&gt; function to every component, including d3 renderers.&lt;/p&gt;
+
+&lt;p&gt;When something calls &lt;code&gt;dispatch&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code&gt;globalDispatchReducer&lt;/code&gt; is called, returning a new state&lt;/li&gt;
+  &lt;li&gt;React updates the &lt;code&gt;vizState&lt;/code&gt; state owned by the &lt;code&gt;App&lt;/code&gt; component, so re-renders &lt;code&gt;App&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;App&lt;/code&gt; in turn re-renders everything else.&lt;/li&gt;
+  &lt;li&gt;Normal components are updated in standard React fashion, using virtual DOM magic so not too much gets re-rendered&lt;/li&gt;
+  &lt;li&gt;the &lt;code&gt;Viz&lt;/code&gt; component looks at the updated &lt;code&gt;state&lt;/code&gt; and redraws whichever bits of the D3 visualisation need to be redrawn.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All of this is surprisingly smooth - I've had pages with thousands of &lt;code&gt;svg&lt;/code&gt; nodes which updated nicely as I drag a control slider.  I initially thought I'd need to find ways to bypass react for some UI updates, but so far I haven't.&lt;/p&gt;
+
+&lt;h2 id="the-future"&gt;The future&lt;/h2&gt;
+
+&lt;p&gt;I'm using this for my polyglot code tools - I intend to write more about those when I have the time.&lt;/p&gt;
+
+&lt;p&gt;I'd really value feedback on this post - especially as I'm not a react expert, and there are probably major things I've missed!  Feedback via Disqus below, or via &lt;code&gt;@kornys&lt;/code&gt; on Twitter.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Building a personal digital garden with Gatsby</title>
     <link rel="alternate" href="/2020/03/19/gatsby-digital-garden.html"/>
@@ -1633,29 +1901,6 @@ Message: Stream closed  com.sun.org.apache.xerces.internal.impl.XMLStreamReaderI
 &lt;p&gt;This is still a pretty simple data structure.  In many environments you will probably find some much worse examples - my most recent project involved parsing &lt;a href="http://www.xbrl.org/specification/gnl/rec-2009-06-22/gnl-rec-2009-06-22.html"&gt;xbrl&lt;/a&gt; which was a lot of fun.  If you meed this sort of xml, you'll really appreciate having a language like clojure on hand.&lt;/p&gt;
 
 &lt;p&gt;I also haven't touched on modifying xml - the zipper frameworks have a lot of tools for on-the-fly modification of xml documents, but that's something for another article.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>A wild blog appears!</title>
-    <link rel="alternate" href="/2013/08/04/new_blog.html"/>
-    <id>/2013/08/04/new_blog.html</id>
-    <published>2013-08-04T04:04:00+01:00</published>
-    <updated>2013-08-04T04:04:00+01:00</updated>
-    <author>
-      <name>Kornelis Sietsma</name>
-    </author>
-    <summary type="html">&lt;p&gt;My old blog at trouble.net.au seems to have died - and it hadn't been updated for ages.&lt;/p&gt;
-
-&lt;p&gt;So I'm starting a new one here, at http://blog.korny.info - there isn't much here right now, but I will work on that soon.&lt;/p&gt;
-
-&lt;p&gt;The blog is being built with &lt;a href="http://middlemanapp.com/"&gt;middleman&lt;/a&gt;&lt;/p&gt;</summary>
-    <content type="html">&lt;p&gt;My old blog at trouble.net.au seems to have died - and it hadn't been updated for ages.&lt;/p&gt;
-
-&lt;p&gt;So I'm starting a new one here, at http://blog.korny.info - there isn't much here right now, but I will work on that soon.&lt;/p&gt;
-
-&lt;p&gt;The blog is being built with &lt;a href="http://middlemanapp.com/"&gt;middleman&lt;/a&gt; for it's nifty static templating magic, &lt;a href="http://neat.bourbon.io/"&gt;neat bourbon&lt;/a&gt; for Bourbon's nice scss addons, and the Neat grid system.  And some starting structure from the &lt;a href="https://github.com/kuldarkalvik/Middleman-Bourbon"&gt;Middleman Bourbon&lt;/a&gt; template by &lt;a href="https://github.com/kuldarkalvik"&gt;Kuldar&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Update: I ended up switching to &lt;a href="http://cferdinandi.github.io/kraken/index.html"&gt;kraken&lt;/a&gt; rather than neat bourbon - I wanted something very simple, because really I just wanted to get text out there rather than fiddle with things.&lt;/p&gt;
 </content>
   </entry>
 </feed>
