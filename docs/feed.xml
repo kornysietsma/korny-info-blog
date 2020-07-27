@@ -464,10 +464,12 @@
     <author>
       <name>Kornelis Sietsma</name>
     </author>
-    <summary type="html">&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.&lt;/p&gt;
+    <summary type="html">&lt;p&gt;&lt;em&gt;UPDATE 27 July 2020 - I've added some bits below for ssh-agent problems&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Note&lt;/em&gt; this post assumes recent versions...&lt;/p&gt;</summary>
-    <content type="html">&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.&lt;/p&gt;
+&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm...&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;&lt;em&gt;UPDATE 27 July 2020 - I've added some bits below for ssh-agent problems&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Note&lt;/em&gt; this post assumes recent versions of &lt;code&gt;git&lt;/code&gt; and &lt;code&gt;openssh&lt;/code&gt; - and the approaches don't always work with tools that do their own git or ssh manipulation, such as IDEs; if they don't read system git/ssh configs, you might be out of luck.  (also this assumes a un*x/Mac operating system, not sure if any of this works on Windows though the same principles probably apply)&lt;/p&gt;
 
@@ -490,16 +492,43 @@
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
 
 Host github.com_foobar
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa_foobar
+  IdentitiesOnly yes
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then ssh recognises &lt;code&gt;github.com_foobar&lt;/code&gt; as an alias for &lt;code&gt;github.com&lt;/code&gt; but with a different identity.  So &lt;code&gt;git clone git@github.com_foobar:foo/bar&lt;/code&gt; will use the &lt;code&gt;id_rsa_foobar&lt;/code&gt; identity file!&lt;/p&gt;
 
 &lt;h4 id="problems"&gt;problems&lt;/h4&gt;
 &lt;p&gt;The main problem here is that &lt;code&gt;github.com_foobar&lt;/code&gt; doesn't exist - it's not a real host that exists in DNS.  Git understands this, but there's a chance that other tools won't look in git config, or will do a host lookup or something, and fail.  (This is happening less as more people start using ssh aliases, but it definitely still happens)&lt;/p&gt;
+
+&lt;h4 id="ssh-agent-headaches"&gt;ssh-agent headaches&lt;/h4&gt;
+&lt;p&gt;(Update in July 2020 as this just bit me)&lt;/p&gt;
+
+&lt;p&gt;There is a problem when you use ssh-agent - in that ssh-agent will try any keys it knows about, and if you have two github.com keys, sometimes it tries them in arbitrary order.&lt;/p&gt;
+
+&lt;p&gt;You can diagnose what is going on with:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh &lt;span class="nt"&gt;-v&lt;/span&gt; git@github.com_foobar
+... much noise later
+debug1: Will attempt key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Will attempt key: /Users/me/.ssh/id_rsa_foobar RSA SHA256:blah explicit
+...
+debug1: Offering public key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Server accepts key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Authentication succeeded &lt;span class="o"&gt;(&lt;/span&gt;publickey&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="nb"&gt;.&lt;/span&gt;
+Authenticated to github.com &lt;span class="o"&gt;([&lt;/span&gt;140.82.118.4]:22&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="nb"&gt;.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Sadly, the ssh-agent has won over the default key!&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href="https://superuser.com/questions/272465/using-multiple-ssh-public-keys/272613#272613"&gt;solution&lt;/a&gt; is to add the following to the &lt;code&gt;~/.ssh/config&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;   IdentitiesOnly yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I've added this to the examples above.&lt;/p&gt;
 
 &lt;h3 id="approach-two-overriding-the-ssh-command"&gt;Approach two: Overriding the ssh command&lt;/h3&gt;
 &lt;p&gt;You can also tell &lt;code&gt;git&lt;/code&gt; to use a different &lt;code&gt;ssh&lt;/code&gt; command:&lt;/p&gt;
