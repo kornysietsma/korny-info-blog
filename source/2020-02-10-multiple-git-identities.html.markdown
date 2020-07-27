@@ -3,6 +3,7 @@ title: multiple git identities
 date: 2020-02-10 08:18 GMT
 tags: tech
 ---
+*UPDATE 27 July 2020 - I've added some bits below for ssh-agent problems*
 
 This is another "I do this a lot so am blogging about it for future me" article.  There is a lot of info about this out there, but doesn't tend to be in a single place, so I'm summarizing the wisdom of others.
 
@@ -28,17 +29,48 @@ Host github.com
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
 
 Host github.com_foobar
   HostName github.com
   User git
   IdentityFile ~/.ssh/id_rsa_foobar
+  IdentitiesOnly yes
 ~~~
 
 Then ssh recognises `github.com_foobar` as an alias for `github.com` but with a different identity.  So `git clone git@github.com_foobar:foo/bar` will use the `id_rsa_foobar` identity file!
 
 #### problems
 The main problem here is that `github.com_foobar` doesn't exist - it's not a real host that exists in DNS.  Git understands this, but there's a chance that other tools won't look in git config, or will do a host lookup or something, and fail.  (This is happening less as more people start using ssh aliases, but it definitely still happens)
+
+#### ssh-agent headaches
+(Update in July 2020 as this just bit me)
+
+There is a problem when you use ssh-agent - in that ssh-agent will try any keys it knows about, and if you have two github.com keys, sometimes it tries them in arbitrary order.
+
+You can diagnose what is going on with:
+
+~~~sh
+$ ssh -v git@github.com_foobar
+... much noise later
+debug1: Will attempt key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Will attempt key: /Users/me/.ssh/id_rsa_foobar RSA SHA256:blah explicit
+...
+debug1: Offering public key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Server accepts key: /Users/me/.ssh/id_rsa RSA SHA256:KESC4GN/blah agent
+debug1: Authentication succeeded (publickey).
+Authenticated to github.com ([140.82.118.4]:22).
+~~~
+
+Sadly, the ssh-agent has won over the default key!
+
+The [solution](https://superuser.com/questions/272465/using-multiple-ssh-public-keys/272613#272613) is to add the following to the `~/.ssh/config` file:
+
+~~~
+   IdentitiesOnly yes
+~~~
+
+I've added this to the examples above.
 
 ### Approach two: Overriding the ssh command
 You can also tell `git` to use a different `ssh` command:
