@@ -16,7 +16,7 @@ The Polyglot Code Explorer lets you visualise large codebases written in multipl
 
 In this article I am going to explain it's purpose, how you can run it yourself, and what it does.
 
-## What is it for
+## What is it for?
 
 Fundamentally, I wanted to answer the question:
 
@@ -28,7 +28,7 @@ But also, I just wanted to be able to explore the code quickly.  I'm a visual th
 
 It is far quicker for me to look at a diagram and see some unusual colouring in one area, than to see the same information in a table of numbers.
 
-### Why polyglot
+### Why polyglot?
 
 Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, on any text-based programming language.
 
