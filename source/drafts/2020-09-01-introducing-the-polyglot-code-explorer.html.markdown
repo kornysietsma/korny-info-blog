@@ -6,31 +6,17 @@ tags: tech
 
 ---
 
-For several years I have been building code visualisation tools, in bits and pieces of my spare time. It started in 2016 with some hacky code I built in clojure and JavaScript/D3 based on [code-maat](https://github.com/adamtornhill/code-maat) - and it's grown in bits and pieces since then - including a complete rewrite using rust for the scanning logic, and React + D3 for the UI. (There's a more detailed history at <https://polyglot.korny.info/history/> but it got a bit long for this blog)
+![Main UI](/2020-09-01-polyglot-explorer/main_ui_sample.png)
 
-The latest iteration is quite different, and mature enough that I thought I should share it more widely, and see if it is useful for other people.
+If you want a quick look at the explorer, you can see [a simple demo here](http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/) or [a more complex one here](http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/).  There is also a documentation site at  <https://polyglot.korny.info> (currently a work-in-progress).
 
-Note I'm going to focus here on _what_ these tools do - if you want to know more about _how?_ and _why?_ I'm going to cover those in more detail on the docs website - though currently it's a bit of a work in progress: <https://polyglot.korny.info>
+## Welcome to the Polyglot Code Explorer
 
-_Note:_ I also talked about this recently on [the ThoughtWorks Technology podcast](https://www.thoughtworks.com/podcasts/code-visualization)
+The Polyglot Code Explorer lets you visualise large codebases written in multiple programming languages.
 
-## What is the Polyglot Code Explorer?
+In this article I am going to explain it's purpose, how you can run it yourself, and what it does.
 
-The explorer is the front end component<> of three tightly coupled applications:
-
-![Tools flowchart](/2020-09-01-polyglot-explorer/flowchart.png)
-
-The Polyglot Code Scanner scans your source code and produces a JSON data file, then the Polyglot Code Offline Layout tool adds layout information to the data file, and finally the Polyglot Code Explorer is the UI that lets you explore the code.
-
-If you want a quick look at the explorer, I have a [simple demo using qgis](http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/) or [a more complex one based on OpenMRS](http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/) hosed on AWS S3.
-
-The source code is on GitHub:
-
-* <https://github.com/kornysietsma/polyglot-code-scanner>
-* <https://github.com/kornysietsma/polyglot-code-offline-layout>
-* <https://github.com/kornysietsma/polyglot-code-explorer>
-
-## What is it for?
+## What is it for
 
 Fundamentally, I wanted to answer the question:
 
@@ -42,15 +28,85 @@ But also, I just wanted to be able to explore the code quickly.  I'm a visual th
 
 It is far quicker for me to look at a diagram and see some unusual colouring in one area, than to see the same information in a table of numbers.
 
-## Why polyglot?
+### Why polyglot
 
 Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, on any text-based programming language.
 
 I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a real hassle.
 
-Also many systems don't use a single language - we have a number of great programming languages with special "sweet spots" and it's quite common to have UIs built in a quite different language to the services or the systems tools.  Comparing them with language-specific tools is almost impossible - and there's a big risk of comparing apples with oranges and getting data that isn't very helpful.
+Also many real world systems don't use a single language - there are a number of great programming languages which are good at particular tasks rather than being general purpose - for example you might have a UIs built in JavaScript, a service built in Kotlin and a system tool build in rust.  Exploring polyglot codebases using language-specific tools is difficult - each will have different features and different ways to calculate metrics.
 
-Also I was inspired by reading Adam Tornhill's book ["Your code as a crime scene"](https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene) - he talks about all the things you can learn just from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of this code uses no language parser at all, or just a simple one to remove blank lines and comments.  This is great when you want to look at a brand new language, or an ancient language, where no reliable parser may exist.
+Also I was inspired by reading Adam Tornhill's book ["Your code as a crime scene"](https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene) - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of this code uses no language parser at all, or just a simple one to remove blank lines and comments.  This is great when you want to look at a brand new language, or an ancient language, where no reliable parser may exist.
+
+And finally - supporting all the various languages out there is a lot of work!  Quite a few of the other tools I found linked from Erik's articles, and elsewhere, seem to have parsers for a number of languages - but progress is slow, and often they don't keep up with new languages or language changes.  Staying largely language-agnostic makes it much easier for me to maintain my code, and not have to worry about it stagnating.
+
+## How to run the Explorer
+
+The explorer is actually the front end component of three tightly coupled applications:
+
+![Tools flowchart](/2020-09-01-polyglot-explorer/flowchart.png)
+
+* The Polyglot Code Scanner is a rust application, which scans the source code and produces a JSON data file
+* The Polyglot Code Offline Layout tool is a node.js script which adds layout information to the JSON data file
+* The Polyglot Code Explorer is a react/D3 web app which provides the user interface for exploring the code
+
+The code is open source, you can find it on GitHub:
+
+* <https://github.com/kornysietsma/polyglot-code-scanner>
+* <https://github.com/kornysietsma/polyglot-code-offline-layout>
+* <https://github.com/kornysietsma/polyglot-code-explorer>
+
+> I should add a disclaimer - I am not a rust guru, and I am definitely not a react guru!  This is side project code, not commercial-quality - it may well have bugs, mistakes, ugliness, and it has far less testing than I'd usually expect :)
+
+You may prefer to run these tools from source code - not all the executables have been tested on all platforms! There are some [more detailed how-to guides on the docs site](https://polyglot.korny.info/tools/explorer/howto) if you want to build them yourself, or need more details than the brief instructions below.
+
+### Getting the executable files
+
+Each of the tools is packaged up as an executable file - the Scanner is written in rust, so it's easy to just compile a binary.  The Layout app is a node.js script, I've used [pkg](https://www.npmjs.com/package/pkg) to build a bundled executable.  And the Explorer can be run as a static website, so the packages are a zipped up bundle of all files needed to build the website, which you can run yourself.
+
+* Scanner executables can be downloaded from <https://github.com/kornysietsma/polyglot-code-scanner/releases>
+* Layout executables can be downloaded from <https://github.com/kornysietsma/polyglot-code-offline-layout/releases>
+* Explorer bundles can be downloaded from <https://github.com/kornysietsma/polyglot-code-explorer/releases>
+
+If you are on a Mac you will need to strip Apple's quarantine attributes from the binary files to avoid the "app is from an unknown developer" error:
+
+~~~sh
+tar zxf polyglot-code-scanner-vwhatever-x86_64-apple-darwin.tar.gz
+cd polyglot-code-scanner-vwhatever-x86_64-apple-darwin
+xattr -d com.apple.quarantine polyglot_code_scanner
+
+unzip polyglot-code-offline-layout-macos.zip
+xattr -d com.apple.quarantine polyglot-code-offline-layout
+~~~
+
+The Explorer is not an executable file - it's a zip file containing the HTML, CSS and JavaScript files needed to run the site.  You can run them locally by running a tiny web server yourself using Python - [there are more detailed instructions here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server) or there's a big list of similar servers in other languages [here](https://gist.github.com/willurd/5720255) - I'll use Python 3 below.
+
+### Running them
+
+A short sample of running these together might help:
+
+~~~sh
+$ cd ~/work
+$ polyglot_code_scanner --coupling --years 3 -o my_project_1.json ~/src/my_project
+# this can be slow for big projects, or if you scan back through many years of history
+# coupling is optional, remove --coupling to speed it up if you don't want it
+# Check there are no errors and the my_project_1.json file is there
+
+$ polyglot-code-offline-layout -i my_project_1.json -o my_project_2.json
+# this can be slow for big files
+# Check there are no errors and the my_project_2.json file is there
+
+# the first time, you need to unzip the explorer files
+$ unzip ~/downloads/polyglot-code-explorer.zip
+Archive:  polyglot-code-explorer.zip
+   creating: polyglot-code-explorer/
+$ cp my_project_2.json polyglot-code-explorer/data/default.json
+$ cd polyglot-code-explorer
+$ python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/)
+~~~
+
+Then open a browser to <http://0.0.0.0:8000> to start exploring!
 
 ## Using the UI
 
@@ -66,37 +122,33 @@ The centre of the display shows the files in your project - I'm using a [Weighte
 
 ![language visualisation](/2020-09-01-polyglot-explorer/vis_language.png)
 
-This is very simple - it just colours each file by programming language, showing the 10 most common languages.  Mostly useful for getting an overview of what goes where - it's usually easy to spot the front-end vs back-end code by the colours used.  (only 10 languages are shown because beyond that, it's hard to visually see different colours)
+This view is very simple - it just colours each file by programming language, showing the 10 most common languages.  Mostly useful for getting an overview of what goes where - it's usually easy to spot the front-end vs back-end code by the colours used.  (only 10 languages are shown because beyond that, it's hard to visually see different colours)
 
 ### Lines of code
 
 ![lines of code](/2020-09-01-polyglot-explorer/vis_loc.png)
 
-This is simple enough - it's a scale from blue for tiny files, through to yellow for giant files.
+This view is simple enough - it uses a scale from blue for tiny files, through to yellow for giant files.
 
 Note that this is not a linear scale - a lot of these use what I call a "Good/Bad/Ugly" scale - blue (0) is good, red (1000) is bad, and yellow (10000 and above) is just ugly.  If I used a linear scale, it'd be harder to distinguish the good/bad files from each other.  (yes, I could use a log scale, but that has it's own problems)
-
-### Nesting depth
-
-This isn't usually very useful - it just shows how deeply nested files are.  Might sometimes be useful if you want to see what is where in the UI.
 
 ### Indentation
 
 ![indentation](/2020-09-01-polyglot-explorer/vis_indentation.png)
 
-This is an interesting one. In [Hindle, Abram, Michael W. Godfrey, and Richard C. Holt. 2008. ‘Reading Beside the Lines: Indentation as a Proxy for Complexity Metric’](https://doi.org/10.1109/ICPC.2008.13) they found that indentation is often useful as a way of looking for complexity - and it makes sense; files with a lot of indentation are often files with deeply nested "if" and "case" statements.  You can choose a few sub-visualisations here - the default shows the standard deviation of indentation, which is often the most useful metric; you can also see the worst indentation in each file, and the "total area" which is useful for also showing very large deeply indented files.
+This metric is an interesting one. In [Hindle, Abram, Michael W. Godfrey, and Richard C. Holt. 2008. ‘Reading Beside the Lines: Indentation as a Proxy for Complexity Metric’](https://doi.org/10.1109/ICPC.2008.13) they found that indentation is often useful as a way of looking for complexity - which makes common sense; files with a lot of indentation are often files with deeply nested "if" and "case" statements.  You can choose a few sub-visualisations using the drop-down near the top-left - the default shows the standard deviation of indentation, which is often the most useful metric; you can also see the worst indentation in each file, and the "total area" which is useful for showing files which are both large and deeply indented.
 
-Of course this can have false positives - heavy indentation might just be a strange formatting style, or for other valid reasons.  But this is often surprisingly useful.
+Of course this metric can have false positives - heavy indentation might be due to a particular formatting style for long lines, or an actually valid data structure, or other valid reasons.  But it is often surprisingly useful.
 
 ### Age since last change
 
 ![age since last change](/2020-09-01-polyglot-explorer/vis_age.png)
 
-This shows how long it is since each file was changed (from git history) blue files are recently changed, yellow files haven't changed for 1460 days in this example (4 years).  Note that this is affected by the date selector down the bottom of the page:
+This view shows how long it is since each file was changed (from git history) blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:
 
 ![date selector](/2020-09-01-polyglot-explorer/date_selector.png)
 
-Files that haven't changed in the selected date range will show in grey.  You need to select the whole project (drag the left side of the selector to the left of the screen) to see change information across the whole scanned date range.
+Files that haven't changed at all in the selected date range will show in grey.  You need to select the whole project (drag the left side of the selector to the left of the screen) to see change information across the whole scanned date range.
 
 This is a good/bad/ugly scale again, largely because generally files that haven't changed for a long time are, in my experience, parts of the system that nobody understands or feels safe to touch.
 
@@ -129,7 +181,7 @@ This has a custom colour scheme because it's not as simple as good/bad.  Basical
 - Two to Eight coders is, in my view, generally OK.  This is a "two-pizza team" - it's fine for the whole team to be changing a file.
 - Eight to 30 coders is definitely risky - maybe the file is tightly coupled with several areas of code, or full of bugs so people keep needing to fix it. High numbers are in brighter colours.
 
-_Note_ there is one current limitation here - the system treats unique user names / emails as unique individuals.  So if you change email or git account, you will look like two people.  I plan to add some way to flag duplicate names - possibly using [the pretty obscure git .mailmap file format](https://www.git-scm.com/docs/git-check-mailmap).  But this might be a fair way down my to-do list.
+_Note_ there is one current limitation here - the system treats unique user names / emails as unique individuals.  So if you change email or git account, you will look like two people.  I plan to add some way to flag duplicate names - possibly using [the pretty obscure git .mailmap file format](https://www.git-scm.com/docs/git-check-mailmap).  But this is a fair way down my to-do list.
 
 ### Churn
 
@@ -167,64 +219,16 @@ At the moment, this either produces far too many links, or far too few.  I think
 
 Most of the research in this area tracks changes within a single commit - but this doesn't work so well for projects with lots of repositories, such as microservices projects.  A huge benefit of this sort of coupling display, if it works, is to find those hidden dependencies between projects - knowing that every time you change the Foo service, you also need to change a file in the Bar service, could be very useful.
 
-## How can I run this myself?
+## More information and further reading
 
-There are some [How-to guides on the docs site](https://polyglot.korny.info/tools/explorer/howto)
+I have built a documentation site for these tools, at <https://polyglot.korny.info> - it gives a bit more of the history of how and why I built these tools.
 
-A very brief summary:
-
-### Getting the executable files
-
-Each of the tools is packaged up as an executable file - the Scanner is written in rust, so it's easy to just compile a binary.  The Layout app is a node.js script, I've used [pkg](https://www.npmjs.com/package/pkg) to build a bundled executable.  And the Explorer can be run as a static website, so the packages are all the files needed to build the website, which you can run yourself.
-
-* Scanner executables can be downloaded from <https://github.com/kornysietsma/polyglot-code-scanner/releases>
-* Layout executables can be downloaded from <https://github.com/kornysietsma/polyglot-code-offline-layout/releases>
-* Explorer bundles can be downloaded from <https://github.com/kornysietsma/polyglot-code-explorer/releases>
-
-
-If you are on a Mac you will need to strip Apple's quarantine attributes from the binary files to avoid the "app is from an unknown developer" error:
-
-```sh
-tar zxf polyglot-code-scanner-vwhatever-x86_64-apple-darwin.tar.gz
-cd polyglot-code-scanner-vwhatever-x86_64-apple-darwin
-xattr -d com.apple.quarantine polyglot_code_scanner
-
-unzip polyglot-code-offline-layout-macos.zip
-xattr -d com.apple.quarantine polyglot-code-offline-layout
-```
-
-The Explorer is not an executable file - it's a zip file containing the HTML, CSS and JavaScript files needed to run the site.  You can run them locally by running a tiny web server yourself - for example with Python 2 you can run `python -m SimpleHTTPServer`, or with Python 3: `python3 -m http.server`
-
-## Running
-
-A short sample of running these together might help:
-
-```sh
-$ cd ~/work
-$ polyglot_code_scanner --coupling --years 3 -o my_project_1.json ~/src/my_project
-# this can be slow for big projects, or if you scan back through many years of history
-# coupling is optional, remove --coupling to speed it up if you don't want it
-# Check there are no errors and the my_project_1.json file is there
-
-$ polyglot-code-offline-layout -i my_project_1.json -o my_project_2.json
-# this can be slow for big files
-# Check there are no errors and the my_project_2.json file is there
-
-# the first time, you need to unzip the explorer files
-$ unzip ~/downloads/polyglot-code-explorer.zip 
-Archive:  polyglot-code-explorer.zip
-   creating: polyglot-code-explorer/
-$ cp my_project_2.json polyglot-code-explorer/data/default.json
-$ cd polyglot-code-explorer
-$ python3 -m http.server
-Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/)
-```
-
-Then open a browser to <http://0.0.0.0:8000> to start exploring!
+I also talked about this recently on [the ThoughtWorks Technology podcast](https://www.thoughtworks.com/podcasts/code-visualization)
 
 ## Next steps
 
-I'm keen to keep tinkering with this - I have a pile of possible enhancements, and a long list of research to read!  And a 3 year old and almost no spare time :)
+I'm keen to keep tinkering with this - I have a pile of possible enhancements, and a long list of research to read!  And a lovely 3 year old child, and limited spare time :)
 
-I'd love to get feedback - feel free to add comments on the Discus form below, or contact me (contact details are at <https://korny.info>) - or for bugs / improvements you can raise issues on the linked github projects.
+A few things are of fairly high priority - I'd like to handle git history renames better, projects with a lot of refactoring will have poorer quality metrics at the moment.
 
+I'd also love to get feedback to help me prioritise - feel free to add comments on the Discus form below, or contact me (contact details are at <https://korny.info>) - or for bugs / improvements you can raise issues on the linked GitHub projects.
