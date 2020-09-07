@@ -5,10 +5,264 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2020-07-19T19:41:00+01:00</updated>
+  <updated>2020-09-06T19:56:00+01:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>Introducing the Polyglot Code Explorer</title>
+    <link rel="alternate" href="/2020/09/06/introducing-the-polyglot-code-explorer.html"/>
+    <id>/2020/09/06/introducing-the-polyglot-code-explorer.html</id>
+    <published>2020-09-06T19:56:00+01:00</published>
+    <updated>2020-09-06T19:56:00+01:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/main_ui_sample.png" alt="Main UI"&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;If you want a quick look at the explorer, you can see &lt;a href="http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/"&gt;a simple demo here&lt;/a&gt; or &lt;a href="http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/"&gt;a more complex one here&lt;/a&gt;.  There is also a documentation site at  &lt;a href="https://polyglot.korny.info"&gt;https://polyglot.korny.info&lt;/a&gt; (currently a work-in-progress).&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id="welcome-to-the-polyglot-code-explorer"&gt;Welcome to the Polyglot Code Explorer&lt;/h2&gt;
+
+&lt;p&gt;The Polyglot...&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/main_ui_sample.png" alt="Main UI" /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;If you want a quick look at the explorer, you can see &lt;a href="http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/"&gt;a simple demo here&lt;/a&gt; or &lt;a href="http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/"&gt;a more complex one here&lt;/a&gt;.  There is also a documentation site at  &lt;a href="https://polyglot.korny.info"&gt;https://polyglot.korny.info&lt;/a&gt; (currently a work-in-progress).&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id="welcome-to-the-polyglot-code-explorer"&gt;Welcome to the Polyglot Code Explorer&lt;/h2&gt;
+
+&lt;p&gt;The Polyglot Code Explorer is an open-source tool for visualising complex codebases written in multiple programming languages.&lt;/p&gt;
+
+&lt;p&gt;In this article I am going to explain its purpose, how you can run it yourself, and what it does.&lt;/p&gt;
+
+&lt;h2 id="what-is-it-for"&gt;What is it for?&lt;/h2&gt;
+
+&lt;p&gt;Fundamentally, I wanted to answer the question:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;How can we visualise large codebases without needing complex language-specific parsers and logic?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Partly I wanted to easily spot toxic code - my colleague &lt;a href="https://erik.doernenburg.com/2013/06/toxicity-reloaded/"&gt;Erik Dörnenberg wrote some great articles on Toxic code visualisation&lt;/a&gt; and I wanted a way to spot some of these problem areas myself.&lt;/p&gt;
+
+&lt;p&gt;But also, I just wanted to be able to explore the code quickly.  I'm a visual thinker, so my main focus is on visualisation - especially when trying to spot patterns in millions of lines of code.&lt;/p&gt;
+
+&lt;p&gt;It is far quicker for me to look at a diagram and see some unusual colouring in one area, than to see the same information in a table of numbers.&lt;/p&gt;
+
+&lt;h3 id="why-polyglot"&gt;Why polyglot?&lt;/h3&gt;
+
+&lt;p&gt;Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, for any text-based programming language.&lt;/p&gt;
+
+&lt;p&gt;I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a headache.  And each tool probably produces different metrics in different formats - it's hard to get any sort of big-picture view.&lt;/p&gt;
+
+&lt;p&gt;Also many real world systems don't use a single language - often it is better to use specialist languages for different tasks, rather than one general-purpose one.  For example one project might have a UI built in JavaScript and HTML, a microservice built in Kotlin and a platform automation tool build in Rust.&lt;/p&gt;
+
+&lt;p&gt;Also I was inspired by reading Adam Tornhill's book &lt;a href="https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene"&gt;"Your code as a crime scene"&lt;/a&gt; - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of my code uses no language parser at all, or just a very simple which can distinguish code from comments.&lt;/p&gt;
+
+&lt;p&gt;And finally - supporting all the various languages out there is a lot of work!  Quite a few of the other tools I found linked from Erik's articles, and elsewhere, seem to have parsers for a number of languages - but progress is slow, and often they don't keep up with new languages or language changes.  Staying largely language-agnostic makes it much easier for me to maintain my code, and not have to worry about it stagnating.&lt;/p&gt;
+
+&lt;h2 id="how-to-run-the-explorer"&gt;How to run the Explorer&lt;/h2&gt;
+
+&lt;p&gt;The explorer is actually the front end component of three tightly coupled applications:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/flowchart.png" alt="Tools flowchart" /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The Polyglot Code Scanner is a rust application, which scans the source code and produces a JSON data file&lt;/li&gt;
+  &lt;li&gt;The Polyglot Code Offline Layout tool is a node.js script which adds layout information to the JSON data file&lt;/li&gt;
+  &lt;li&gt;The Polyglot Code Explorer is a react/D3 web app which provides the user interface for exploring the code&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The code is open source, you can find it on GitHub:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://github.com/kornysietsma/polyglot-code-scanner"&gt;https://github.com/kornysietsma/polyglot-code-scanner&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/kornysietsma/polyglot-code-offline-layout"&gt;https://github.com/kornysietsma/polyglot-code-offline-layout&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/kornysietsma/polyglot-code-explorer"&gt;https://github.com/kornysietsma/polyglot-code-explorer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I should add a disclaimer - I am not a rust guru, and I am definitely not a react guru!  This is side project code, not commercial-quality - it may well have bugs, mistakes, ugliness, and it has far less testing than I'd usually expect :)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You may prefer to run these tools from source code - not all the executables have been tested on all platforms! There are some &lt;a href="https://polyglot.korny.info/tools/explorer/howto"&gt;more detailed how-to guides on the docs site&lt;/a&gt; if you want to build them yourself, or need more details than the brief instructions below.&lt;/p&gt;
+
+&lt;h3 id="getting-the-executable-files"&gt;Getting the executable files&lt;/h3&gt;
+
+&lt;p&gt;Each of the tools is packaged up as an executable file - the Scanner is written in rust, so it's easy to just compile a binary.  The Layout app is a node.js script, I've used &lt;a href="https://www.npmjs.com/package/pkg"&gt;pkg&lt;/a&gt; to build a bundled executable.  And the Explorer can be run as a static website, so the packages are a zipped up bundle of all files needed to build the website, which you can run yourself.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Scanner executables can be downloaded from &lt;a href="https://github.com/kornysietsma/polyglot-code-scanner/releases"&gt;https://github.com/kornysietsma/polyglot-code-scanner/releases&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Layout executables can be downloaded from &lt;a href="https://github.com/kornysietsma/polyglot-code-offline-layout/releases"&gt;https://github.com/kornysietsma/polyglot-code-offline-layout/releases&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Explorer bundles can be downloaded from &lt;a href="https://github.com/kornysietsma/polyglot-code-explorer/releases"&gt;https://github.com/kornysietsma/polyglot-code-explorer/releases&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you are on a Mac you will need to strip Apple's quarantine attributes from the binary files to avoid the "app is from an unknown developer" error:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nb"&gt;tar &lt;/span&gt;zxf polyglot-code-scanner-vwhatever-x86_64-apple-darwin.tar.gz
+&lt;span class="nb"&gt;cd &lt;/span&gt;polyglot-code-scanner-vwhatever-x86_64-apple-darwin
+xattr &lt;span class="nt"&gt;-d&lt;/span&gt; com.apple.quarantine polyglot_code_scanner
+
+unzip polyglot-code-offline-layout-macos.zip
+xattr &lt;span class="nt"&gt;-d&lt;/span&gt; com.apple.quarantine polyglot-code-offline-layout
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The Explorer is not an executable file - it's a zip file containing the HTML, CSS and JavaScript files needed to run the site.  You can run them locally by running a tiny web server yourself using Python - &lt;a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server"&gt;there are more detailed instructions here&lt;/a&gt; or there's a big list of similar servers in other languages &lt;a href="https://gist.github.com/willurd/5720255"&gt;here&lt;/a&gt; - I'll use Python 3 below.&lt;/p&gt;
+
+&lt;h3 id="running-them"&gt;Running them&lt;/h3&gt;
+
+&lt;p&gt;A short sample of running these together might help:&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ~/work
+&lt;span class="nv"&gt;$ &lt;/span&gt;polyglot_code_scanner &lt;span class="nt"&gt;--coupling&lt;/span&gt; &lt;span class="nt"&gt;--years&lt;/span&gt; 3 &lt;span class="nt"&gt;-o&lt;/span&gt; my_project_1.json ~/src/my_project
+&lt;span class="c"&gt;# this can be slow for big projects, or if you scan back through many years of history&lt;/span&gt;
+&lt;span class="c"&gt;# coupling is optional, remove --coupling to speed it up if you don't want it&lt;/span&gt;
+&lt;span class="c"&gt;# Check there are no errors and the my_project_1.json file is there&lt;/span&gt;
+
+&lt;span class="nv"&gt;$ &lt;/span&gt;polyglot-code-offline-layout &lt;span class="nt"&gt;-i&lt;/span&gt; my_project_1.json &lt;span class="nt"&gt;-o&lt;/span&gt; my_project_2.json
+&lt;span class="c"&gt;# this can be slow for big files&lt;/span&gt;
+&lt;span class="c"&gt;# Check there are no errors and the my_project_2.json file is there&lt;/span&gt;
+
+&lt;span class="c"&gt;# the first time, you need to unzip the explorer files&lt;/span&gt;
+&lt;span class="nv"&gt;$ &lt;/span&gt;unzip ~/downloads/polyglot-code-explorer.zip
+Archive:  polyglot-code-explorer.zip
+   creating: polyglot-code-explorer/
+&lt;span class="nv"&gt;$ &lt;/span&gt;cp my_project_2.json polyglot-code-explorer/data/default.json
+&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;polyglot-code-explorer
+&lt;span class="nv"&gt;$ &lt;/span&gt;python3 &lt;span class="nt"&gt;-m&lt;/span&gt; http.server
+Serving HTTP on 0.0.0.0 port 8000 &lt;span class="o"&gt;(&lt;/span&gt;http://0.0.0.0:8000/&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then open a browser to &lt;a href="http://0.0.0.0:8000"&gt;http://0.0.0.0:8000&lt;/a&gt; to start exploring!&lt;/p&gt;
+
+&lt;h2 id="using-the-ui"&gt;Using the UI&lt;/h2&gt;
+
+&lt;p&gt;The Explorer front end looks somewhat like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/Main_UI.png" alt="Main UI" /&gt;&lt;/p&gt;
+
+&lt;p&gt;There is more about how to use the UI &lt;a href="http://localhost:2222/tools/explorer/ui"&gt;on the docs site&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The centre of the display shows the files in your project - I'm using a &lt;a href="https://en.wikipedia.org/wiki/Weighted_Voronoi_diagram"&gt;Weighted Voronoi Diagram&lt;/a&gt; which has the big advantage of showing files roughly in proportional to their size.  And by size I'm using lines of code, which is generally much more useful than bytes - especially as research tends to show that high lines of code is correlated with complexity and defects - so just looking for large lines of code is a good starting point for finding problems.&lt;/p&gt;
+
+&lt;h3 id="viewing-by-programming-language"&gt;Viewing by programming language&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_language.png" alt="language visualisation" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This view is very simple - it just colours each file by programming language, showing the 10 most common languages.  Mostly useful for getting an overview of what goes where - it's usually easy to spot the front-end vs back-end code by the colours used.  (only 10 languages are shown because beyond that, it's hard to visually see different colours)&lt;/p&gt;
+
+&lt;h3 id="lines-of-code"&gt;Lines of code&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_loc.png" alt="lines of code" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This view is simple enough - it uses a scale from blue for tiny files, through to yellow for giant files.&lt;/p&gt;
+
+&lt;p&gt;Note that this is not a linear scale - a lot of these use what I call a "Good/Bad/Ugly" scale - blue (0) is good, red (1000) is bad, and yellow (10000 and above) is just ugly.  If I used a linear scale, it'd be harder to distinguish the good/bad files from each other.  (yes, I could use a log scale, but that has it's own problems)&lt;/p&gt;
+
+&lt;h3 id="indentation"&gt;Indentation&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_indentation.png" alt="indentation" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This metric is an interesting one. In &lt;a href="https://doi.org/10.1109/ICPC.2008.13"&gt;Hindle, Abram, Michael W. Godfrey, and Richard C. Holt. 2008. ‘Reading Beside the Lines: Indentation as a Proxy for Complexity Metric’&lt;/a&gt; they found that indentation is often useful as a way of looking for complexity - which makes common sense; files with a lot of indentation are often files with deeply nested "if" and "case" statements.  You can choose a few sub-visualisations using the drop-down near the top-left - the default shows the standard deviation of indentation, which is often the most useful metric; you can also see the worst indentation in each file, and the "total area" which is useful for showing files which are both large and deeply indented.&lt;/p&gt;
+
+&lt;p&gt;Of course this metric can have false positives - heavy indentation might be due to a particular formatting style for long lines, or an actually valid data structure, or other valid reasons.  But it is often surprisingly useful.&lt;/p&gt;
+
+&lt;h3 id="age-since-last-change"&gt;Age since last change&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_age.png" alt="age since last change" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This view shows how long it is since each file was changed (from git history) - blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/date_selector.png" alt="date selector" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Files that haven't changed at all in the selected date range will show in grey.  You need to select the whole project (drag the left side of the selector to the left of the screen) to see change information across the whole scanned date range.&lt;/p&gt;
+
+&lt;p&gt;This is a good/bad/ugly scale again, largely because generally files that haven't changed for a long time are, in my experience, parts of the system that nobody understands or feels safe to touch.&lt;/p&gt;
+
+&lt;p&gt;However this is a bit contentious - it depends a lot on the culture of the organisation, and the kind of code - a lot of research in this field shows the flip-side of this, that files that haven't changed for ages are stable. If they had bugs, people would have touched them - so these files might be "safe".  Personally, coming from an agile world where shared code ownership is important, and rapid change is the norm, I see old untouched files as something that might show stagnation and maintenance nightmares - I think a lot of what is "good" here depends on what you are looking for.&lt;/p&gt;
+
+&lt;h3 id="creation-date"&gt;Creation date&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_creation.png" alt="creation date" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This &lt;em&gt;doesn't&lt;/em&gt; use a good/bad scale - it's not really about quality, but sometimes it's useful to know which files are new, and which are old.  This is especially handy when you are using the date selector, to give you a feel for how the code has changed over time.&lt;/p&gt;
+
+&lt;p&gt;However, there is a problem here that requires a bit of a digression&lt;/p&gt;
+
+&lt;h4 id="the-problem-with-the-date-selector"&gt;The problem with the date selector&lt;/h4&gt;
+
+&lt;p&gt;The scanner starts with the files currently on your filesystem - and then it works backwards in time through the git logs.  It doesn't really keep track of the actual state of your system over time, or file renames, or deleted files.  If you create a file &lt;code&gt;foo.c&lt;/code&gt;, and do a pile of work on it, and then delete it, the scanner will not show it - there's not really anywhere in the JSON data file to store that data!  Similarly renames are not handled well - it sees a file rename, but isn't great at tracking what happens to the file before the rename.  (This is something I plan to fix, when I can!  But it's non-trivial - you can't just track file renames by time, you need to track them by branch…)&lt;/p&gt;
+
+&lt;p&gt;So moving the date selector is handy for limiting some kinds of information, and getting some views of the past - but it's not actually a window into the past state of the project.&lt;/p&gt;
+
+&lt;h3 id="unique-changers"&gt;Unique changers&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_unique_changers.png" alt="unique changers" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This shows how many different people touched a file, in the selected date range. Again is a bit of an "it depends" metric - some studies show that few changers are good, as they tend to be just experts and not new inexperienced people.  But again, too few changers can be a sign that only one person knows a piece of code, so you don't have any collective code ownership, and if that one person leaves, you might have some unknown code.  (There's some really interesting research in this area, which I'd love to look into in the future - such as looking at how new/old each changer is to the organisation, how long they've been touching this area of the code, and the like).&lt;/p&gt;
+
+&lt;p&gt;This has a custom colour scheme because it's not as simple as good/bad.  Basically:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;No changers is bad, so it's highlighted in cyan.  This probably means that no-one currently understands the code at all.&lt;/li&gt;
+  &lt;li&gt;One changer might be OK, though I'd see it as an ownership risk.  This is shown in dark red.&lt;/li&gt;
+  &lt;li&gt;Two to Eight coders is, in my view, generally OK.  This is a "two-pizza team" - it's fine for the whole team to be changing a file.&lt;/li&gt;
+  &lt;li&gt;Eight to 30 coders is definitely risky - maybe the file is tightly coupled with several areas of code, or full of bugs so people keep needing to fix it. High numbers are in brighter colours.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt; there is one current limitation here - the system treats unique user names / emails as unique individuals.  So if you change email or git account, you will look like two people.  I plan to add some way to flag duplicate names - possibly using &lt;a href="https://www.git-scm.com/docs/git-check-mailmap"&gt;the pretty obscure git .mailmap file format&lt;/a&gt;.  But this is a fair way down my to-do list.&lt;/p&gt;
+
+&lt;h3 id="churn"&gt;Churn&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/vis_churn.png" alt="churn" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Churn shows the rate of change - how often a file has changed in the selected date window.  This again isn't necessarily good or bad - it depends a lot on what date range you are using.  If a file changes every work day over several years, that's probably bad!  But if it changes every day over the course of a short project, that might be fine.&lt;/p&gt;
+
+&lt;p&gt;There are three sub-visualisations here:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Days containing a change - this is in proportion to the number of days selected.  So "0.5" means the file has changed every second day, on average.  This doesn't care how often in the day a file changed, so 10 commits on one day looks the same as 1 commit.&lt;/li&gt;
+  &lt;li&gt;Commits per day - this is the sum of commits, divided by the number of days.  So "0.5" means on average one commit every two days - but this might mean 150 commits on one day, and none the rest of the year.&lt;/li&gt;
+  &lt;li&gt;Lines per day - this is the sum of the number of lines changed (both adds and deletes) divided by the number of days.  So tiny tweaks to files won't show up nearly as brightly as large numbers of lines added or deleted.  Good for seeing where more work is being done.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="temporal-coupling"&gt;Temporal Coupling&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src="/2020-09-01-polyglot-explorer/Coupling.png" alt="coupling" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is based on ideas from Adam Tornhill's books, plus some research - it tries to work out when files might be tightly coupled to each other, based on when the files change in git.  Adam calls this "Temporal Coupling".&lt;/p&gt;
+
+&lt;p&gt;The curved lines show which files seem to be temporally coupled to which other files.&lt;/p&gt;
+
+&lt;p&gt;Note each line is unidirectional - file A may be coupled to file B, but file B may not be coupled to file A.&lt;/p&gt;
+
+&lt;p&gt;For example, in the screenshot above, the file &lt;code&gt;testprocessinggui.cpp&lt;/code&gt; had commits on 22 days in the date range selected.&lt;/p&gt;
+
+&lt;p&gt;The file &lt;code&gt;qgisapp.cpp&lt;/code&gt; was also changed on 20 of the same days.&lt;/p&gt;
+
+&lt;p&gt;According to the current coupling algorithm, this means it has a ratio of 0.909 - 90% of commits to &lt;code&gt;testprocessinggui.cpp&lt;/code&gt; seem to have also implied commits to &lt;code&gt;qgisapp.cpp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The converse might not be true -  &lt;code&gt;qgisapp.cpp&lt;/code&gt; might have changed on another 20 unrelated days, so it might not have a coupling connection back to &lt;code&gt;testprocessinggui.cpp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Obviously this logic can produce a lot of false positives, if files change a lot coincidentally.&lt;/p&gt;
+
+&lt;p&gt;At the moment, this either produces far too many links, or far too few.  I think this needs a lot of work - at minimum, it should use a much smaller time window than a day!  I am probably going to try to make it changes within an hour, and see if that helps.&lt;/p&gt;
+
+&lt;p&gt;Most of the research in this area tracks changes within a single commit - but this doesn't work so well for projects with lots of repositories, such as microservices projects.  A huge benefit of this sort of coupling display, if it works, is to find those hidden dependencies between projects - knowing that every time you change the Foo service, you also need to change a file in the Bar service, could be very useful.&lt;/p&gt;
+
+&lt;h2 id="more-information-and-further-reading"&gt;More information and further reading&lt;/h2&gt;
+
+&lt;p&gt;I have built a documentation site for these tools, at &lt;a href="https://polyglot.korny.info"&gt;https://polyglot.korny.info&lt;/a&gt; - it gives a bit more of the history of how and why I built these tools.&lt;/p&gt;
+
+&lt;p&gt;I also talked about this recently on &lt;a href="https://www.thoughtworks.com/podcasts/code-visualization"&gt;the ThoughtWorks Technology podcast&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id="next-steps"&gt;Next steps&lt;/h2&gt;
+
+&lt;p&gt;I'm keen to keep tinkering with this - I have a pile of possible enhancements, and a long list of research to read!  And a lovely 3 year old child, and limited spare time :)&lt;/p&gt;
+
+&lt;p&gt;A few things are of fairly high priority - I'd like to handle git history renames better, projects with a lot of refactoring will have poorer quality metrics at the moment.&lt;/p&gt;
+
+&lt;p&gt;I'd also love to get feedback to help me prioritise - feel free to add comments on the Disqus form below, or contact me &lt;a href="https://twitter.com/kornys"&gt;on Twitter&lt;/a&gt; or other social media - or for bugs / improvements you can raise issues on the linked GitHub projects.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Better D3 sites with react</title>
     <link rel="alternate" href="/2020/07/19/better-d3-with-react.html"/>
@@ -1325,611 +1579,6 @@ of cool things - which I should blog about, some time.&lt;/p&gt;
 &lt;p&gt;And we're done - you can import this csv file into Excel or LibreOffice or whatever you use.&lt;/p&gt;
 
 &lt;p&gt;Note, you can use a simple extension of this to write the freemind file to a GraphViz dot file very easily - I do this to import mindmap data into OmniGraffle.  I'll leave this as an exercise for the reader!&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Xml manipulation in clojure</title>
-    <link rel="alternate" href="/2014/03/08/xml-for-fun-and-profit.html"/>
-    <id>/2014/03/08/xml-for-fun-and-profit.html</id>
-    <published>2014-03-08T19:37:00+00:00</published>
-    <updated>2014-03-08T19:37:00+00:00</updated>
-    <author>
-      <name>Kornelis Sietsma</name>
-    </author>
-    <summary type="html">&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;"XML is like violence - if it doesn't work, use more"&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Clojure is awesome for parsing and processing structured data.  It has a wide range of functions for handling lists, maps (associative arrays), sets, and (if you really need them) objects.&lt;/p&gt;
-
-&lt;p&gt;One great example of the power of clojure for this sort of thing is processing xml.  You may hate xml, you may use json or edn or yaml or anything else you can - but ultimately, xml is still all over the place, and if you need to handle complex xml or large xml, you might want to look at clojure.&lt;/p&gt;
-
-&lt;aside&gt;
-  &lt;p&gt;This article was started in September 2013 - but it grew, and it grew, and the blog needed some styling, and I moved to Glasgow… so it's rather late getting out of beta.&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;&lt;/p&gt;</summary>
-    <content type="html">&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;"XML is like violence - if it doesn't work, use more"&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Clojure is awesome for parsing and processing structured data.  It has a wide range of functions for handling lists, maps (associative arrays), sets, and (if you really need them) objects.&lt;/p&gt;
-
-&lt;p&gt;One great example of the power of clojure for this sort of thing is processing xml.  You may hate xml, you may use json or edn or yaml or anything else you can - but ultimately, xml is still all over the place, and if you need to handle complex xml or large xml, you might want to look at clojure.&lt;/p&gt;
-
-&lt;aside&gt;
-  &lt;p&gt;This article was started in September 2013 - but it grew, and it grew, and the blog needed some styling, and I moved to Glasgow… so it's rather late getting out of beta.&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id="contents"&gt;Contents&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#parsing-xml-as-structured-data"&gt;Parsing XML&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#lazy-parsing"&gt;Lazy parsing&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#traversing-xml-as-a-sequence"&gt;XML as a sequence&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#zippers"&gt;Zippers&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#datazip-for-zipper-awesomeness"&gt;data.zip for zipper awesomeness&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#parsing-wikipedia"&gt;Parsing Wikipedia&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#laziness---lose-your-head"&gt;Laziness - Lose your head&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#data-processing-with-lazy-sequences"&gt;Data processing with lazy sequences&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="#conclusion"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
-&lt;aside&gt;
-  &lt;p&gt;&lt;em&gt;Note&lt;/em&gt; - this was originally written as a no-previous-clojure-knowledge-needed post, but it got quite long.  So now I assume you know basic clojure syntax, and how to use the &lt;a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E"&gt;&lt;code&gt;-&amp;gt;&lt;/code&gt;&lt;/a&gt; and &lt;a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E%3E"&gt;&lt;code&gt;-&amp;gt;&amp;gt;&lt;/code&gt;&lt;/a&gt;.  If this means nothing to you, check out &lt;a href="http://www.braveclojure.com/"&gt;Clojure for the brave and true&lt;/a&gt; a great starting resource, as well as &lt;a href="http://clojure.org"&gt;http://clojure.org&lt;/a&gt; and &lt;a href="http://jafingerhut.github.io/cheatsheet-clj-1.3/cheatsheet-tiptip-cdocs-summary.html"&gt;the cheat sheet&lt;/a&gt;.&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;As I said at the start, handling XML in clojure is awesome - but the documentation is all over the place, especially as you need to use several different libraries together (this being the clojure way - prefer small composable functions over monolithic frameworks). Hence I'll attempt to pull everything together in this blog post - at least for &lt;em&gt;reading&lt;/em&gt; xml.&lt;/p&gt;
-
-&lt;p&gt;Clojure has three basic approaches to xml:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Parsing as structured data&lt;/li&gt;
-  &lt;li&gt;Traversing the structured data as a sequence&lt;/li&gt;
-  &lt;li&gt;Manipulating via zippers and their friends&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;More, the first two of these can be done lazily, allowing for easy processing of huge data sets.  More on this later.&lt;/p&gt;
-
-&lt;h2 id="parsing-xml-as-structured-data"&gt;Parsing xml as structured data&lt;/h2&gt;
-
-&lt;p&gt;Clojure comes with a built in xml parser - it can parse streams, files, or URIs into nested maps.  Unfortunately it doesn't have a simple way to parse strings, but you can make them into streams and then parse them as follows:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.xml/parse&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;java.io.ByteArrayInputStream.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;.getBytes&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Given an xml file like this:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight xml"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;top&amp;gt;&lt;/span&gt;
-Baby, I'm the top
-  &lt;span class="nt"&gt;&amp;lt;mid&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;bot&lt;/span&gt; &lt;span class="na"&gt;foo=&lt;/span&gt;&lt;span class="s"&gt;"bar"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
-      I'm the bottom!
-    &lt;span class="nt"&gt;&amp;lt;/bot&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;/mid&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/top&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;calling &lt;code&gt;(parse xml)&lt;/code&gt; will return a set of nested maps representing the data:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:top,&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="s"&gt;"Baby, I'm the top"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:mid,&lt;/span&gt;&lt;span class="w"&gt; 
-     &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt; 
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="w"&gt;
-        &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:bot,&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"bar"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="p"&gt;]}]}]}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Once you have nested maps in clojure, you have a huge number of ways to manipulate the data just using language constructs.  For example, you can get the content above with:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;second&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)))))))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Or using the &lt;a href="http://clojuredocs.org/clojure_core/clojure.core/-%3E%3E"&gt;&lt;code&gt;-&amp;gt;&amp;gt;&lt;/code&gt;&lt;/a&gt; macro:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="nb"&gt;second&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;You can do more than just 'first' and 'second' here - you can add functions to filter data, such as:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:mid&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;filter&lt;/code&gt; explicitly looks for a child of the :content element with a &lt;code&gt;:tag&lt;/code&gt; of &lt;code&gt;:mid&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id="lazy-parsing"&gt;Lazy parsing&lt;/h2&gt;
-
-&lt;p&gt;Instead of using core.xml you can use the &lt;a href="https://github.com/clojure/data.xml"&gt;data.xml&lt;/a&gt; library (&lt;a href="http://clojure.github.io/data.xml/"&gt;api docs here&lt;/a&gt;).  This superficially works like the core.xml parser (though happily it has a parse-str function built in) :&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;'clojure.data.xml&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;; as above&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;results in:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;clojure.data.xml.Element&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="no"&gt;:top,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Baby, I'm the top"&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;clojure.data.xml.Element&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
-              &lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:mid,&lt;/span&gt;&lt;span class="w"&gt;
-              &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-              &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;clojure.data.xml.Element&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
-                        &lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:bot,&lt;/span&gt;&lt;span class="w"&gt;
-                        &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"bar"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-                        &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="p"&gt;)})})}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;aside&gt;
-  &lt;p&gt;The &lt;code&gt;#clojure.data.xml.Element&lt;/code&gt; values above are &lt;a href="http://clojure.org/datatypes"&gt;records&lt;/a&gt; - which implement Map, so our code doesn't have to change.&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;The big difference isn't immediately obvious: the lists in the &lt;code&gt;:content&lt;/code&gt; sections, and the &lt;code&gt;Element&lt;/code&gt;s, are both lazy.  They won't be evaluated until needed - which means you can process huge xml structures this way without needing to load the whole thing into memory.  If you start parsing (say) a 42G wikipedia dump, and you only look at &lt;code&gt;(first (:content dump))&lt;/code&gt; then the parser will never look beyond the first well formed xml element in the body.&lt;/p&gt;
-
-&lt;h3 id="a-quick-aside---dumping-an-xml-element-for-debugging"&gt;A quick aside - dumping an xml element for debugging&lt;/h3&gt;
-
-&lt;p&gt;To make sense of xml traversal, often you'll want to look at an element like the &lt;code&gt;top&lt;/code&gt; element - and there's a function called &lt;code&gt;emit-element&lt;/code&gt; that will convert an element back to xml for you.  However, it will convert the &lt;em&gt;whole&lt;/em&gt; element, including all it's children, to xml.  So I have a couple of handy functions:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dbg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;associative?&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;emit-element&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;dissoc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;emit-element&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as-short-xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.string/trim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;; remove trailing \n&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-out-str&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;associative?&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-        &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;c-xml/emit-element&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;dissoc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-        &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;c-xml/emit-element&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;node&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;These do essentially the same thing - &lt;code&gt;dbg&lt;/code&gt; will print a node as xml without it's contents.  Or if you pass it anything else, like a string "I'm the bottom!" it will pass it to emit-element, which will just print it.  And then &lt;code&gt;dbg&lt;/code&gt; returns the original node for further processing - all the printing is as side effects.&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;as-short-xml&lt;/code&gt; instead captures the printed output as a string, and returns that - useful when you want a side-effect free function that returns a string, rather than printing.&lt;/p&gt;
-
-&lt;h2 id="traversing-xml-as-a-sequence"&gt;Traversing xml as a sequence&lt;/h2&gt;
-
-&lt;p&gt;Clojure core includes the &lt;a href="http://clojuredocs.org/clojure_core/clojure.core/xml-seq"&gt;xml-seq&lt;/a&gt; function that works on either of the above structures, letting you iterate over the tree of elements in a depth-first fashion.&lt;/p&gt;
-
-&lt;p&gt;For example, with our xml above:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as-short-xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-seq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;c-d-xml/parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;top/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="s"&gt;"Baby, I'm the top"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;mid/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;bot foo='bar'/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;xml-seq&lt;/code&gt; function traversed the whole tree lazily from the top to the bottom.&lt;/p&gt;
-
-&lt;p&gt;You can of course use all the standard clojure list processing functions on the node sequence - for instance, if you wanted the first node with an attribute:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;c-d-xml/parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="nb"&gt;xml-seq&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;not-empty&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;as-short-xml&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;bot foo='bar'/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;As I mentioned earlier, this is lazy - once you've found an element with an attribute, and output it, the sequence traversal will stop, and so will the parser.  Of course we are using strings here, so the whole xml string will be in memory, but you can use streams to avoid this as well.  More on this later.&lt;/p&gt;
-
-&lt;h2 id="zippers"&gt;Zippers&lt;/h2&gt;
-
-&lt;p&gt;Zippers are probably the easiest way to manage xml - once you grok them.&lt;/p&gt;
-
-&lt;p&gt;Zippers are a strange beast. &lt;a href="http://en.wikipedia.org/wiki/Zipper_(data_structure)"&gt;Wikipedia&lt;/a&gt; describes them as:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A technique of representing an aggregate data structure so that it is convenient for writing programs that traverse the structure arbitrarily and update it's contents…&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I like to think of a zipper as a kind of pointer to part of a tree - at any time if you have a tree of nodes like the one above, you can have a zipper that refers to a node in the tree, and use it to navigate around the tree.  You can also use the zipper to produce a modified version of the xml document, but I'll leave that for another post.&lt;/p&gt;
-
-&lt;p&gt;To get a zipper from an xml tree, you need another library:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.zip/xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The output of this isn't very useful.  Zippers are a little hard to view, because they need to keep track of the entire xml tree they are created from - so every time you output a zipper, you see the whole parsed xml structure, which doesn't help much.&lt;/p&gt;
-
-&lt;p&gt;To find out more about the current state of a zipper, you can call &lt;code&gt;clojure.zip/node&lt;/code&gt;, which returns the node pointed to by the zipper.  Then you can call the same debug functions described earlier.  Here's some short functions to dump zippers:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;zipper&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;do&lt;/span&gt;&lt;span class="w"&gt;
-                    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;dbg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.zip/node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zipper&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-                    &lt;/span&gt;&lt;span class="n"&gt;zipper&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;; return the zipper for more processing&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;az&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;zipper&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;as-short-xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.zip/node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zipper&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="basic-zipper-navigation"&gt;Basic zipper navigation&lt;/h2&gt;
-
-&lt;p&gt;Zippers, like most of clojure, are immutable - to "navigate" using them, you modify a zipper with a function to get a new zipper.  The basic options are:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;down - takes you to the first child of this node&lt;/li&gt;
-  &lt;li&gt;up - takes you to the parent element of this node&lt;/li&gt;
-  &lt;li&gt;right - takes you to the next sibling of this node&lt;/li&gt;
-  &lt;li&gt;left - takes you to the previous sibling of this node&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a href="http://richhickey.github.io/clojure/clojure.zip-api.html"&gt;and many many other similar navigation commands&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;So to continue with our example xml:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;c-zip/xml-zip&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;c-zip/down&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;c-zip/right&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;c-zip/down&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="n"&gt;az&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Baby, I'm the top"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;mid/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="s"&gt;"&amp;lt;bot foo='bar'/&amp;gt;"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The first call to 'dz' dumps the first child of the root, the text node "Baby, I'm the top"&lt;/p&gt;
-
-&lt;p&gt;Then we move to it's right sibling and dump the value there - the "&amp;lt;mid&amp;gt;" node.&lt;/p&gt;
-
-&lt;p&gt;Then we move down to it's first child, and output the "&amp;lt;bot&amp;gt;" node.&lt;/p&gt;
-
-&lt;p&gt;I hope this is making sense.  Basically, you move the zipper around the tree to get to the node you want.  Handy for some cases, but still a little strange.&lt;/p&gt;
-
-&lt;h2 id="datazip-for-zipper-awesomeness"&gt;Data.zip for zipper awesomeness&lt;/h2&gt;
-
-&lt;p&gt;Basic zippers are just a starting point.  To really make them fly for xml manipulation, I'll use yet another library: &lt;a href="http://clojure.github.io/data.zip/"&gt;data.zip&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Data.zip contains the data.zip.xml namespace which has a number of simple and powerful functions that operate on xml zippers and play very nicely together.&lt;/p&gt;
-
-&lt;h2 id="accessors"&gt;Accessors&lt;/h2&gt;
-
-&lt;p&gt;There are several functions that given a zipper pointing to an xml node, extract information on it.  For example, using the zipper we had above pointing to the &lt;bot&gt; node, we could call `(attr zipper :foo)` which would return "bar", naturally. `(text zipper)` would return "I'm the bottom!".&lt;/bot&gt;&lt;/p&gt;
-
-&lt;p&gt;There are also predicates similar to these - &lt;code&gt;(attr= :foo "bar")&lt;/code&gt; returns a predicate that returns true if a given node has a "foo=bar" attribute - so &lt;code&gt;((attr= :foo "bar") zipper)&lt;/code&gt; would be true.  Similarly &lt;code&gt;(text= "asdf")&lt;/code&gt; is a predicate that matches based on element text, &lt;code&gt;(tag= :mid)&lt;/code&gt; matches on tag name.&lt;/p&gt;
-
-&lt;h2 id="threading-magic"&gt;Threading magic&lt;/h2&gt;
-
-&lt;p&gt;Clojure.data.zip has two functions that look and act a little like the &lt;code&gt;-&amp;gt;&lt;/code&gt; threading macro:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;a href="http://clojure.github.io/data.zip/#clojure.data.zip.xml/xml-&amp;gt;"&gt;&lt;code&gt;xml-&amp;gt;&lt;/code&gt;&lt;/a&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;a href="http://clojure.github.io/data.zip/#clojure.data.zip.xml/xml1-&amp;gt;"&gt;&lt;code&gt;xml1-&amp;gt;&lt;/code&gt;&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;These work similarly - they take a zipper as a starting location, and then a sequence of matchers.  They apply each matcher in order as follows:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;If it's a function, call it on the zipper
-    &lt;ol&gt;
-      &lt;li&gt;If it returns a collection, each value of the collection is passed to the next matcher&lt;/li&gt;
-      &lt;li&gt;If it returns a (zipper) location, the location is passed to the next matcher&lt;/li&gt;
-      &lt;li&gt;If it returns true, the current location is passed to the next matcher&lt;/li&gt;
-      &lt;li&gt;If it returns false or nil, this particular matching branch stops&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;If it's a keyword &lt;code&gt;:foo&lt;/code&gt; it is converted to the predicate &lt;code&gt;(tag= :foo)&lt;/code&gt; and run as above&lt;/li&gt;
-  &lt;li&gt;If it's a string "bar" it is converted to the predicate &lt;code&gt;(text= "bar")&lt;/code&gt; and run as above&lt;/li&gt;
-  &lt;li&gt;If it's a vector, it is converted to a sub query&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Note that this can result in more than one value - each matcher can return a collection, which results in more results being passed to later matchers.  The difference between &lt;code&gt;xml-&amp;gt;&lt;/code&gt; and &lt;code&gt;xml1-&amp;gt;&lt;/code&gt; is that &lt;code&gt;xml-&amp;gt;&lt;/code&gt; returns a collection of results, whereas &lt;code&gt;xml1-&amp;gt;&lt;/code&gt; returns only the first not-false-or-nil result.&lt;/p&gt;
-
-&lt;p&gt;The actual result is whatever comes out of the rightmost matcher function.&lt;/p&gt;
-
-&lt;p&gt;An example may help.  Given our xml yet again,&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;; for convenience&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="no"&gt;:mid&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="no"&gt;:bot&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;attr=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"bar"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"I'm the bottom!"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;returns a sequence with a single element &lt;code&gt;("I'm the bottom")&lt;/code&gt;.  If we'd called &lt;code&gt;xml1-&amp;gt;&lt;/code&gt; it would have just returned a single string.&lt;/p&gt;
-
-&lt;p&gt;This worked by taking the &lt;top&gt; node, looking for a child &lt;mid&gt; node, then a child &lt;bot&gt; node, then checking that node had the `foo=bar` attribute, then returning it's text.&lt;/bot&gt;&lt;/mid&gt;&lt;/top&gt;&lt;/p&gt;
-
-&lt;p&gt;Our xml is too simple for much more complex manipulation.  If you want to see more of the things you can do with xml and zippers, have a look at &lt;a href="https://github.com/clojure/data.zip/blob/master/src/test/clojure/clojure/data/zip/xml_test.clj"&gt;the test cases for clojure.data.zip&lt;/a&gt; - they are far more useful than the actual documentation!&lt;/p&gt;
-
-&lt;p&gt;However, let's move on to a real world example - reading a big big xml file.&lt;/p&gt;
-
-&lt;h2 id="parsing-wikipedia"&gt;Parsing Wikipedia&lt;/h2&gt;
-
-&lt;p&gt;Wikipedia is &lt;a href="http://en.wikipedia.org/wiki/Wikipedia:Database_download#English-language_Wikipedia"&gt;available for download&lt;/a&gt; as a big gzipped xml file.  And when I say big - it's around 9.5 GB compressed, or 44 GB of xml.  You don't really want to read it into memory.&lt;/p&gt;
-
-&lt;p&gt;So lets be lazy.&lt;/p&gt;
-
-&lt;p&gt;First some boilerplate - I'm going to include the whole namespace here, so you can try this code yourself if you want:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ns&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;wikiparse.core&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:require&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;wikiparse.util&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dbg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as-short-xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;az&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-xml&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-d-xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-d-zip&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.zip.xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-d-z-xml&lt;/span&gt;&lt;span class="w"&gt;
-                &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;attr=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.java.io&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clj-time.core&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;time&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clj-time.format&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.pprint&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:import&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;org.apache.commons.compress.compressors.bzip2&lt;/span&gt;&lt;span class="w"&gt;
-              &lt;/span&gt;&lt;span class="n"&gt;BZip2CompressorInputStream&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"produce a Reader on a bzipped file"&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="n"&gt;io/file&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="n"&gt;io/input-stream&lt;/span&gt;&lt;span class="w"&gt; 
-      &lt;/span&gt;&lt;span class="n"&gt;BZip2CompressorInputStream.&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="n"&gt;io/reader&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The bz2-reader function will unzip the file on the fly - it's all streams and readers, so you don't need to store the whole thing in memory.&lt;/p&gt;
-
-&lt;p&gt;Let's start parsing the xml.  First, we'll define a reader - note, this is not something you'd ever do outside a repl, as using &lt;code&gt;def&lt;/code&gt; like this puts the reader in a global symbol.  See further down for better ways to handle readers.&lt;/p&gt;
-
-&lt;p&gt;Then we can start parsing the xml:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"wikipedia.xml.bz2"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:mediawiki&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Wikipedia"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The top few lines of the wikipedia dump are:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight xml"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;mediawiki&lt;/span&gt; &lt;span class="na"&gt;xmlns=&lt;/span&gt;&lt;span class="s"&gt;"..."&lt;/span&gt; &lt;span class="na"&gt;version=&lt;/span&gt;&lt;span class="s"&gt;"0.8"&lt;/span&gt; &lt;span class="na"&gt;xml:lang=&lt;/span&gt;&lt;span class="s"&gt;"en"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;siteinfo&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;sitename&amp;gt;&lt;/span&gt;Wikipedia&lt;span class="nt"&gt;&amp;lt;/sitename&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;so this looks right.&lt;/p&gt;
-
-&lt;p&gt;Most of the wikipedia dump is a long sequence of &lt;code&gt;&amp;lt;page&amp;gt;&lt;/code&gt; tags similar to:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight xml"&gt;&lt;code&gt;  &lt;span class="nt"&gt;&amp;lt;page&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Autism&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;revision&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;id&amp;gt;&lt;/span&gt;557666522&lt;span class="nt"&gt;&amp;lt;/id&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;timestamp&amp;gt;&lt;/span&gt;2013-05-31T11:04:03Z&lt;span class="nt"&gt;&amp;lt;/timestamp&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;text&lt;/span&gt; &lt;span class="na"&gt;xml:space=&lt;/span&gt;&lt;span class="s"&gt;"preserve"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
-... lots of text here
-      &lt;span class="nt"&gt;&amp;lt;/text&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;model&amp;gt;&lt;/span&gt;wikitext&lt;span class="nt"&gt;&amp;lt;/model&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;format&amp;gt;&lt;/span&gt;text/x-wiki&lt;span class="nt"&gt;&amp;lt;/format&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;/revision&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;/page&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;though there are some which are just redirect stubs:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight xml"&gt;&lt;code&gt;  &lt;span class="nt"&gt;&amp;lt;page&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;AccessibleComputing&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;redirect&lt;/span&gt; &lt;span class="na"&gt;title=&lt;/span&gt;&lt;span class="s"&gt;"Computer accessibility"&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;revision&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;id&amp;gt;&lt;/span&gt;381202555&lt;span class="nt"&gt;&amp;lt;/id&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;timestamp&amp;gt;&lt;/span&gt;2010-08-26T22:38:36Z&lt;span class="nt"&gt;&amp;lt;/timestamp&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;text&lt;/span&gt; &lt;span class="na"&gt;xml:space=&lt;/span&gt;&lt;span class="s"&gt;"preserve"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;#REDIRECT [[Computer accessibility]] {{R from CamelCase}}&lt;span class="nt"&gt;&amp;lt;/text&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;model&amp;gt;&lt;/span&gt;wikitext&lt;span class="nt"&gt;&amp;lt;/model&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;format&amp;gt;&lt;/span&gt;text/x-wiki&lt;span class="nt"&gt;&amp;lt;/format&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;/revision&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;/page&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Let's look for the first few titles.  How about we use the zipper stuff from before?&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;take&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt;
-             &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt;
-             &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt;
-             &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"AccessibleComputing"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Anarchism"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanHistory"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanGeography"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanPeople"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanCommunications"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanTransportations"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanMilitary"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanTransnationalIssues"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AssistiveTechnology"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Cool - how about we test laziness, let's look for the 1000th title:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;nth&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Integral domain"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Awesome - how about the 100,000th?&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;nth&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="mi"&gt;100000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;Exception&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;thread&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"RMI TCP Connection(idle)"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;java.lang.OutOfMemoryError&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;GC&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;overhead&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;limit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;exceeded&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Oops - what happened to that laziness?&lt;/p&gt;
-
-&lt;h2 id="laziness---lose-your-head"&gt;Laziness - Lose your head&lt;/h2&gt;
-
-&lt;p&gt;The trouble is, we have a reference to the original parsed xml structure in the symbol &lt;code&gt;x&lt;/code&gt;.  This means that even though the pages are expanded lazily, the old pages we've looked at can't be fully garbage collected, as their parent &lt;code&gt;x&lt;/code&gt; still has a reference to them.&lt;/p&gt;
-
-&lt;p&gt;This is called "head retention" in clojure - it's not uncommon with lazy sequences.  If you keep a reference to the head of a sequence, it can't be garbage collected.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Worse&lt;/em&gt;, the zipper library does the same thing.  Every zipper can be traversed to find it's parent - so every zipper keeps a reference to it's parent.&lt;/p&gt;
-
-&lt;p&gt;So we have to go back to simple structure parsing.  Don't worry, we won't throw away &lt;em&gt;all&lt;/em&gt; the zipper functionality - you just have to use it on each child node, not the overall tree.&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;element&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;element&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-          &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt;
-          &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-open&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"wikipedia.xml.bz2"&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;nth&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-         &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-title&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="mi"&gt;100000&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Flatonia, Texas"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;aside&gt;
-  &lt;p&gt;(Note: with-open is a macro that automatically closes the reader when we're done)&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;Success!  Getting rid of the symbol &lt;code&gt;x&lt;/code&gt; means we aren't keeping the head around - and we can still use a zipper within the &lt;code&gt;page-title&lt;/code&gt; function to manipulate the individual page.  For a simple task like this it is probably overkill, and will add a fair bit of overhead - especially as we are mapping the page title for the 99,999 pages we don't care about.  But the minute you want to filter or act on the page contents, you'll need that processing.&lt;/p&gt;
-
-&lt;p&gt;And this still only took 135 seconds, using 123 MB peak RAM on my laptop - not too bad for an unoptimised scan through 100,000 xml nodes.&lt;/p&gt;
-
-&lt;h2 id="data-processing-with-lazy-sequences"&gt;Data processing with lazy sequences&lt;/h2&gt;
-
-&lt;p&gt;Clojure excels at processing sequences of stuff.  The wikipedia data is a bit simple for a great example, but it's a start.&lt;/p&gt;
-
-&lt;p&gt;First, lets write a function to transform a wikipedia xml sub-document into a useful structure:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-&amp;gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;page&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;let&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt;     &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;attr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:revision&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fmt/parse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:revision&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:text&lt;/span&gt;&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:revision&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:text&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)}))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;aside&gt;
-  &lt;p&gt;Note I've been a bit lazy here with error checking - if there is no timestamp element this will crash horribly.&lt;/p&gt;
-&lt;/aside&gt;
-
-&lt;p&gt;Now let's get the first few entries:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-open&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;doall&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;take&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="w"&gt;
-          &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-&amp;gt;map&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;One strange thing I had to do here is use &lt;code&gt;doall&lt;/code&gt; - this is to force non-laziness.  Clojure's laziness is great generally, but without &lt;code&gt;doall&lt;/code&gt; you will get:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;XMLStreamException ParseError at [row,col]:[85,2582]
-Message: Stream closed  com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next (XMLStreamReaderImpl.java:596)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Why?  This is a common point of pain in dealing with lazy sequences - you need to make sure you force non-lazy behaviour before you lose your data source or connection or similar.  In this case, the &lt;code&gt;with-open&lt;/code&gt; call opens a file for streaming - but everything inside the &lt;code&gt;take 4&lt;/code&gt; call is only processed when output is needed.  Which is after &lt;code&gt;with-open&lt;/code&gt; has closed the reader on you!&lt;/p&gt;
-
-&lt;p&gt;So you need to add a &lt;code&gt;doall&lt;/code&gt; first, which takes those 4 lazy results and forces them to be evaluated as concrete results. You wouldn't need this if all the processing of the sequence was forced within the &lt;code&gt;with-open&lt;/code&gt; call in some other way.&lt;/p&gt;
-
-&lt;p&gt;Anyway, back to the output of the above:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AccessibleComputing"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Computer accessibility"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"381202555"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2010-08-26&lt;/span&gt;&lt;span class="n"&gt;T22&lt;/span&gt;&lt;span class="no"&gt;:38:36.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Anarchism"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"557411769"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2013-05-29&lt;/span&gt;&lt;span class="n"&gt;T21&lt;/span&gt;&lt;span class="no"&gt;:19:48.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanHistory"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"History of Afghanistan"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"74466652"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2006-09-08&lt;/span&gt;&lt;span class="n"&gt;T04&lt;/span&gt;&lt;span class="no"&gt;:15:52.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"AfghanistanGeography"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Geography of Afghanistan"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"407008307"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2011-01-10&lt;/span&gt;&lt;span class="n"&gt;T03&lt;/span&gt;&lt;span class="no"&gt;:56:19.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;(I removed the text for clarity)&lt;/p&gt;
-
-&lt;p&gt;Ok, now we have structured data we can process it.  Let's say we want to know the first 4 articles last updated before 2008?  Ignoring redirects, of course.&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-open&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;doall&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;take&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="w"&gt;
-          &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-&amp;gt;map&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remove&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;time/after?&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;time/date-time&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2008&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))))))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:Complete list of encyclopedia topics (obsolete)"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"31953688"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2005-12-19&lt;/span&gt;&lt;span class="n"&gt;T09&lt;/span&gt;&lt;span class="no"&gt;:54:11.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:Complete list of encyclopedia topics (obsolete)/6"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"15904520"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2005-05-16&lt;/span&gt;&lt;span class="n"&gt;T07&lt;/span&gt;&lt;span class="no"&gt;:18:26.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:Complete list of encyclopedia topics (obsolete)/7"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"15904521"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2005-05-16&lt;/span&gt;&lt;span class="n"&gt;T07&lt;/span&gt;&lt;span class="no"&gt;:18:30.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:Complete list of encyclopedia topics (obsolete)/8"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"15904522"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2005-05-16&lt;/span&gt;&lt;span class="n"&gt;T07&lt;/span&gt;&lt;span class="no"&gt;:18:56.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Hmm - kind of boring.  Let's strip the obsolete pages:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-open&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bz2-reader&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;doall&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;take&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="w"&gt;
-          &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rdr&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="nb"&gt;parse&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:page&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;page-&amp;gt;map&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remove&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;filter&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;time/after?&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;time/date-time&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2008&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-               &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remove&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;re-find&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="s"&gt;"\(obsolete\)"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;))))))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:GNE Project Files/Proposed GNU Moderation System"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"57629800"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2006-06-09&lt;/span&gt;&lt;span class="n"&gt;T01&lt;/span&gt;&lt;span class="no"&gt;:38:24.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:GNE Project Files/GNE Project Design"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"57629879"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2006-06-09&lt;/span&gt;&lt;span class="n"&gt;T01&lt;/span&gt;&lt;span class="no"&gt;:39:07.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Wikipedia:GNE Project Files/Project Name"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"15910103"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2004-04-14&lt;/span&gt;&lt;span class="n"&gt;T22&lt;/span&gt;&lt;span class="no"&gt;:22:01.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:title&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"History of the Virgin Islands"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:redirect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nil,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"155442896"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="no"&gt;:timestamp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;&amp;lt;DateTime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2007-09-03&lt;/span&gt;&lt;span class="n"&gt;T16&lt;/span&gt;&lt;span class="no"&gt;:52:44.000Z&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This should give you a taste for what you can do.  Finding the above on my laptop took almost a minute - I'm not sure how far through the wikipedia dump it searched.  Counting the number of skipped pages is left as an exercise for the reader!&lt;/p&gt;
-
-&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;This is still a pretty simple data structure.  In many environments you will probably find some much worse examples - my most recent project involved parsing &lt;a href="http://www.xbrl.org/specification/gnl/rec-2009-06-22/gnl-rec-2009-06-22.html"&gt;xbrl&lt;/a&gt; which was a lot of fun.  If you meed this sort of xml, you'll really appreciate having a language like clojure on hand.&lt;/p&gt;
-
-&lt;p&gt;I also haven't touched on modifying xml - the zipper frameworks have a lot of tools for on-the-fly modification of xml documents, but that's something for another article.&lt;/p&gt;
 </content>
   </entry>
 </feed>

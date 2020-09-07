@@ -32,15 +32,20 @@
 </h1>
 </header>
 <section class='blog'>
-<div class='main' role='main'><p><img src="/2020-09-01-polyglot-explorer/main_ui_sample.png" alt="Main UI" /></p>
+<div class='main' role='main'><article>
+<header>
+<h1>Introducing the Polyglot Code Explorer</h1>
+<time>Sep  6 2020</time>
+</header>
+<p><img src="/2020-09-01-polyglot-explorer/main_ui_sample.png" alt="Main UI" /></p>
 
-<p>If you want a quick look at the explorer, you can see <a href="http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/">a simple demo here</a> or <a href="http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/">a more complex one here</a>.  There is also a documentation site at  <a href="https://polyglot.korny.info">https://polyglot.korny.info</a> (currently a work-in-progress).</p>
+<p><em>If you want a quick look at the explorer, you can see <a href="http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/">a simple demo here</a> or <a href="http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/">a more complex one here</a>.  There is also a documentation site at  <a href="https://polyglot.korny.info">https://polyglot.korny.info</a> (currently a work-in-progress).</em></p>
 
 <h2 id="welcome-to-the-polyglot-code-explorer">Welcome to the Polyglot Code Explorer</h2>
 
-<p>The Polyglot Code Explorer lets you visualise large codebases written in multiple programming languages.</p>
+<p>The Polyglot Code Explorer is an open-source tool for visualising complex codebases written in multiple programming languages.</p>
 
-<p>In this article I am going to explain it's purpose, how you can run it yourself, and what it does.</p>
+<p>In this article I am going to explain its purpose, how you can run it yourself, and what it does.</p>
 
 <h2 id="what-is-it-for">What is it for?</h2>
 
@@ -58,13 +63,13 @@
 
 <h3 id="why-polyglot">Why polyglot?</h3>
 
-<p>Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, on any text-based programming language.</p>
+<p>Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, for any text-based programming language.</p>
 
-<p>I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a real hassle.</p>
+<p>I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a headache.  And each tool probably produces different metrics in different formats - it's hard to get any sort of big-picture view.</p>
 
-<p>Also many real world systems don't use a single language - there are a number of great programming languages which are good at particular tasks rather than being general purpose - for example you might have a UIs built in JavaScript, a service built in Kotlin and a system tool build in rust.  Exploring polyglot codebases using language-specific tools is difficult - each will have different features and different ways to calculate metrics.</p>
+<p>Also many real world systems don't use a single language - often it is better to use specialist languages for different tasks, rather than one general-purpose one.  For example one project might have a UI built in JavaScript and HTML, a microservice built in Kotlin and a platform automation tool build in Rust.</p>
 
-<p>Also I was inspired by reading Adam Tornhill's book <a href="https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene">"Your code as a crime scene"</a> - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of this code uses no language parser at all, or just a simple one to remove blank lines and comments.  This is great when you want to look at a brand new language, or an ancient language, where no reliable parser may exist.</p>
+<p>Also I was inspired by reading Adam Tornhill's book <a href="https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene">"Your code as a crime scene"</a> - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of my code uses no language parser at all, or just a very simple which can distinguish code from comments.</p>
 
 <p>And finally - supporting all the various languages out there is a lot of work!  Quite a few of the other tools I found linked from Erik's articles, and elsewhere, seem to have parsers for a number of languages - but progress is slow, and often they don't keep up with new languages or language changes.  Staying largely language-agnostic makes it much easier for me to maintain my code, and not have to worry about it stagnating.</p>
 
@@ -176,7 +181,7 @@ Serving HTTP on 0.0.0.0 port 8000 <span class="o">(</span>http://0.0.0.0:8000/<s
 
 <p><img src="/2020-09-01-polyglot-explorer/vis_age.png" alt="age since last change" /></p>
 
-<p>This view shows how long it is since each file was changed (from git history) blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:</p>
+<p>This view shows how long it is since each file was changed (from git history) - blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:</p>
 
 <p><img src="/2020-09-01-polyglot-explorer/date_selector.png" alt="date selector" /></p>
 
@@ -267,7 +272,29 @@ Serving HTTP on 0.0.0.0 port 8000 <span class="o">(</span>http://0.0.0.0:8000/<s
 
 <p>A few things are of fairly high priority - I'd like to handle git history renames better, projects with a lot of refactoring will have poorer quality metrics at the moment.</p>
 
-<p>I'd also love to get feedback to help me prioritise - feel free to add comments on the Discus form below, or contact me (contact details are at <a href="https://korny.info">https://korny.info</a>) - or for bugs / improvements you can raise issues on the linked GitHub projects.</p>
+<p>I'd also love to get feedback to help me prioritise - feel free to add comments on the Disqus form below, or contact me <a href="https://twitter.com/kornys">on Twitter</a> or other social media - or for bugs / improvements you can raise issues on the linked GitHub projects.</p>
+
+<div id='disqus_thread'></div>
+<script>
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'kornyblog';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>
+Please enable JavaScript to view the
+<a href='http://disqus.com/?ref_noscript'>comments powered by Disqus.</a>
+</noscript>
+<a class='dsq-brlink' href='http://disqus.com'>
+comments powered by
+<span class='logo-disqus'>Disqus</span>
+</a>
+</article>
 </div>
 <aside>
 <h2>About Me</h2>
@@ -284,6 +311,10 @@ kornys on twitter
 </p>
 <h2>Recent Articles</h2>
 <ol>
+<li>
+<a href="/2020/09/06/introducing-the-polyglot-code-explorer.html">Introducing the Polyglot Code Explorer</a>
+<span>Sep  6</span>
+</li>
 <li>
 <a href="/2020/07/19/better-d3-with-react.html">Better D3 sites with react</a>
 <span>Jul 19</span>
@@ -320,16 +351,12 @@ kornys on twitter
 <a href="/2014/05/11/snippets.html">Clojure snippets</a>
 <span>May 11</span>
 </li>
-<li>
-<a href="/2014/04/12/parsing-freemind-files.html">Parsing FreeMind files</a>
-<span>Apr 12</span>
-</li>
 </ol>
 <h2>Tags</h2>
 <ol>
 <li>
 <a href="/tags/tech.html">tech</a>
-(5)
+(6)
 </li>
 <li>
 <a href="/tags/testing-tech.html">testing tech</a>
