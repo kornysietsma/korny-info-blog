@@ -1,20 +1,20 @@
 ---
 
 title: Introducing the Polyglot Code Explorer
-date: 2020-09-01 18:56 GMT
+date: 2020-09-06 18:56 GMT
 tags: tech
 
 ---
 
 ![Main UI](/2020-09-01-polyglot-explorer/main_ui_sample.png)
 
-If you want a quick look at the explorer, you can see [a simple demo here](http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/) or [a more complex one here](http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/).  There is also a documentation site at  <https://polyglot.korny.info> (currently a work-in-progress).
+_If you want a quick look at the explorer, you can see [a simple demo here](http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/) or [a more complex one here](http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/).  There is also a documentation site at  <https://polyglot.korny.info> (currently a work-in-progress)._
 
 ## Welcome to the Polyglot Code Explorer
 
-The Polyglot Code Explorer lets you visualise large codebases written in multiple programming languages.
+The Polyglot Code Explorer is an open-source tool for visualising complex codebases written in multiple programming languages.
 
-In this article I am going to explain it's purpose, how you can run it yourself, and what it does.
+In this article I am going to explain its purpose, how you can run it yourself, and what it does.
 
 ## What is it for?
 
@@ -30,13 +30,13 @@ It is far quicker for me to look at a diagram and see some unusual colouring in 
 
 ### Why polyglot?
 
-Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, on any text-based programming language.
+Polyglot means "speaking multiple languages" - in this case, it means these tools should work, to some degree, for any text-based programming language.
 
-I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a real hassle.
+I've worked in many programming languages over the years, and a lot of them don't have good or easy code quality tools - either they are too new for a community to have built them, or they are from ancient projects where even if such tools exist, getting them up and running is a headache.  And each tool probably produces different metrics in different formats - it's hard to get any sort of big-picture view.
 
-Also many real world systems don't use a single language - there are a number of great programming languages which are good at particular tasks rather than being general purpose - for example you might have a UIs built in JavaScript, a service built in Kotlin and a system tool build in rust.  Exploring polyglot codebases using language-specific tools is difficult - each will have different features and different ways to calculate metrics.
+Also many real world systems don't use a single language - often it is better to use specialist languages for different tasks, rather than one general-purpose one.  For example one project might have a UI built in JavaScript and HTML, a microservice built in Kotlin and a platform automation tool build in Rust.
 
-Also I was inspired by reading Adam Tornhill's book ["Your code as a crime scene"](https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene) - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of this code uses no language parser at all, or just a simple one to remove blank lines and comments.  This is great when you want to look at a brand new language, or an ancient language, where no reliable parser may exist.
+Also I was inspired by reading Adam Tornhill's book ["Your code as a crime scene"](https://www.goodreads.com/book/show/23627482-your-code-as-a-crime-scene) - he talks about all the things you can learn from really simple metrics like lines of code, and indentation, and change history.  None of these need a complex language parser - and complex language parsers tend to be touchy and flaky.  Most of my code uses no language parser at all, or just a very simple which can distinguish code from comments.
 
 And finally - supporting all the various languages out there is a lot of work!  Quite a few of the other tools I found linked from Erik's articles, and elsewhere, seem to have parsers for a number of languages - but progress is slow, and often they don't keep up with new languages or language changes.  Staying largely language-agnostic makes it much easier for me to maintain my code, and not have to worry about it stagnating.
 
@@ -144,7 +144,7 @@ Of course this metric can have false positives - heavy indentation might be due 
 
 ![age since last change](/2020-09-01-polyglot-explorer/vis_age.png)
 
-This view shows how long it is since each file was changed (from git history) blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:
+This view shows how long it is since each file was changed (from git history) - blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:
 
 ![date selector](/2020-09-01-polyglot-explorer/date_selector.png)
 
@@ -231,4 +231,4 @@ I'm keen to keep tinkering with this - I have a pile of possible enhancements, a
 
 A few things are of fairly high priority - I'd like to handle git history renames better, projects with a lot of refactoring will have poorer quality metrics at the moment.
 
-I'd also love to get feedback to help me prioritise - feel free to add comments on the Discus form below, or contact me (contact details are at <https://korny.info>) - or for bugs / improvements you can raise issues on the linked GitHub projects.
+I'd also love to get feedback to help me prioritise - feel free to add comments on the Disqus form below, or contact me [on Twitter](https://twitter.com/kornys) or other social media - or for bugs / improvements you can raise issues on the linked GitHub projects.
