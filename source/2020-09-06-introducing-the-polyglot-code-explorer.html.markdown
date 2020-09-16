@@ -164,7 +164,9 @@ However, there is a problem here that requires a bit of a digression
 
 #### The problem with the date selector
 
-The scanner starts with the files currently on your filesystem - and then it works backwards in time through the git logs.  It doesn't really keep track of the actual state of your system over time, or file renames, or deleted files.  If you create a file `foo.c`, and do a pile of work on it, and then delete it, the scanner will not show it - there's not really anywhere in the JSON data file to store that data!  Similarly renames are not handled well - it sees a file rename, but isn't great at tracking what happens to the file before the rename.  (This is something I plan to fix, when I can!  But it's non-trivial - you can't just track file renames by time, you need to track them by branch...)
+The scanner starts with the files currently on your filesystem - and then it works backwards in time through the git logs.  It doesn't really keep track of the actual state of your system over time, ~or file renames,~ or deleted files.  If you create a file `foo.c`, and do a pile of work on it, and then delete it, the scanner will not show it - there's not really anywhere in the JSON data file to store that data!  ~Similarly renames are not handled well - it sees a file rename, but isn't great at tracking what happens to the file before the rename.  (This is something I plan to fix, when I can!  But it's non-trivial - you can't just track file renames by time, you need to track them by branch...)~
+
+(**Update** as of scanner version 0.2.0, it does now follow renames and respect deletes.  You still can't see any files that are not in the current HEAD revision when you scan!  But if you rename `foo.c` to `bar.c` it will show all changes to `foo.c` when you look at `bar.c`. This is most important if you move directories around - I've had to rename `src/hierachy` to `src/hierarchy` in the past!)
 
 So moving the date selector is handy for limiting some kinds of information, and getting some views of the past - but it's not actually a window into the past state of the project.
 
