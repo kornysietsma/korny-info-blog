@@ -5,10 +5,42 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2020-09-06T19:56:00+01:00</updated>
+  <updated>2022-01-26T20:31:00+00:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>Hiatus</title>
+    <link rel="alternate" href="/2022/01/26/hiatus.html"/>
+    <id>/2022/01/26/hiatus.html</id>
+    <published>2022-01-26T20:31:00+00:00</published>
+    <updated>2022-01-26T20:31:00+00:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;h2 id="long-time-no-blog"&gt;Long time no blog&lt;/h2&gt;
+
+&lt;p&gt;I don't often post personal things here, but I thought after a 15 month gap I should put something up.&lt;/p&gt;
+
+&lt;p&gt;We are all well and happy here, but since late 2020 I was incredibly busy at work - working on a "Red team" review of a major...&lt;/p&gt;</summary>
+    <content type="html">&lt;h2 id="long-time-no-blog"&gt;Long time no blog&lt;/h2&gt;
+
+&lt;p&gt;I don't often post personal things here, but I thought after a 15 month gap I should put something up.&lt;/p&gt;
+
+&lt;p&gt;We are all well and happy here, but since late 2020 I was incredibly busy at work - working on a "Red team" review of a major UK public sector project which was in real trouble, and then working with the organisation to help plan and build a complete reset of the project.  It was a challenging and interesting and a great learning experience - but it also used up all my energy and spare time not already dedicated to family, so not much side-project work or blog ideas made it out.&lt;/p&gt;
+
+&lt;p&gt;Then in November 2021 our other side-project happened - we adopted a child!  I'm not going to share details in a public medium, but it's been a wonderful exhausting journey. I'm half way through 6 months of Adoption Leave, and things are sort-of almost calming down a bit - enough that I can start thinking about the year ahead, and maybe update this blog!&lt;/p&gt;
+
+&lt;p&gt;So - I might turn some draft posts into real posts at some stage; and I'm trying to get back into technical reading, when I have the time and brainpower.&lt;/p&gt;
+
+&lt;p&gt;Currently I'm reading &lt;a href="https://www.goodreads.com/book/show/1408452.Information_Visualization"&gt;Information Visualization: Perception for Design&lt;/a&gt; by Colin Ware - which is fascinating, an in-depth academic text on human visual perception and cognition - it's basically covering the low-level stuff that our bodies and brains do to process visual info, with an eye on how this impacts the world of visualization.&lt;/p&gt;
+
+&lt;p&gt;There is so much here, backed by so much research - it's not all immediately applicable to people building D3 interfaces, necessarily - you can get that from lots of other books.  But if you want to know a bit more about &lt;em&gt;why&lt;/em&gt; you might want to prefer one kind of colour scheme to another, or why visual programming languages might not ever match the hype, or how to support colour-blind users (and why some small proportion of the population can see colours that nobody else can!), or a million other fascinating facts about brains and eyes - it's a really interesting read.  If very dense to read through blurry, sleep-deprived eyes.&lt;/p&gt;
+
+&lt;p&gt;Anyway, enough blathering - just thought I'd post a "still alive" notice.  There may be more posts soon, or it may be more months of silence here!&lt;/p&gt;
+
+</content>
+  </entry>
   <entry>
     <title>Introducing the Polyglot Code Explorer</title>
     <link rel="alternate" href="/2020/09/06/introducing-the-polyglot-code-explorer.html"/>
@@ -1426,161 +1458,6 @@ of cool things - which I should blog about, some time.&lt;/p&gt;
 &lt;p&gt;I've mostly moved from emacs to Intellij Idea + &lt;a href="https://cursiveclojure.com/"&gt;the Cursive plugin&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;I intend to put up a decent cheat sheet for using Cursive's structural mode, which is basically a variant of paredit.  But I'm out of time.  For now, look at the excellent tutorial &lt;a href="https://cursiveclojure.com/userguide/paredit.html"&gt;on the cursive site&lt;/a&gt;.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Parsing FreeMind files</title>
-    <link rel="alternate" href="/2014/04/12/parsing-freemind-files.html"/>
-    <id>/2014/04/12/parsing-freemind-files.html</id>
-    <published>2014-04-12T16:07:00+01:00</published>
-    <updated>2014-04-12T16:07:00+01:00</updated>
-    <author>
-      <name>Kornelis Sietsma</name>
-    </author>
-    <summary type="html">&lt;p&gt;This is a bit of an addendum on &lt;a href="/2014/03/08/xml-for-fun-and-profit.html"&gt;my previous post&lt;/a&gt;. - I wanted to convert some &lt;a href="http://freemind.sourceforge.net/wiki/index.php/Main_Page"&gt;FreeMind&lt;/a&gt; mind-maps into other formats.  FreeMind is pretty cool, especially as it's file format is fairly straightforward XML, so lots of other mind mapping programs, like XMind, will read and write FreeMind files.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</summary>
-    <content type="html">&lt;p&gt;This is a bit of an addendum on &lt;a href="/2014/03/08/xml-for-fun-and-profit.html"&gt;my previous post&lt;/a&gt;. - I wanted to convert some &lt;a href="http://freemind.sourceforge.net/wiki/index.php/Main_Page"&gt;FreeMind&lt;/a&gt; mind-maps into other formats.  FreeMind is pretty cool, especially as it's file format is fairly straightforward XML, so lots of other mind mapping programs, like XMind, will read and write FreeMind files.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Initially what I wanted was to get the data into a spreadsheet.  I had a map vaguely like:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="/2014/04/12/parsing-freemind-files/things.png" alt="things mindmap" /&gt;&lt;/p&gt;
-
-&lt;p&gt;And I wanted to turn this into tabular data in a spreadsheet:&lt;/p&gt;
-
-&lt;table class="spreadsheet"&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Bigger than a breadbox&lt;/td&gt;
-      &lt;td&gt;red&lt;/td&gt;
-      &lt;td&gt;phone booth&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Bigger than a breadbox&lt;/td&gt;
-      &lt;td&gt;grey&lt;/td&gt;
-      &lt;td&gt;elephant&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Smaller than a mouse&lt;/td&gt;
-      &lt;td&gt;white&lt;/td&gt;
-      &lt;td&gt;gold ball&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Smaller than a mouse&lt;/td&gt;
-      &lt;td&gt;white&lt;/td&gt;
-      &lt;td&gt;eyeball&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;In between&lt;/td&gt;
-      &lt;td&gt;yellow&lt;/td&gt;
-      &lt;td&gt;canary&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;In between&lt;/td&gt;
-      &lt;td&gt;yellow&lt;/td&gt;
-      &lt;td&gt;banana&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;You get the idea - I didn't want every node, just those at level 3, and I needed to denormalise them back into columns.&lt;/p&gt;
-
-&lt;p&gt;Now, there are lots of freemind examples to manipulate maps - using xslt. Yuck. This stuff is &lt;em&gt;so&lt;/em&gt; easy in clojure.&lt;/p&gt;
-
-&lt;p&gt;I'll do this at the repl, for simplicity.  First, some namespaces:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ns&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fm-parse.blog&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:require&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.xml&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;parse-str&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;up&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;down&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;left&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;right&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;c-d-zip&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.zip.xml&lt;/span&gt;&lt;span class="w"&gt;
-              &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;attr=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.java.io&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clojure.data.csv&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;write-csv&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;It's a pity the xml stuff is spread over so many namespaces, but that's somewhat the clojure way - libraries are built up as incremental changes to existing libraries.
-(Normally I'd add more &lt;code&gt;:as&lt;/code&gt; namespace aliases, but I wanted to keep the code terse so it's more readable on small devices)&lt;/p&gt;
-
-&lt;p&gt;Next, read the freemind xml into memory:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml-data&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;slurp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"things.mm"&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;clojure.pprint/pprint&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml-data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:map,&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:version&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"1.0.1"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
- &lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node,&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:CREATED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"1396204283978"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="no"&gt;:ID&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"ID_1617316526"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="no"&gt;:MODIFIED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"1396204290625"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="no"&gt;:TEXT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Things"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt;
-   &lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="no"&gt;:tag&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node,&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="no"&gt;:attrs&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:CREATED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"1396204291304"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="no"&gt;:ID&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"ID_1543131992"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="no"&gt;:MODIFIED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"1396204295075"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="no"&gt;:POSITION&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"right"&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="no"&gt;:TEXT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="n"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;...&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="c1"&gt;; define the root of what we care about:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;root&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xml-data&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:content&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;first&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The nodes we want have :TEXT attributes with the name of the node, and children with child notes.  That's most of what we care about.  I'll define a function to get the node name from a zipper location:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;attr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:TEXT&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Then for example, we can get the text from the phone booth node:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml1-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;root&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;down&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;down&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;down&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;var&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fm-parse.blog/phone-booth&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;What we want for the spreadsheet is a list (really a seq) of all the nodes from the root down to a leaf.  There's an "ancestors" function in the zip code that will do what we want - I'll build it up step by step:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ancestors&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"red"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Things"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;reverse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ancestors&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Things"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"red"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;rest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;reverse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ancestors&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"red"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;make this a function:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as-text-seq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;zloc&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;c-d-zip/ancestors&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zloc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zip-&amp;gt;txt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="nb"&gt;reverse&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="nb"&gt;rest&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;var&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fm-parse.blog/as-text-seq&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;as-text-seq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;phone-booth&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"red"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;That's the first line of our spreadsheet!  The clojure.data.csv library takes sequences like this trivially - I'll show this below - but we want to find all the right nodes to export.&lt;/p&gt;
-
-&lt;p&gt;If you look at the mind map above, what we want is all nodes exactly 3 levels deep in the tree.  We can codify that as a match for the &lt;code&gt;xml-&amp;gt;&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;root&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;attr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:TEXT&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"elephant"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"golf ball"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"eyeball"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"canary"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"banana"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Those are the leaf nodes - now just call as-text-seq on each of them:&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;level3-nodes&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;xml-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;xml-zip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;root&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:node&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;csv-data&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;leaf&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;level3-nodes&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-                &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;as-text-seq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;leaf&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;csv-lev3&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"red"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"phone booth"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Bigger than a breadbox"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"grey"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"elephant"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Smaller than a mouse"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"white"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"golf ball"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Smaller than a mouse"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"white"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"eyeball"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"In between"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"yellow"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"canary"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"In between"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"yellow"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"banana"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;with-open&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;out-file&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;io/writer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"sample.csv"&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;write-csv&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;out-file&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;csv-data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And we're done - you can import this csv file into Excel or LibreOffice or whatever you use.&lt;/p&gt;
-
-&lt;p&gt;Note, you can use a simple extension of this to write the freemind file to a GraphViz dot file very easily - I do this to import mindmap data into OmniGraffle.  I'll leave this as an exercise for the reader!&lt;/p&gt;
 </content>
   </entry>
 </feed>

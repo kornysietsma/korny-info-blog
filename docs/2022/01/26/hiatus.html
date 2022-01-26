@@ -34,69 +34,25 @@
 <section class='blog'>
 <div class='main' role='main'><article>
 <header>
-<h1>OCR Hack - grabbing text from the screen on a Macbook</h1>
-<time>Apr  8 2019</time>
+<h1>Hiatus</h1>
+<time>Jan 26 2022</time>
 </header>
-<p>(File under: obscure hacks that I'm blogging mostly so I can re-create them in the future when
-I've forgotten what I did to make this work)</p>
+<h2 id="long-time-no-blog">Long time no blog</h2>
 
-<p>This is a neat hack I worked out a couple of months ago, while I was scanning in some recipes -
-I wanted a way to easily grab some text from a photo, repeatedly - and more, I wanted to grab
-a section of a page, because often recipes are laid out in strange ways, tables
-of contents, big titles, and the rest.</p>
+<p>I don't often post personal things here, but I thought after a 15 month gap I should put something up.</p>
 
-<p>Since then, it's turned out to be handy for other things.  Got a locked PDF you want to
-grab a paragraph from?  Or a Kindle book that you want to quote?  (I have no idea how on
-earth people justify locking users out of copying bits of their purchased books!  It's fair
-use, folks - all I want is to quote your book, and I'm sure the real pirates can
-bypass your DRM)</p>
+<p>We are all well and happy here, but since late 2020 I was incredibly busy at work - working on a "Red team" review of a major UK public sector project which was in real trouble, and then working with the organisation to help plan and build a complete reset of the project.  It was a challenging and interesting and a great learning experience - but it also used up all my energy and spare time not already dedicated to family, so not much side-project work or blog ideas made it out.</p>
 
-<p>Anyway, I now have a nifty <code>scrn2txt</code> button on my Mac's touch bar - this is how it works:</p>
+<p>Then in November 2021 our other side-project happened - we adopted a child!  I'm not going to share details in a public medium, but it's been a wonderful exhausting journey. I'm half way through 6 months of Adoption Leave, and things are sort-of almost calming down a bit - enough that I can start thinking about the year ahead, and maybe update this blog!</p>
 
-<ul>
-  <li>
-    <p>First, install <a href="https://github.com/tesseract-ocr/tesseract/wiki">Tesseract</a> - it's as simple as <code>brew install tesseract</code></p>
-  </li>
-  <li>
-    <p>Next, I wrote a simple commandline wrapper script, <code>ocr_screenshot.sh</code> in my standard scripts directory:</p>
-  </li>
-</ul>
+<p>So - I might turn some draft posts into real posts at some stage; and I'm trying to get back into technical reading, when I have the time and brainpower.</p>
 
-<div class="highlight"><pre class="highlight shell"><code><span class="c">#!/bin/bash -e</span>
-tesseract <span class="nv">$1</span> /tmp/out <span class="nt">-l</span> eng
-<span class="nb">cat</span> /tmp/out.txt | pbcopy
-</code></pre></div>
-<ul>
-  <li>
-    <p>I run <a href="https://folivora.ai/">Better Touch Tool</a> - a very nice tool for scripting the touch bar, as well as lots of
-other nice hacks (like window tiling, special hotkeys and lots of other things).  It's quite easy to set up
-a hotkey to run the above script:</p>
+<p>Currently I'm reading <a href="https://www.goodreads.com/book/show/1408452.Information_Visualization">Information Visualization: Perception for Design</a> by Colin Ware - which is fascinating, an in-depth academic text on human visual perception and cognition - it's basically covering the low-level stuff that our bodies and brains do to process visual info, with an eye on how this impacts the world of visualization.</p>
 
-    <ol>
-      <li>
-        <p>Create a new button set up as "capture screenshot - configurable"
-<img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image1.png" alt="better touch tool screenshot&quot;" /></p>
-      </li>
-      <li>
-        <p>Capture the screenshot to a fixed file - <code>/tmp/tmp_screenshot</code> in my example
-<img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image2.png" alt="better touch tool screenshot&quot;" /></p>
-      </li>
-      <li>
-        <p>Run the script above as <code>ocr_screenshot.sh {filepath}</code> - this will pass the filename to the script
-<img src="/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image3.png" alt="better touch tool screenshot&quot;" /></p>
-      </li>
-      <li>
-        <p>Save the button!</p>
-      </li>
-    </ol>
-  </li>
-</ul>
+<p>There is so much here, backed by so much research - it's not all immediately applicable to people building D3 interfaces, necessarily - you can get that from lots of other books.  But if you want to know a bit more about <em>why</em> you might want to prefer one kind of colour scheme to another, or why visual programming languages might not ever match the hype, or how to support colour-blind users (and why some small proportion of the population can see colours that nobody else can!), or a million other fascinating facts about brains and eyes - it's a really interesting read.  If very dense to read through blurry, sleep-deprived eyes.</p>
 
-<p>The result is a nice little button on my touchbar - when I press it, it prompts me to select a rectangle of the screen, saves it as a bitmap to <code>/tmp/tmp_screenshot.png</code>, calls <code>tesseract</code> to OCR it to text, and then <code>pbcopy</code> to put it on my clipboard.</p>
+<p>Anyway, enough blathering - just thought I'd post a "still alive" notice.  There may be more posts soon, or it may be more months of silence here!</p>
 
-<p>Tesseract seems pretty powerful too - it happily grabs text from slightly skewed image files, and any minor mistakes are easy to fix.</p>
-
-<p>I hope this is useful to someone!</p>
 
 <div id='disqus_thread'></div>
 <script>
