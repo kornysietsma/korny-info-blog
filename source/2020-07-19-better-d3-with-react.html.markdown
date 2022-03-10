@@ -274,3 +274,7 @@ All of this is surprisingly smooth - I've had pages with thousands of `svg` node
 I'm using this for my polyglot code tools - I intend to write more about those when I have the time.
 
 I'd really value feedback on this post - especially as I'm not a react expert, and there are probably major things I've missed!  Feedback via Disqus below, or via `@kornys` on Twitter.
+
+## Update Mar 2022
+
+I have tweaked the repo a bit - using Typescript now, and updated versions of React, D3, eslint and prettier.  Haven't really had time to update this blog post, but hopefully it's mostly still relevant.

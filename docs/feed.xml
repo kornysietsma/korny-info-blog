@@ -563,6 +563,10 @@ Serving HTTP on 0.0.0.0 port 8000 &lt;span class="o"&gt;(&lt;/span&gt;http://0.0
 &lt;p&gt;I'm using this for my polyglot code tools - I intend to write more about those when I have the time.&lt;/p&gt;
 
 &lt;p&gt;I'd really value feedback on this post - especially as I'm not a react expert, and there are probably major things I've missed!  Feedback via Disqus below, or via &lt;code&gt;@kornys&lt;/code&gt; on Twitter.&lt;/p&gt;
+
+&lt;h2 id="update-mar-2022"&gt;Update Mar 2022&lt;/h2&gt;
+
+&lt;p&gt;I have tweaked the repo a bit - using Typescript now, and updated versions of React, D3, eslint and prettier.  Haven't really had time to update this blog post, but hopefully it's mostly still relevant.&lt;/p&gt;
 </content>
   </entry>
   <entry>
