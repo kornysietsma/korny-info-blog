@@ -5,10 +5,113 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2022-01-26T20:31:00+00:00</updated>
+  <updated>2022-09-12T15:31:00+01:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>A geeky kind of sabbatical</title>
+    <link rel="alternate" href="/2022/09/12/sabbatical.html"/>
+    <id>/2022/09/12/sabbatical.html</id>
+    <published>2022-09-12T15:31:00+01:00</published>
+    <updated>2022-09-12T15:31:00+01:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;h2 id="a-geeky-kind-of-sabbatical"&gt;A geeky kind of sabbatical&lt;/h2&gt;
+
+&lt;p&gt;I am on sabbatical!  After 10 years at Thoughtworks, I'm getting a nice long break.  (I've actually been on sabbatical for a few weeks - school holidays plus usual procrastination delayed this post…)&lt;/p&gt;
+
+&lt;p&gt;I had to decide, a...&lt;/p&gt;</summary>
+    <content type="html">&lt;h2 id="a-geeky-kind-of-sabbatical"&gt;A geeky kind of sabbatical&lt;/h2&gt;
+
+&lt;p&gt;I am on sabbatical!  After 10 years at Thoughtworks, I'm getting a nice long break.  (I've actually been on sabbatical for a few weeks - school holidays plus usual procrastination delayed this post…)&lt;/p&gt;
+
+&lt;p&gt;I had to decide, a while ago - what would I do on my sabbatical?  Some people use them to travel, to see the world, to expand their horizons - but I have two small kids, so that really didn't sound much like it fit this stage of my life!&lt;/p&gt;
+
+&lt;p&gt;Instead, I wanted to think about things I could do while largely staying at or near home.  On thinking further, my main life goals at the moment are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Mental health&lt;/li&gt;
+  &lt;li&gt;Physical health&lt;/li&gt;
+  &lt;li&gt;Learning and self-improvement&lt;/li&gt;
+  &lt;li&gt;Family and family maintenance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Several of these are overlapping - I started on a venn diagram but it got a bit messy!&lt;/p&gt;
+
+&lt;p&gt;However, I'm also a big geek - one thing that satistfies my "Mental health" and "Learning" areas is to actually write some code.  To build something of value, and share it with others.  This is especially the case as I haven't been on a proper software delivery project since 2020 - I've done some fascinating work, but I have felt a bit disconnected from the art of writing code.&lt;/p&gt;
+
+&lt;p&gt;So - a major goal of my sabbatical is to try to make some big improvements to my pet project, the &lt;a href="https://polyglot.korny.info"&gt;Polyglot Code Tools&lt;/a&gt;. It might not sound much like a holiday to some!  But I love it.&lt;/p&gt;
+
+&lt;p&gt;I'm also doing plenty for the other categories - I'm back doing weekly yoga (which is awesome), I had a great summer holiday with the kids and my mum, and I've done lots of life-admin tasks that I won't bore people with here.  I'm also going to try for a few long bike rides - but right now I'm scratching my "I want to code" itch!&lt;/p&gt;
+
+&lt;p&gt;I have a few big epics planned around my tools - some of them are already done or nearing done!  For example, you can now assign users to teams, and visualise which team has changed which areas of code most in a particular timespan:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/2022-sabbatical/v060alpha1_teams.png" alt="Showing teams in the Explorer" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This was from code I hacked together at a client, I've now re-written it cleanly, in TypeScript, and it is mostly working.&lt;/p&gt;
+
+&lt;h2 id="work-in-progress"&gt;Work in progress&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Moving to TypeScript - done!  Some areas were quite tricky - I should blog about TypeScript…&lt;/li&gt;
+  &lt;li&gt;Saving explorer settings to the browser or to file - done! This is essential as the UI grows - otherwise every time you reload the browser, all config like user teams would be lost.&lt;/li&gt;
+  &lt;li&gt;Creating and visualizing teams - mostly done! Most of what remains is UI tweaks - letting users see teams in more contexts, for example.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="planned-epics"&gt;Planned epics&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Filtering the UI by folder and/or programming language
+    &lt;ul&gt;
+      &lt;li&gt;this can really help speed on a large codebase. Sadly the layout can't change on filtering, but that doesn't matter for a lot of use cases.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Making it work without git - ideally adding support for other SCMs, but "not crashing the UI if there is no git data" would be a good start.  And skipping git scanning would be a good way for users to get faster feedback.&lt;/li&gt;
+  &lt;li&gt;Rewriting the Voronoi layout in rust / webassembly
+    &lt;ul&gt;
+      &lt;li&gt;This is a big one - I've actually started a while ago, but it's tricky, especially as the JavaScript code I use currently is (a) quite prone to crashing, and (b) very much not suited to a rust-style language - lots of random state fiddling all over the place.&lt;/li&gt;
+      &lt;li&gt;However, I suspect the result would be drastically faster - not just because rust, but also as I could ditch lots of time-consuming error-handling retries&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;If it is fast enough, embedding layout in the Explorer so you can change layout at run-time.  This would make the system much more usable and the feedback loop for things like changing file ignore patterns much tighter.&lt;/li&gt;
+  &lt;li&gt;Reading the research for more ideas!  I have a number of academic papers I picked up over time, and a number of great Data Visualisation books - I want to mine those for ideas of value.&lt;/li&gt;
+  &lt;li&gt;Much better documentation - I'd like an introduction video, for instance, for people who learn from videos better than words.  And a matching step-by-step written guide.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="possible-epics"&gt;Possible epics&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Using a different lines-of-code tool.  I'm using a fork of &lt;a href="https://github.com/XAMPPRocky/tokei"&gt;tokei&lt;/a&gt; which is nice and fast - but I had to fork it because I wanted to be able to strip comments from the code for complexity measures.  And maintaining the fork is annoying.  There are many other multi-language parsers out there, such as &lt;a href="https://tree-sitter.github.io/tree-sitter/"&gt;tree-sitter&lt;/a&gt; - these might also let me do some more complex metrics like class/method length, while still supporting a lot of languages.&lt;/li&gt;
+  &lt;li&gt;Using a data server rather than JSON files.  This would take away some of the unix-style simplicity of the tool - and make it harder to run in locked down environments. But it also might add a lot of power - some calculations could be offloaded to the server, allowing for things like actually observing code as it existed at a particular point in time.  And the layout engine could run as compiled multithreaded rustm not as webassembly in a browser.&lt;/li&gt;
+  &lt;li&gt;Using other layouts than Voronoi trees.&lt;/li&gt;
+  &lt;li&gt;Other tools!  I have a &lt;a href="https://github.com/kornysietsma/git-cd-chart-twuk2018"&gt;git log visualisation thing&lt;/a&gt; I built ages ago - it'd be great to rebuild something similar with new tools.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="important-tasks-but-not-really-epics"&gt;Important tasks but not really epics&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Fixing publishing binaries (the tools I used to use have died!) - probably using github actions&lt;/li&gt;
+  &lt;li&gt;Adding unit tests to the Explorer - yes, I've been lax here.  The rust code is tested and mostly TDD, but the UI involved a lot of UI tweaking that just wasn't worth testing. Nowadays there is plenty of quite testable logic as well - but having started with no tests, it's hard to course correct.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="please-send-me-your-ideas"&gt;Please send me your ideas&lt;/h2&gt;
+
+&lt;p&gt;If anyone out there has used the polyglot tools, or might be interested but can't for some reason, I'd love to hear your thoughts.  What might you be interested in seeing in a code visualisation tool?&lt;/p&gt;
+
+&lt;p&gt;Also, I'd love suggestions of open-source code I can look at as examples.  I can't publish examples based on client code, so I'd like more real-world projects that are a bit like business code:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Multiple interrelated repositories - it's nice to try out how the &lt;a href="https://polyglot.korny.info/metrics/temporal-coupling"&gt;temporal coupling&lt;/a&gt; features work - so far they haven't been awfully useful, but I'm hoping to find places where they are of value&lt;/li&gt;
+  &lt;li&gt;Lots of teams of developers.  This is a big issue with open-source samples - so much is done by individual contributors.  In day-to-day work we like to work with teams as the unit of software delivery, so I'd love places where visualising teams makes sense.&lt;/li&gt;
+  &lt;li&gt;Lots of languages.  This isn't hard really, almost everyone has a mix of languages these days.  But it'd be nice to have some languages that lack existing tools, like SQL…&lt;/li&gt;
+  &lt;li&gt;and of course, lots of code and years of git history.  (but not &lt;em&gt;too&lt;/em&gt; much code - I tried running against the linux kernel, and it works, but takes a long long time)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you have any ideas, please contact me on &lt;a href="https://mastodon.social/@korny"&gt;mastodon&lt;/a&gt; or &lt;a href="https://twitter.com/kornys"&gt;twitter&lt;/a&gt; (you can comment on this blog too, but it doesn't get checked all that often!)&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Hiatus</title>
     <link rel="alternate" href="/2022/01/26/hiatus.html"/>
@@ -1317,151 +1420,6 @@ in reality that's probably all I'll have time for, for another 4 years!&lt;/p&gt
 
 &lt;p&gt;I still work for ThoughtWorks, though for the UK tentacle.  Doing all sorts
 of cool things - which I should blog about, some time.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Clojure snippets</title>
-    <link rel="alternate" href="/2014/05/11/snippets.html"/>
-    <id>/2014/05/11/snippets.html</id>
-    <published>2014-05-11T13:08:00+01:00</published>
-    <updated>2014-05-11T13:08:00+01:00</updated>
-    <author>
-      <name>Kornelis Sietsma</name>
-    </author>
-    <summary type="html">&lt;p&gt;I'm planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it's easier to blog these to get them out rapidly, I'll try to format them nicely later.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</summary>
-    <content type="html">&lt;p&gt;I'm planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it's easier to blog these to get them out rapidly, I'll try to format them nicely later.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id="namespaces-and-main-methods"&gt;Namespaces and main methods&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ns&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo.bar&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:import&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;java.net&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;URI&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;URL&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:require&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;clj-http.client&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;compojure.core&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:all&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;; prefer this over 'use'&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:gen-class&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="c1"&gt;; if you have a main method to expose&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;-main&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;println&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"args:"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="midje-basics"&gt;Midje basics&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;ns&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo.t-bar&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;:require&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;midje.sweet&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:refer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:all&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-            &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;foo.bar&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;subject&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="c1"&gt;; or just :refer :all&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;facts&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"about foos"&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fact&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"the foo is alive"&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;subject/foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;123&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;just&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;123&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;provided&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;bar&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;123&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="midje-custom-checker"&gt;Midje custom checker&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;same-json&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;expected&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;actual&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-string&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;actual&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-string&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;expected&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;true&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; or the same test but better outputs on failure&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;defchecker&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;same-json&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;expected&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;chatty-checker&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;actual&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-     &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-string&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;actual&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;parse-string&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;expected&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;true&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fact&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"json is similar"&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;slurp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"file1.json"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;same-json&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;slurp&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"file2.json"&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="destructuring"&gt;Destructuring&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;let&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;rest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;       &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:d&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:e&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:fg&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;           &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:e&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"e"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:fg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;"f"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"g"&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:keys&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:h&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"h"&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:i&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"i"&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="c1"&gt;; a is :a, b is :b, e is "e", f is "f", g is "g"&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="c1"&gt;; h defaults to "h", i is "i"&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="c1"&gt;; rest is [:c :d]&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="c1"&gt;; all is [:a :b :c :d]&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="nb"&gt;key&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;val&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"a"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"b"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"c"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;...&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; mostly avoid this as the syntax is confusing, but on occasion:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;defn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:keys&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foo"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"bar"&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;println&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; special syntax for passing key/val parameters:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"baz"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foo baz"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="map-manipulation"&gt;Map manipulation&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;old-map&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:bar,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:baz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:bat&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;into&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;old-map&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="c1"&gt;; or anything that produces a pair&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:bar&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:foo,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:bat&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:baz&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;see also &lt;a href="algo.generic's%20fmap%20function"&gt;https://github.com/clojure/algo.generic&lt;/a&gt; if you just want to manipulate values not keys&lt;/p&gt;
-
-&lt;h2 id="protocols-and-records"&gt;Protocols and Records&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;defprotocol&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;FooBar&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"does a buzzy thing"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;defrecord&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Widget&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;hands&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;feet&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="n"&gt;FooBar&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;hands&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;feet&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;Widget.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"ha"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"fe"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"hafe"&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; same as above but '-&amp;gt;Widget' is a first class function&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;Widget&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"h"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"f"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"hf"&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;map-&amp;gt;Widget&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;:feet&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foot"&lt;/span&gt;&lt;span class="p"&gt;}))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foot"&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="c1"&gt;; hands is nil&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;extend-type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Integer&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="n"&gt;FooBar&lt;/span&gt;&lt;span class="w"&gt;
-  &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"buzz:"&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;buzz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="n"&gt;=&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"buzz:17"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="threading"&gt;Threading&lt;/h2&gt;
-
-&lt;div class="highlight"&gt;&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="c1"&gt;; same as&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;-&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="c1"&gt;; same as&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;z&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="no"&gt;:a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; need to wrap anonymous fns:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;reverse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="c1"&gt;; same as&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;reverse&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;%&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;as-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;inc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="c1"&gt;; same as&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;inc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-
-&lt;/span&gt;&lt;span class="c1"&gt;; also can nest as-&amp;gt; inside -&amp;gt;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="nb"&gt;inc&lt;/span&gt;&lt;span class="w"&gt;
-    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;as-&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
-       &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;baz&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id="paredit-and-cursive"&gt;Paredit and Cursive&lt;/h2&gt;
-
-&lt;p&gt;I've mostly moved from emacs to Intellij Idea + &lt;a href="https://cursiveclojure.com/"&gt;the Cursive plugin&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I intend to put up a decent cheat sheet for using Cursive's structural mode, which is basically a variant of paredit.  But I'm out of time.  For now, look at the excellent tutorial &lt;a href="https://cursiveclojure.com/userguide/paredit.html"&gt;on the cursive site&lt;/a&gt;.&lt;/p&gt;
 </content>
   </entry>
 </feed>
