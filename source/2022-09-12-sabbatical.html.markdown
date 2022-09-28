@@ -75,3 +75,9 @@ Also, I'd love suggestions of open-source code I can look at as examples.  I can
 * and of course, lots of code and years of git history.  (but not _too_ much code - I tried running against the linux kernel, and it works, but takes a long long time)
 
 If you have any ideas, please contact me on [mastodon](https://mastodon.social/@korny) or [twitter](https://twitter.com/kornys) (you can comment on this blog too, but it doesn't get checked all that often!)
+
+## The inevitable update
+
+Quick update 28th September - I really didn't anticipate just how much impact sleep deprivation from our lovely daughter was going to impact my plans.  I've done quite a bit (more blog updates to come) but I also need to lower my expectations a bit - I am focusing more on mental health and getting the family through a difficult year, than getting a vast amount done.
+
+So I'm going to release some cool stuff, update the docs, and all that.  But some of the later epics might have to wait a few more months / years!
