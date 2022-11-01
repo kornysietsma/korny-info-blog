@@ -74,7 +74,7 @@ Also, I'd love suggestions of open-source code I can look at as examples.  I can
 * Lots of languages.  This isn't hard really, almost everyone has a mix of languages these days.  But it'd be nice to have some languages that lack existing tools, like SQL...
 * and of course, lots of code and years of git history.  (but not _too_ much code - I tried running against the linux kernel, and it works, but takes a long long time)
 
-If you have any ideas, please contact me on [mastodon](https://mastodon.social/@korny) or [twitter](https://twitter.com/kornys) (you can comment on this blog too, but it doesn't get checked all that often!)
+If you have any ideas, please contact me on [mastodon](https://octodon.social/@Korny) or [twitter](https://twitter.com/kornys) (you can comment on this blog too, but it doesn't get checked all that often!)
 
 ## The inevitable update
 
