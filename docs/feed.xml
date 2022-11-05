@@ -5,10 +5,54 @@
   <id>http://blog.korny.info</id>
   <link href="http://blog.korny.info"/>
   <link href="http://blog.korny.info/feed.xml" rel="self"/>
-  <updated>2022-10-13T10:13:00+01:00</updated>
+  <updated>2022-11-05T21:10:00+00:00</updated>
   <author>
     <name>Kornelis Sietsma</name>
   </author>
+  <entry>
+    <title>Is Mastodon a Twitter replacement?</title>
+    <link rel="alternate" href="/2022/11/05/is-mastodon-a-twitter-replacement.html"/>
+    <id>/2022/11/05/is-mastodon-a-twitter-replacement.html</id>
+    <published>2022-11-05T21:10:00+00:00</published>
+    <updated>2022-11-05T21:10:00+00:00</updated>
+    <author>
+      <name>Kornelis Sietsma</name>
+    </author>
+    <summary type="html">&lt;h2 id="it-depends-which-bits-of-twitter-you-want"&gt;It depends which bits of Twitter you want&lt;/h2&gt;
+
+&lt;p&gt;I've been back on &lt;a href="https://joinmastodon.org/"&gt;Mastodon&lt;/a&gt; in the past week, given the Twitter mess, and I've come to the realisation that I have two main patterns of Twitter usage - and Mastodon is a great option for one of them.&lt;/p&gt;
+
+&lt;p&gt;My Twitter...&lt;/p&gt;</summary>
+    <content type="html">&lt;h2 id="it-depends-which-bits-of-twitter-you-want"&gt;It depends which bits of Twitter you want&lt;/h2&gt;
+
+&lt;p&gt;I've been back on &lt;a href="https://joinmastodon.org/"&gt;Mastodon&lt;/a&gt; in the past week, given the Twitter mess, and I've come to the realisation that I have two main patterns of Twitter usage - and Mastodon is a great option for one of them.&lt;/p&gt;
+
+&lt;p&gt;My Twitter usage is a mixture of:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Connection with enthusiasts - all kinds of enthusiasts.  Tech people, political wonks, academics, climate activists, parents. Sometimes I'm just following people, but I often actively participate - these feel like peer relationships.  Sure, sometimes the person I respond to is an expert in the field and I'm just a dabbler!  But the key part is, it's a conversation and active.&lt;/li&gt;
+  &lt;li&gt;Following the zeitgeist. News updates, what famous or influential people say, huge trending events and movements, but generally chosen by "the algorithm" not me.  Generally I'm a passive consumer not a participant - sometimes I'll quote-tweet one from this category, which might move it into category 1 above if someone I know responds&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Mastodon looks &lt;em&gt;great&lt;/em&gt; for category 1 - the enthusiasts.  I can talk to people, I can tweak my feed to follow topics, I can connect with other likeminded people.  However it involves an investment of some effort - I need to curate who I follow, build searches and lists (more on that below).  But already I'm seeing a ton of great interesting stuff, especially with the recent influx of new people - even if they are just dual-posting, I prefer to see their content on Mastodon where I have more control.  (Also I note it tends to be a lot more positive and creative than Twitter - maybe as "the algorithm" emphasises negative content to drive conflict?)&lt;/p&gt;
+
+&lt;p&gt;Mastodon is unlikely to work for category 2 - the Zeitgeist.  For one thing, there is no "algorithm" - nothing selects and filters content for me. I can follow a lot of celebrities and look at trending hashtags, but again, this is extra effort that a lot of people might not bother with.  Mastodon is not going to say "Hey, Stephen King said this funny thing". (I can get a bit of the zeitgeist when a person I follow boosts something - if one of my friends boosts Stephen King I'll see it, but it won't then decide "Korny likes Stephen King" unless I follow him)&lt;/p&gt;
+
+&lt;p&gt;But also - I don't think it will appeal to typical non-enthusiast users.  Already I'm seeing "this is too hard, I need to choose an instance??" posts.  Which is utterly fair - if you want a global zeitgeist feed, you don't want to have to spend hours fiddling with configuration!  Centralised for-profit sites like Twitter or Reddit or others work well here - and they have slick user experience and no strange network effects or local server forks or any other background stuff you need to learn.&lt;/p&gt;
+
+&lt;p&gt;Mastodon is also a bit flakey.  It is free and volunteer run. It depends on admins getting funding from donations, and those admins can burn out or not respond as fast as users want or have moderation views that don't match yours.  There are mitigations - it's easy to migrate instances (and all your followers are auto-redirected!) and I suspect we will see more corporate or organisation servers over time too (like the wonderful toot.thoughtworks.com or the new &lt;a href="https://social.network.europa.eu/"&gt;EU instances&lt;/a&gt; )&lt;/p&gt;
+
+&lt;p&gt;But because of the above, I suspect it won't work for a huge proportion of Twitter users - people who just want an easy way to see what is happening, and of course famous people who want an audience of followers with nice simple reliable commercial backing.  Without the "non-enthusiast" users, Mastodon has less appeal for celebrities and it's just going to be a different kind of place.&lt;/p&gt;
+
+&lt;p&gt;Thankfully, there are millions and millions of enthusiasts out there - already there are plenty on Mastodon to make it worthwhile, at least in my (admittedly geeky) interest areas.  For me, it's not "will Mastodon replace twitter?" - it &lt;em&gt;already is replacing&lt;/em&gt; this part, and it turns out it's the part I value most.&lt;/p&gt;
+
+&lt;p&gt;Mastodon still has plenty of hurdles - for a start it could do with some extra ways to curate the firehose of information.  If I want to follow @foo_bar@geek.social who posts some cool tech stuff but also hourly cat pictures, and also follow Martin Fowler who posts something interesting every day or two, Martin's posts can get easily swamped. (My current fix for this is to use lists to categorise people I want to see more often, but it's a bit clunky)&lt;/p&gt;
+
+&lt;p&gt;Maybe something else will come along that does it better; maybe Mastodon will flounder under the weight of it's own temporary success and users will move on.  But at the moment it's looking pretty good, at least for my needs.&lt;/p&gt;
+
+&lt;p&gt;And I'll keep Twitter for where it's useful (if it stays up!) - though I'll also keep my eyes out for less commercial, less distorting, less dominated-by-horrible-people zeitgeist sources.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>New polyglot code tools releases</title>
     <link rel="alternate" href="/2022/10/13/new-polyglot-releases.html"/>
@@ -1427,42 +1471,6 @@ monstrosities when overused - but they can also be very useful, and very simple,
 and the basics of how they are structured and how they operate hasn't really changed
 since my dad showed me VisiCalc on his Apple II 35 years ago.  It's the
 one programming language that I've used that has that much longevity and consistency!&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>What on earth happened?</title>
-    <link rel="alternate" href="/2019/01/19/what-on-earth-happened.html"/>
-    <id>/2019/01/19/what-on-earth-happened.html</id>
-    <published>2019-01-19T21:03:00+00:00</published>
-    <updated>2019-01-19T21:03:00+00:00</updated>
-    <author>
-      <name>Kornelis Sietsma</name>
-    </author>
-    <summary type="html">&lt;p&gt;So, last significant update was 2014 - and most of the posts before that were about clojure.  (I used to have a personal blog as well at blog.sietsma.com but it's a bit of a fiction separating tech from life from people stuff! Besides, I almost never...&lt;/p&gt;</summary>
-    <content type="html">&lt;p&gt;So, last significant update was 2014 - and most of the posts before that were about clojure.  (I used to have a personal blog as well at blog.sietsma.com but it's a bit of a fiction separating tech from life from people stuff! Besides, I almost never have kept up either kind of blog, so I might as well merge them)&lt;/p&gt;
-
-&lt;p&gt;So, why the hiatus? Apart from the usual reasons that everyone always has for stoppping blogging. I have some bigger excuses.  In May 2014 I had gone to work for a year in Glasgow, trying to see the world and do fun new things.&lt;/p&gt;
-
-&lt;p&gt;Well, since 2014 I have:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Met the lovely Becky Thorn (well, we met at the end of 2013, but hit it off in 2014)&lt;/li&gt;
-  &lt;li&gt;Married the lovely Becky Thorn Sietsma&lt;/li&gt;
-  &lt;li&gt;Transferred permanently to the UK&lt;/li&gt;
-  &lt;li&gt;With the lovely Dr B, produced the utterly lovely Rowan Sietsma - who is now two!&lt;/li&gt;
-  &lt;li&gt;Had four years of great crazy romantic exhausting life.  Mostly exhausting, for the past 2 years - but well worth it.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So, I feel the urge to try to blog again - I have some cool things to talk about.&lt;/p&gt;
-
-&lt;p&gt;I'm doing less clojure - but still some, it's my main personal coding tool, and it's awesome for things like &lt;a href="http://jepsen.io"&gt;Jepsen&lt;/a&gt;. I have been tinkering with many other cool things though - given a few talks, presented a few internal things at ThoughtWorks event - and I really should summarise some of those for a public audience.&lt;/p&gt;
-
-&lt;p&gt;I also might blog a bit about parenting stuff - it's fascinating how parenting is a mix of science, pseudo science, dodgy science, and thousands of years of tradition and habit.  For a quick example - did
-you know that most of what people think about teething - that it's painful and devastating and causes lots of side effects like fever, rashes, and diarrhoea, &lt;a href="https://www.bmj.com/content/325/7368/814"&gt;is probably false and just an extreme example of confusing correlation for causation&lt;/a&gt;?&lt;/p&gt;
-
-&lt;p&gt;Also I might add the occasional personal update - I've left a lot of very good friends behind in Melbourne, and not all of them are on social media, so maybe I might post updates for them (and then send them a link via ICQ or carrier pigeon or whatever tech they use)&lt;/p&gt;
-
-&lt;p&gt;So, hopefully you'll see more new stuff here soon.  Or I'll be posting in 2023 about why I didn't blog again!&lt;/p&gt;
 </content>
   </entry>
 </feed>
