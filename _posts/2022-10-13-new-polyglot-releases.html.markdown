@@ -27,17 +27,17 @@ I'm a huge fan of the [Team Topologies book](https://www.goodreads.com/book/show
 
 So, when investigating codebases, I wanted to be able to tell which teams were operating in which areas, and how they overlap.  The end result is a view like this:
 
-![New UI with top teams](/2022-polyglot/polyglot-062-top-teams.png)
+![New UI with top teams](/assets/images/2022-polyglot/polyglot-062-top-teams.png)
 
 This does need a caveat though - you need to create team information yourself!  Git doesn't tell me which user is in which team.  (In fact you also need to do a fair bit of work merging users, as git doesn't tell me that `foo@bar.com` is actually the same user as `Fulvio_Barrington@gmail.com` ...)
 
 There is also a view that tries to show where multiple teams overlap, using SVG patterns - this is a bit experimental, but might be useful:
 
-![Top Teams - patterned](/2022-polyglot/top-teams-patterned.png)
+![Top Teams - patterned](/assets/images/2022-polyglot/top-teams-patterned.png)
 
 And you can focus on a single team (or a single user!) to see just their contribution compared to everyone else:
 
-![Single team impact](/2022-polyglot/single-team-impact.png)
+![Single team impact](/assets/images/2022-polyglot/single-team-impact.png)
 
 Here blue is the selected team, red is other users, and colours in between show overlap.  Also brighter colours show more change, darker show less.
 

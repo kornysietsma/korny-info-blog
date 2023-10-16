@@ -7,7 +7,7 @@ categories: ['software development']
 excerpt: 'The Polyglot Code Explorer is my open-source tool for visualising complex codebases written in multiple programming languages.'
 ---
 
-![Main UI](/2020-09-01-polyglot-explorer/main_ui_sample.png)
+![Main UI](/assets/images/2020-09-01-polyglot-explorer/main_ui_sample.png)
 
 _If you want a quick look at the explorer, you can see [a simple demo here](http://polyglot-code-explorer.s3-website.eu-west-2.amazonaws.com/) or [a more complex one here](http://polyglot-code-explorer-openmrs.s3-website.eu-west-2.amazonaws.com/).  There is also a documentation site at  <https://polyglot.korny.info> (currently a work-in-progress)._
 
@@ -45,7 +45,7 @@ And finally - supporting all the various languages out there is a lot of work!  
 
 The explorer is actually the front end component of three tightly coupled applications:
 
-![Tools flowchart](/2020-09-01-polyglot-explorer/flowchart.png)
+![Tools flowchart](/assets/images/2020-09-01-polyglot-explorer/flowchart.png)
 
 * The Polyglot Code Scanner is a rust application, which scans the source code and produces a JSON data file
 * The Polyglot Code Offline Layout tool is a node.js script which adds layout information to the JSON data file
@@ -113,7 +113,7 @@ Then open a browser to <http://0.0.0.0:8000> to start exploring!
 
 The Explorer front end looks somewhat like this:
 
-![Main UI](/2020-09-01-polyglot-explorer/Main_UI.png)
+![Main UI](/assets/images/2020-09-01-polyglot-explorer/Main_UI.png)
 
 There is more about how to use the UI [on the docs site](http://localhost:2222/tools/explorer/ui)
 
@@ -121,13 +121,13 @@ The centre of the display shows the files in your project - I'm using a [Weighte
 
 ### Viewing by programming language
 
-![language visualisation](/2020-09-01-polyglot-explorer/vis_language.png)
+![language visualisation](/assets/images/2020-09-01-polyglot-explorer/vis_language.png)
 
 This view is very simple - it just colours each file by programming language, showing the 10 most common languages.  Mostly useful for getting an overview of what goes where - it's usually easy to spot the front-end vs back-end code by the colours used.  (only 10 languages are shown because beyond that, it's hard to visually see different colours)
 
 ### Lines of code
 
-![lines of code](/2020-09-01-polyglot-explorer/vis_loc.png)
+![lines of code](/assets/images/2020-09-01-polyglot-explorer/vis_loc.png)
 
 This view is simple enough - it uses a scale from blue for tiny files, through to yellow for giant files.
 
@@ -135,7 +135,7 @@ Note that this is not a linear scale - a lot of these use what I call a "Good/Ba
 
 ### Indentation
 
-![indentation](/2020-09-01-polyglot-explorer/vis_indentation.png)
+![indentation](/assets/images/2020-09-01-polyglot-explorer/vis_indentation.png)
 
 This metric is an interesting one. In [Hindle, Abram, Michael W. Godfrey, and Richard C. Holt. 2008. ‘Reading Beside the Lines: Indentation as a Proxy for Complexity Metric’](https://doi.org/10.1109/ICPC.2008.13) they found that indentation is often useful as a way of looking for complexity - which makes common sense; files with a lot of indentation are often files with deeply nested "if" and "case" statements.  You can choose a few sub-visualisations using the drop-down near the top-left - the default shows the standard deviation of indentation, which is often the most useful metric; you can also see the worst indentation in each file, and the "total area" which is useful for showing files which are both large and deeply indented.
 
@@ -143,11 +143,11 @@ Of course this metric can have false positives - heavy indentation might be due 
 
 ### Age since last change
 
-![age since last change](/2020-09-01-polyglot-explorer/vis_age.png)
+![age since last change](/assets/images/2020-09-01-polyglot-explorer/vis_age.png)
 
 This view shows how long it is since each file was changed (from git history) - blue files are recently changed, red files haven't changed in a year, yellow files haven't changed in 4 years.  Note that this is affected by the date selector down the bottom of the page:
 
-![date selector](/2020-09-01-polyglot-explorer/date_selector.png)
+![date selector](/assets/images/2020-09-01-polyglot-explorer/date_selector.png)
 
 Files that haven't changed at all in the selected date range will show in grey.  You need to select the whole project (drag the left side of the selector to the left of the screen) to see change information across the whole scanned date range.
 
@@ -157,7 +157,7 @@ However this is a bit contentious - it depends a lot on the culture of the organ
 
 ### Creation date
 
-![creation date](/2020-09-01-polyglot-explorer/vis_creation.png)
+![creation date](/assets/images/2020-09-01-polyglot-explorer/vis_creation.png)
 
 This _doesn't_ use a good/bad scale - it's not really about quality, but sometimes it's useful to know which files are new, and which are old.  This is especially handy when you are using the date selector, to give you a feel for how the code has changed over time.
 
@@ -173,7 +173,7 @@ So moving the date selector is handy for limiting some kinds of information, and
 
 ### Unique changers
 
-![unique changers](/2020-09-01-polyglot-explorer/vis_unique_changers.png)
+![unique changers](/assets/images/2020-09-01-polyglot-explorer/vis_unique_changers.png)
 
 This shows how many different people touched a file, in the selected date range. Again is a bit of an "it depends" metric - some studies show that few changers are good, as they tend to be just experts and not new inexperienced people.  But again, too few changers can be a sign that only one person knows a piece of code, so you don't have any collective code ownership, and if that one person leaves, you might have some unknown code.  (There's some really interesting research in this area, which I'd love to look into in the future - such as looking at how new/old each changer is to the organisation, how long they've been touching this area of the code, and the like).
 
@@ -188,7 +188,7 @@ _Note_ there is one current limitation here - the system treats unique user name
 
 ### Churn
 
-![churn](/2020-09-01-polyglot-explorer/vis_churn.png)
+![churn](/assets/images/2020-09-01-polyglot-explorer/vis_churn.png)
 
 Churn shows the rate of change - how often a file has changed in the selected date window.  This again isn't necessarily good or bad - it depends a lot on what date range you are using.  If a file changes every work day over several years, that's probably bad!  But if it changes every day over the course of a short project, that might be fine.
 
@@ -200,7 +200,7 @@ There are three sub-visualisations here:
 
 ### Temporal Coupling
 
-![coupling](/2020-09-01-polyglot-explorer/Coupling.png)
+![coupling](/assets/images/2020-09-01-polyglot-explorer/Coupling.png)
 
 This is based on ideas from Adam Tornhill's books, plus some research - it tries to work out when files might be tightly coupled to each other, based on when the files change in git.  Adam calls this "Temporal Coupling".
 
