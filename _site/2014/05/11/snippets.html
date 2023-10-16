@@ -1,0 +1,812 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Clojure snippets - Korny’s Blog</title>
+<meta name="description" content="I’m planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it’s easier to blog these to get them out rapidly, I’ll try to format them nicely later.">
+
+
+  <meta name="author" content="Korny Sietsma">
+  
+  <meta property="article:author" content="Korny Sietsma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Korny's Blog">
+<meta property="og:title" content="Clojure snippets">
+<meta property="og:url" content="http://localhost:4000/2014/05/11/snippets.html">
+
+
+  <meta property="og:description" content="I’m planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it’s easier to blog these to get them out rapidly, I’ll try to format them nicely later.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-05-11T13:08:00+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/2014/05/11/snippets.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Korny's Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Korny's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/posts/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/korny-face.png" alt="Korny Sietsma" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Korny Sietsma</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Geek, Parent, Coder, Aussie living in the UK</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://korny.info" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Korny.info</span></a></li>
+          
+        
+          
+            <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i><span class="label">Mastodon</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Clojure snippets">
+    <meta itemprop="description" content="I’m planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it’s easier to blog these to get them out rapidly, I’ll try to format them nicely later.">
+    <meta itemprop="datePublished" content="2014-05-11T13:08:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/2014/05/11/snippets.html" class="u-url" itemprop="url">Clojure snippets
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2014-05-11T13:08:00+01:00">May 11, 2014</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#namespaces-and-main-methods">Namespaces and main methods</a></li><li><a href="#midje-basics">Midje basics</a></li><li><a href="#midje-custom-checker">Midje custom checker</a></li><li><a href="#destructuring">Destructuring</a></li><li><a href="#map-manipulation">Map manipulation</a></li><li><a href="#protocols-and-records">Protocols and Records</a></li><li><a href="#threading">Threading</a></li><li><a href="#paredit-and-cursive">Paredit and Cursive</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>I’m planning to build a proper clojure snippets/cheat-sheet page, for all the things I do regularly, or want to encourage team members to do regularly.  But it’s easier to blog these to get them out rapidly, I’ll try to format them nicely later.</p>
+
+<!--more-->
+
+<h2 id="namespaces-and-main-methods">Namespaces and main methods</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">foo.bar</span><span class="w">
+  </span><span class="p">(</span><span class="no">:import</span><span class="w"> </span><span class="p">[</span><span class="n">java.net</span><span class="w"> </span><span class="n">URI</span><span class="w"> </span><span class="n">URL</span><span class="p">])</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">clj-http.client</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">request</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">compojure.core</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="no">:all</span><span class="p">])</span><span class="w"> </span><span class="c1">; prefer this over 'use'</span><span class="w">
+  </span><span class="p">(</span><span class="no">:gen-class</span><span class="p">))</span><span class="w">  </span><span class="c1">; if you have a main method to expose</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">-main</span><span class="w">
+  </span><span class="p">[</span><span class="o">&amp;</span><span class="w"> </span><span class="n">args</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">println</span><span class="w"> </span><span class="s">"args:"</span><span class="w"> </span><span class="n">args</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="midje-basics">Midje basics</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">foo.t-bar</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">midje.sweet</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="no">:all</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">foo.bar</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">subject</span><span class="p">]))</span><span class="w">  </span><span class="c1">; or just :refer :all</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">facts</span><span class="w"> </span><span class="s">"about foos"</span><span class="w">
+  </span><span class="p">(</span><span class="nf">fact</span><span class="w"> </span><span class="s">"the foo is alive"</span><span class="w">
+    </span><span class="p">(</span><span class="nf">subject/foo</span><span class="w"> </span><span class="mi">123</span><span class="p">)</span><span class="w"> </span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">just</span><span class="w"> </span><span class="p">{</span><span class="no">:foo</span><span class="w"> </span><span class="mi">123</span><span class="p">})</span><span class="w">
+    </span><span class="p">(</span><span class="nf">provided</span><span class="w"> </span><span class="p">(</span><span class="nf">bar</span><span class="w"> </span><span class="mi">123</span><span class="p">)</span><span class="w"> </span><span class="n">=&gt;</span><span class="w"> </span><span class="no">:foo</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="midje-custom-checker">Midje custom checker</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">same-json</span><span class="w"> </span><span class="p">[</span><span class="n">expected</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">actual</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-string</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="n">true</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-string</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="n">true</span><span class="p">))))</span><span class="w">
+
+</span><span class="c1">; or the same test but better outputs on failure</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">defchecker</span><span class="w"> </span><span class="n">same-json</span><span class="w"> </span><span class="p">[</span><span class="n">expected</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">chatty-checker</span><span class="w"> </span><span class="p">[</span><span class="n">actual</span><span class="p">]</span><span class="w">
+     </span><span class="p">(</span><span class="nb">=</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-string</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="n">true</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-string</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="n">true</span><span class="p">))))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">fact</span><span class="w"> </span><span class="s">"json is similar"</span><span class="w">
+  </span><span class="p">(</span><span class="nb">slurp</span><span class="w"> </span><span class="s">"file1.json"</span><span class="p">)</span><span class="w"> </span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">same-json</span><span class="w"> </span><span class="p">(</span><span class="nb">slurp</span><span class="w"> </span><span class="s">"file2.json"</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="destructuring">Destructuring</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[[</span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nb">rest</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">all</span><span class="p">]</span><span class="w">       </span><span class="p">[</span><span class="no">:a</span><span class="w"> </span><span class="no">:b</span><span class="w"> </span><span class="no">:c</span><span class="w"> </span><span class="no">:d</span><span class="p">]</span><span class="w">
+      </span><span class="p">{</span><span class="n">e</span><span class="w"> </span><span class="no">:e</span><span class="w"> </span><span class="p">[</span><span class="n">f</span><span class="w"> </span><span class="n">g</span><span class="p">]</span><span class="w"> </span><span class="no">:fg</span><span class="p">}</span><span class="w">           </span><span class="p">{</span><span class="no">:e</span><span class="w"> </span><span class="s">"e"</span><span class="w"> </span><span class="no">:fg</span><span class="w"> </span><span class="p">[</span><span class="s">"f"</span><span class="w"> </span><span class="s">"g"</span><span class="p">]}</span><span class="w">
+      </span><span class="p">{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">h</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="no">:or</span><span class="w"> </span><span class="p">{</span><span class="no">:h</span><span class="w"> </span><span class="s">"h"</span><span class="p">}}</span><span class="w"> </span><span class="p">{</span><span class="no">:i</span><span class="w"> </span><span class="s">"i"</span><span class="p">}]</span><span class="w">
+      </span><span class="c1">; a is :a, b is :b, e is "e", f is "f", g is "g"</span><span class="w">
+      </span><span class="c1">; h defaults to "h", i is "i"</span><span class="w">
+      </span><span class="c1">; rest is [:c :d]</span><span class="w">
+      </span><span class="c1">; all is [:a :b :c :d]</span><span class="w">
+</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="p">[[</span><span class="nb">key</span><span class="w"> </span><span class="nb">val</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="no">:a</span><span class="w"> </span><span class="s">"a"</span><span class="w"> </span><span class="no">:b</span><span class="w"> </span><span class="s">"b"</span><span class="w"> </span><span class="no">:c</span><span class="w"> </span><span class="s">"c"</span><span class="p">}</span><span class="w"> </span><span class="n">...</span><span class="w"> </span><span class="p">)</span><span class="w">
+
+</span><span class="c1">; mostly avoid this as the syntax is confusing, but on occasion:</span><span class="w">
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="w"> </span><span class="p">{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="p">]</span><span class="w"> </span><span class="no">:or</span><span class="w"> </span><span class="p">{</span><span class="n">a</span><span class="w"> </span><span class="s">"foo"</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="s">"bar"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">(</span><span class="nb">println</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="p">))</span><span class="w">
+
+</span><span class="c1">; special syntax for passing key/val parameters:</span><span class="w">
+</span><span class="p">(</span><span class="nf">foo</span><span class="w"> </span><span class="no">:b</span><span class="w"> </span><span class="s">"baz"</span><span class="p">)</span><span class="w"> </span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"foo baz"</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="map-manipulation">Map manipulation</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">old-map</span><span class="w"> </span><span class="p">{</span><span class="no">:foo</span><span class="w"> </span><span class="no">:bar,</span><span class="w"> </span><span class="no">:baz</span><span class="w"> </span><span class="no">:bat</span><span class="p">})</span><span class="w">
+</span><span class="p">(</span><span class="nb">into</span><span class="w"> </span><span class="p">{}</span><span class="w">
+  </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="p">[[</span><span class="n">k</span><span class="w"> </span><span class="n">v</span><span class="p">]</span><span class="w"> </span><span class="n">old-map</span><span class="p">]</span><span class="w">
+    </span><span class="p">[</span><span class="n">v</span><span class="w"> </span><span class="n">k</span><span class="p">]))</span><span class="w">  </span><span class="c1">; or anything that produces a pair</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="no">:bar</span><span class="w"> </span><span class="no">:foo,</span><span class="w"> </span><span class="no">:bat</span><span class="w"> </span><span class="no">:baz</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>see also <a href="algo.generic's fmap function">https://github.com/clojure/algo.generic</a> if you just want to manipulate values not keys</p>
+
+<h2 id="protocols-and-records">Protocols and Records</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">defprotocol</span><span class="w"> </span><span class="n">FooBar</span><span class="w">
+  </span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="p">]</span><span class="w"> </span><span class="s">"does a buzzy thing"</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">defrecord</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="p">[</span><span class="n">hands</span><span class="w"> </span><span class="n">feet</span><span class="p">]</span><span class="w">
+  </span><span class="n">FooBar</span><span class="w">
+  </span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">str</span><span class="w"> </span><span class="n">hands</span><span class="w"> </span><span class="n">feet</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">(</span><span class="nf">Widget.</span><span class="w"> </span><span class="s">"ha"</span><span class="w"> </span><span class="s">"fe"</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"hafe"</span><span class="w">
+
+</span><span class="c1">; same as above but '-&gt;Widget' is a first class function</span><span class="w">
+</span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">(</span><span class="nf">-&gt;Widget</span><span class="w"> </span><span class="s">"h"</span><span class="w"> </span><span class="s">"f"</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"hf"</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">(</span><span class="nf">map-&gt;Widget</span><span class="w"> </span><span class="p">{</span><span class="no">:feet</span><span class="w"> </span><span class="s">"foot"</span><span class="p">}))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"foot"</span><span class="w">  </span><span class="c1">; hands is nil</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">extend-type</span><span class="w"> </span><span class="n">Integer</span><span class="w">
+  </span><span class="n">FooBar</span><span class="w">
+  </span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="p">[</span><span class="n">this</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">str</span><span class="w"> </span><span class="s">"buzz:"</span><span class="w"> </span><span class="n">this</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">buzz</span><span class="w"> </span><span class="mi">17</span><span class="p">)</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"buzz:17"</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="threading">Threading</h2>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="p">(</span><span class="nf">z</span><span class="w"> </span><span class="no">:a</span><span class="p">)</span><span class="w"> </span><span class="n">foo</span><span class="p">)</span><span class="w">
+</span><span class="c1">; same as</span><span class="w">
+</span><span class="p">(</span><span class="nf">foo</span><span class="w"> </span><span class="p">(</span><span class="nf">z</span><span class="w"> </span><span class="p">(</span><span class="nf">y</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="no">:a</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="p">(</span><span class="nf">z</span><span class="w"> </span><span class="no">:a</span><span class="p">)</span><span class="w"> </span><span class="n">foo</span><span class="p">)</span><span class="w">
+</span><span class="c1">; same as</span><span class="w">
+</span><span class="p">(</span><span class="nf">foo</span><span class="w"> </span><span class="p">(</span><span class="nf">z</span><span class="w"> </span><span class="no">:a</span><span class="w"> </span><span class="p">(</span><span class="nf">y</span><span class="w"> </span><span class="n">x</span><span class="p">)))</span><span class="w">
+
+</span><span class="c1">; need to wrap anonymous fns:</span><span class="w">
+</span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">reverse</span><span class="w"> </span><span class="n">%</span><span class="p">))</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
+</span><span class="c1">; same as</span><span class="w">
+</span><span class="p">(</span><span class="nf">y</span><span class="w"> </span><span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">reverse</span><span class="w"> </span><span class="n">%</span><span class="p">)</span><span class="w"> </span><span class="n">x</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">as-&gt;</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="n">x</span><span class="w">
+      </span><span class="p">(</span><span class="nb">inc</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w">
+      </span><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span><span class="w">
+</span><span class="c1">; same as</span><span class="w">
+</span><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">inc</span><span class="w"> </span><span class="n">foo</span><span class="p">)</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w">
+
+</span><span class="c1">; also can nest as-&gt; inside -&gt;</span><span class="w">
+</span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">foo</span><span class="w">
+    </span><span class="nb">inc</span><span class="w">
+    </span><span class="p">(</span><span class="nf">as-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w">
+       </span><span class="p">(</span><span class="nf">foo</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">bar</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nf">baz</span><span class="w"> </span><span class="n">x</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="paredit-and-cursive">Paredit and Cursive</h2>
+
+<p>I’ve mostly moved from emacs to Intellij Idea + <a href="https://cursiveclojure.com/">the Cursive plugin</a></p>
+
+<p>I intend to put up a decent cheat sheet for using Cursive’s structural mode, which is basically a variant of paredit.  But I’m out of time.  For now, look at the excellent tutorial <a href="https://cursiveclojure.com/userguide/paredit.html">on the cursive site</a>.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#clojure" class="page__taxonomy-item p-category" rel="tag">clojure</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#software-development" class="page__taxonomy-item p-category" rel="tag">software development</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2014-05-11T13:08:00+01:00">May 11, 2014</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Clojure+snippets%20http%3A%2F%2Flocalhost%3A4000%2F2014%2F05%2F11%2Fsnippets.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2014%2F05%2F11%2Fsnippets.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2014%2F05%2F11%2Fsnippets.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2014/04/12/parsing-freemind-files.html" class="pagination--pager" title="Parsing FreeMind files
+">Previous</a>
+    
+    
+      <a href="/2018/11/24/its_alive.html" class="pagination--pager" title="It’s alive!
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2023/10/14/blog-refresh" rel="permalink">New job, new blog!
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-10-14T00:00:00+01:00">October 14, 2023</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I quit my job! Yes, after 12 amazing years at Thoughtworks, I decided it was time to move on.
+
+I’m starting a new job in November - more on that later - but ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/12/01/folks-to-follow-on-mastodon.html" rel="permalink">Interesting folks to follow on Mastodon
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-01T09:27:00+00:00">December 1, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          8 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">My highly-idiosyncratic list of interesting people on Mastodon
+
+I’ve been really enjoying moving from the crumbling mess of Twitter, to the chaotic federated...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/10/buying-minecoins-on-a-child-s-android-minecraft-account.html" rel="permalink">Buying minecoins on a child’s Android Minecraft account
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-10T11:01:00+00:00">November 10, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sharing here as this was a world of pain, and maybe I can save someone else this pain.
+
+Information is as of November 2022 - earlier advice on the web is wro...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/05/is-mastodon-a-twitter-replacement.html" rel="permalink">Is Mastodon a Twitter replacement?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-05T21:10:00+00:00">November 5, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">It depends which bits of Twitter you want…
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i> Mastodon</a></li>
+        
+      
+        
+          <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Korny's Blog. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/2014/05/11/snippets.html";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2014/05/11/snippets.html"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kornyblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

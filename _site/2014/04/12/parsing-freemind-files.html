@@ -1,0 +1,823 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Parsing FreeMind files - Korny’s Blog</title>
+<meta name="description" content="Example of parsing FreeMind xml in clojure">
+
+
+  <meta name="author" content="Korny Sietsma">
+  
+  <meta property="article:author" content="Korny Sietsma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Korny's Blog">
+<meta property="og:title" content="Parsing FreeMind files">
+<meta property="og:url" content="http://localhost:4000/2014/04/12/parsing-freemind-files.html">
+
+
+  <meta property="og:description" content="Example of parsing FreeMind xml in clojure">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-04-12T16:07:00+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/2014/04/12/parsing-freemind-files.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Korny's Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Korny's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/posts/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/korny-face.png" alt="Korny Sietsma" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Korny Sietsma</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Geek, Parent, Coder, Aussie living in the UK</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://korny.info" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Korny.info</span></a></li>
+          
+        
+          
+            <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i><span class="label">Mastodon</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Parsing FreeMind files">
+    <meta itemprop="description" content="Example of parsing FreeMind xml in clojure">
+    <meta itemprop="datePublished" content="2014-04-12T16:07:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/2014/04/12/parsing-freemind-files.html" class="u-url" itemprop="url">Parsing FreeMind files
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2014-04-12T16:07:00+01:00">April 12, 2014</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              
+
+            </nav>
+          </aside>
+        
+        <p>This is a bit of an addendum on <a href="2014-03-08-xml-for-fun-and-profit.html">my previous post</a>. - I wanted to convert some <a href="http://freemind.sourceforge.net/wiki/index.php/Main_Page">FreeMind</a> mind-maps into other formats.  FreeMind is pretty cool, especially as it’s file format is fairly straightforward XML, so lots of other mind mapping programs, like XMind, will read and write FreeMind files.</p>
+
+<!--more-->
+
+<p>Initially what I wanted was to get the data into a spreadsheet.  I had a map vaguely like:</p>
+
+<p><img src="/assets/images/2014-04-12-parsing-freemind-files/things.png" alt="things mindmap" /></p>
+
+<p>And I wanted to turn this into tabular data in a spreadsheet:</p>
+
+<table class="spreadsheet">
+  <tbody>
+    <tr>
+      <td>Bigger than a breadbox</td>
+      <td>red</td>
+      <td>phone booth</td>
+    </tr>
+    <tr>
+      <td>Bigger than a breadbox</td>
+      <td>grey</td>
+      <td>elephant</td>
+    </tr>
+    <tr>
+      <td>Smaller than a mouse</td>
+      <td>white</td>
+      <td>gold ball</td>
+    </tr>
+    <tr>
+      <td>Smaller than a mouse</td>
+      <td>white</td>
+      <td>eyeball</td>
+    </tr>
+    <tr>
+      <td>In between</td>
+      <td>yellow</td>
+      <td>canary</td>
+    </tr>
+    <tr>
+      <td>In between</td>
+      <td>yellow</td>
+      <td>banana</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>You get the idea - I didn’t want every node, just those at level 3, and I needed to denormalise them back into columns.</p>
+
+<p>Now, there are lots of freemind examples to manipulate maps - using xslt. Yuck. This stuff is <em>so</em> easy in clojure.</p>
+
+<p>I’ll do this at the repl, for simplicity.  First, some namespaces:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">fm-parse.blog</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">clojure.data.xml</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">parse-str</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.zip</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="nb">xml-zip</span><span class="w"> </span><span class="nb">up</span><span class="w"> </span><span class="nb">down</span><span class="w"> </span><span class="nb">left</span><span class="w"> </span><span class="nb">right</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.zip</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">c-d-zip</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.zip.xml</span><span class="w">
+              </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">xml-&gt;</span><span class="w"> </span><span class="n">xml1-&gt;</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">attr=</span><span class="w"> </span><span class="n">text</span><span class="p">]]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.java.io</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">io</span><span class="p">]</span><span class="w">
+            </span><span class="p">[</span><span class="n">clojure.data.csv</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">write-csv</span><span class="p">]]))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>It’s a pity the xml stuff is spread over so many namespaces, but that’s somewhat the clojure way - libraries are built up as incremental changes to existing libraries.
+(Normally I’d add more <code class="language-plaintext highlighter-rouge">:as</code> namespace aliases, but I wanted to keep the code terse so it’s more readable on small devices)</p>
+
+<p>Next, read the freemind xml into memory:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xml-data</span><span class="w"> </span><span class="p">(</span><span class="nf">parse-str</span><span class="w"> </span><span class="p">(</span><span class="nb">slurp</span><span class="w"> </span><span class="s">"things.mm"</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">clojure.pprint/pprint</span><span class="w"> </span><span class="n">xml-data</span><span class="p">)</span><span class="w">
+</span><span class="p">{</span><span class="no">:tag</span><span class="w"> </span><span class="no">:map,</span><span class="w">
+ </span><span class="no">:attrs</span><span class="w"> </span><span class="p">{</span><span class="no">:version</span><span class="w"> </span><span class="s">"1.0.1"</span><span class="p">}</span><span class="n">,</span><span class="w">
+ </span><span class="no">:content</span><span class="w">
+ </span><span class="p">({</span><span class="no">:tag</span><span class="w"> </span><span class="no">:node,</span><span class="w">
+   </span><span class="no">:attrs</span><span class="w">
+   </span><span class="p">{</span><span class="no">:CREATED</span><span class="w"> </span><span class="s">"1396204283978"</span><span class="n">,</span><span class="w">
+    </span><span class="no">:ID</span><span class="w"> </span><span class="s">"ID_1617316526"</span><span class="n">,</span><span class="w">
+    </span><span class="no">:MODIFIED</span><span class="w"> </span><span class="s">"1396204290625"</span><span class="n">,</span><span class="w">
+    </span><span class="no">:TEXT</span><span class="w"> </span><span class="s">"Things"</span><span class="p">}</span><span class="n">,</span><span class="w">
+   </span><span class="no">:content</span><span class="w">
+   </span><span class="p">({</span><span class="no">:tag</span><span class="w"> </span><span class="no">:node,</span><span class="w">
+     </span><span class="no">:attrs</span><span class="w">
+     </span><span class="p">{</span><span class="no">:CREATED</span><span class="w"> </span><span class="s">"1396204291304"</span><span class="n">,</span><span class="w">
+      </span><span class="no">:ID</span><span class="w"> </span><span class="s">"ID_1543131992"</span><span class="n">,</span><span class="w">
+      </span><span class="no">:MODIFIED</span><span class="w"> </span><span class="s">"1396204295075"</span><span class="n">,</span><span class="w">
+      </span><span class="no">:POSITION</span><span class="w"> </span><span class="s">"right"</span><span class="n">,</span><span class="w">
+      </span><span class="no">:TEXT</span><span class="w"> </span><span class="s">"Bigger than a breadbox"</span><span class="p">}</span><span class="n">,</span><span class="w">
+</span><span class="n">...</span><span class="w">
+</span><span class="c1">; define the root of what we care about:</span><span class="w">
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="nb">root</span><span class="w"> </span><span class="p">(</span><span class="nb">-&gt;</span><span class="w"> </span><span class="n">xml-data</span><span class="w"> </span><span class="no">:content</span><span class="w"> </span><span class="nb">first</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The nodes we want have :TEXT attributes with the name of the node, and children with child notes.  That’s most of what we care about.  I’ll define a function to get the node name from a zipper location:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">zip-&gt;txt</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nf">attr</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="no">:TEXT</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Then for example, we can get the text from the phone booth node:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">phone-booth</span><span class="w"> </span><span class="p">(</span><span class="nf">xml1-&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="nb">root</span><span class="p">)</span><span class="w"> </span><span class="nb">down</span><span class="w"> </span><span class="nb">down</span><span class="w"> </span><span class="nb">down</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">var</span><span class="w"> </span><span class="n">fm-parse.blog/phone-booth</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">zip-&gt;txt</span><span class="w"> </span><span class="n">phone-booth</span><span class="p">)</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="s">"phone booth"</span><span class="w">
+</span></code></pre></div></div>
+
+<p>What we want for the spreadsheet is a list (really a seq) of all the nodes from the root down to a leaf.  There’s an “ancestors” function in the zip code that will do what we want - I’ll build it up step by step:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">zip-&gt;txt</span><span class="w"> </span><span class="p">(</span><span class="nf">ancestors</span><span class="w"> </span><span class="n">phone-booth</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"phone booth"</span><span class="w"> </span><span class="s">"red"</span><span class="w"> </span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"Things"</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nb">reverse</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">zip-&gt;txt</span><span class="w"> </span><span class="p">(</span><span class="nf">ancestors</span><span class="w"> </span><span class="n">phone-booth</span><span class="p">)))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"Things"</span><span class="w"> </span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"red"</span><span class="w"> </span><span class="s">"phone booth"</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="p">(</span><span class="nb">reverse</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">zip-&gt;txt</span><span class="w"> </span><span class="p">(</span><span class="nf">ancestors</span><span class="w"> </span><span class="n">phone-booth</span><span class="p">))))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"red"</span><span class="w"> </span><span class="s">"phone booth"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>make this a function:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">as-text-seq</span><span class="w"> </span><span class="p">[</span><span class="n">zloc</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">c-d-zip/ancestors</span><span class="w"> </span><span class="n">zloc</span><span class="p">)</span><span class="w">
+       </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="n">zip-&gt;txt</span><span class="p">)</span><span class="w">
+       </span><span class="nb">reverse</span><span class="w">
+       </span><span class="nb">rest</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">var</span><span class="w"> </span><span class="n">fm-parse.blog/as-text-seq</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="nf">as-text-seq</span><span class="w"> </span><span class="n">phone-booth</span><span class="p">)</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"red"</span><span class="w"> </span><span class="s">"phone booth"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>That’s the first line of our spreadsheet!  The clojure.data.csv library takes sequences like this trivially - I’ll show this below - but we want to find all the right nodes to export.</p>
+
+<p>If you look at the mind map above, what we want is all nodes exactly 3 levels deep in the tree.  We can codify that as a match for the <code class="language-plaintext highlighter-rouge">xml-&gt;</code> function:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="nb">root</span><span class="p">)</span><span class="w"> </span><span class="no">:node</span><span class="w"> </span><span class="no">:node</span><span class="w"> </span><span class="no">:node</span><span class="w"> </span><span class="p">(</span><span class="nf">attr</span><span class="w"> </span><span class="no">:TEXT</span><span class="p">))</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"phone booth"</span><span class="w"> </span><span class="s">"elephant"</span><span class="w"> </span><span class="s">"golf ball"</span><span class="w"> </span><span class="s">"eyeball"</span><span class="w"> </span><span class="s">"canary"</span><span class="w"> </span><span class="s">"banana"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Those are the leaf nodes - now just call as-text-seq on each of them:</p>
+
+<div class="language-clojure highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">level3-nodes</span><span class="w"> </span><span class="p">(</span><span class="nf">xml-&gt;</span><span class="w"> </span><span class="p">(</span><span class="nb">xml-zip</span><span class="w"> </span><span class="nb">root</span><span class="p">)</span><span class="w"> </span><span class="no">:node</span><span class="w"> </span><span class="no">:node</span><span class="w"> </span><span class="no">:node</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">csv-data</span><span class="w"> </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="p">[</span><span class="n">leaf</span><span class="w"> </span><span class="n">level3-nodes</span><span class="p">]</span><span class="w">
+                </span><span class="p">(</span><span class="nf">as-text-seq</span><span class="w"> </span><span class="n">leaf</span><span class="p">)))</span><span class="w">
+</span><span class="n">csv-lev3</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">((</span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"red"</span><span class="w"> </span><span class="s">"phone booth"</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="s">"Bigger than a breadbox"</span><span class="w"> </span><span class="s">"grey"</span><span class="w"> </span><span class="s">"elephant"</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="s">"Smaller than a mouse"</span><span class="w"> </span><span class="s">"white"</span><span class="w"> </span><span class="s">"golf ball"</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="s">"Smaller than a mouse"</span><span class="w"> </span><span class="s">"white"</span><span class="w"> </span><span class="s">"eyeball"</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="s">"In between"</span><span class="w"> </span><span class="s">"yellow"</span><span class="w"> </span><span class="s">"canary"</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="s">"In between"</span><span class="w"> </span><span class="s">"yellow"</span><span class="w"> </span><span class="s">"banana"</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nb">with-open</span><span class="w"> </span><span class="p">[</span><span class="n">out-file</span><span class="w"> </span><span class="p">(</span><span class="nf">io/writer</span><span class="w"> </span><span class="s">"sample.csv"</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">write-csv</span><span class="w"> </span><span class="n">out-file</span><span class="w"> </span><span class="n">csv-data</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>And we’re done - you can import this csv file into Excel or LibreOffice or whatever you use.</p>
+
+<p>Note, you can use a simple extension of this to write the freemind file to a GraphViz dot file very easily - I do this to import mindmap data into OmniGraffle.  I’ll leave this as an exercise for the reader!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#clojure" class="page__taxonomy-item p-category" rel="tag">clojure</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#software-development" class="page__taxonomy-item p-category" rel="tag">software development</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2014-04-12T16:07:00+01:00">April 12, 2014</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Parsing+FreeMind+files%20http%3A%2F%2Flocalhost%3A4000%2F2014%2F04%2F12%2Fparsing-freemind-files.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2014%2F04%2F12%2Fparsing-freemind-files.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2014%2F04%2F12%2Fparsing-freemind-files.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2014/03/08/xml-for-fun-and-profit.html" class="pagination--pager" title="Xml manipulation in clojure
+">Previous</a>
+    
+    
+      <a href="/2014/05/11/snippets.html" class="pagination--pager" title="Clojure snippets
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2023/10/14/blog-refresh" rel="permalink">New job, new blog!
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-10-14T00:00:00+01:00">October 14, 2023</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I quit my job! Yes, after 12 amazing years at Thoughtworks, I decided it was time to move on.
+
+I’m starting a new job in November - more on that later - but ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/12/01/folks-to-follow-on-mastodon.html" rel="permalink">Interesting folks to follow on Mastodon
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-01T09:27:00+00:00">December 1, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          8 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">My highly-idiosyncratic list of interesting people on Mastodon
+
+I’ve been really enjoying moving from the crumbling mess of Twitter, to the chaotic federated...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/10/buying-minecoins-on-a-child-s-android-minecraft-account.html" rel="permalink">Buying minecoins on a child’s Android Minecraft account
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-10T11:01:00+00:00">November 10, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sharing here as this was a world of pain, and maybe I can save someone else this pain.
+
+Information is as of November 2022 - earlier advice on the web is wro...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/05/is-mastodon-a-twitter-replacement.html" rel="permalink">Is Mastodon a Twitter replacement?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-05T21:10:00+00:00">November 5, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">It depends which bits of Twitter you want…
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i> Mastodon</a></li>
+        
+      
+        
+          <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Korny's Blog. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/2014/04/12/parsing-freemind-files.html";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2014/04/12/parsing-freemind-files.html"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kornyblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

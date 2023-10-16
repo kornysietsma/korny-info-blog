@@ -1,0 +1,737 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>OCR Hack - grabbing text from the screen on a Macbook - Korny’s Blog</title>
+<meta name="description" content="My hacks to easily grab and OCR text on my mac">
+
+
+  <meta name="author" content="Korny Sietsma">
+  
+  <meta property="article:author" content="Korny Sietsma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Korny's Blog">
+<meta property="og:title" content="OCR Hack - grabbing text from the screen on a Macbook">
+<meta property="og:url" content="http://localhost:4000/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">
+
+
+  <meta property="og:description" content="My hacks to easily grab and OCR text on my mac">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-04-08T11:51:00+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Korny's Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Korny's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/posts/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/korny-face.png" alt="Korny Sietsma" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Korny Sietsma</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Geek, Parent, Coder, Aussie living in the UK</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://korny.info" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Korny.info</span></a></li>
+          
+        
+          
+            <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i><span class="label">Mastodon</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="OCR Hack - grabbing text from the screen on a Macbook">
+    <meta itemprop="description" content="My hacks to easily grab and OCR text on my mac">
+    <meta itemprop="datePublished" content="2019-04-08T11:51:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html" class="u-url" itemprop="url">OCR Hack - grabbing text from the screen on a Macbook
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2019-04-08T11:51:00+01:00">April 8, 2019</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              
+
+            </nav>
+          </aside>
+        
+        <p>(File under: obscure hacks that I’m blogging mostly so I can re-create them in the future when
+I’ve forgotten what I did to make this work)</p>
+
+<p>This is a neat hack I worked out a couple of months ago, while I was scanning in some recipes -
+I wanted a way to easily grab some text from a photo, repeatedly - and more, I wanted to grab
+a section of a page, because often recipes are laid out in strange ways, tables
+of contents, big titles, and the rest.</p>
+
+<p>Since then, it’s turned out to be handy for other things.  Got a locked PDF you want to
+grab a paragraph from?  Or a Kindle book that you want to quote?  (I have no idea how on
+earth people justify locking users out of copying bits of their purchased books!  It’s fair
+use, folks - all I want is to quote your book, and I’m sure the real pirates can
+bypass your DRM)</p>
+
+<p>Anyway, I now have a nifty <code class="language-plaintext highlighter-rouge">scrn2txt</code> button on my Mac’s touch bar - this is how it works:</p>
+
+<ul>
+  <li>
+    <p>First, install <a href="https://github.com/tesseract-ocr/tesseract/wiki">Tesseract</a> - it’s as simple as <code class="language-plaintext highlighter-rouge">brew install tesseract</code></p>
+  </li>
+  <li>
+    <p>Next, I wrote a simple commandline wrapper script, <code class="language-plaintext highlighter-rouge">ocr_screenshot.sh</code> in my standard scripts directory:</p>
+  </li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash -e</span>
+tesseract <span class="nv">$1</span> /tmp/out <span class="nt">-l</span> eng
+<span class="nb">cat</span> /tmp/out.txt | pbcopy
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>I run <a href="https://folivora.ai/">Better Touch Tool</a> - a very nice tool for scripting the touch bar, as well as lots of
+other nice hacks (like window tiling, special hotkeys and lots of other things).  It’s quite easy to set up
+a hotkey to run the above script:</p>
+
+    <ol>
+      <li>
+        <p>Create a new button set up as “capture screenshot - configurable”
+<img src="/assets/images/2019-04-08-ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image1.png" alt="better touch tool screenshot&quot;" /></p>
+      </li>
+      <li>
+        <p>Capture the screenshot to a fixed file - <code class="language-plaintext highlighter-rouge">/tmp/tmp_screenshot</code> in my example
+<img src="/assets/images/2019-04-08-ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image2.png" alt="better touch tool screenshot&quot;" /></p>
+      </li>
+      <li>
+        <p>Run the script above as <code class="language-plaintext highlighter-rouge">ocr_screenshot.sh {filepath}</code> - this will pass the filename to the script
+<img src="/assets/images/2019-04-08-ocr-hack-grabbing-text-from-the-screen-on-a-macbook/image3.png" alt="better touch tool screenshot&quot;" /></p>
+      </li>
+      <li>
+        <p>Save the button!</p>
+      </li>
+    </ol>
+  </li>
+</ul>
+
+<p>The result is a nice little button on my touchbar - when I press it, it prompts me to select a rectangle of the screen, saves it as a bitmap to <code class="language-plaintext highlighter-rouge">/tmp/tmp_screenshot.png</code>, calls <code class="language-plaintext highlighter-rouge">tesseract</code> to OCR it to text, and then <code class="language-plaintext highlighter-rouge">pbcopy</code> to put it on my clipboard.</p>
+
+<p>Tesseract seems pretty powerful too - it happily grabs text from slightly skewed image files, and any minor mistakes are easy to fix.</p>
+
+<p>I hope this is useful to someone!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#hacks" class="page__taxonomy-item p-category" rel="tag">hacks</a><span class="sep">, </span>
+    
+      <a href="/tags/#macos" class="page__taxonomy-item p-category" rel="tag">macos</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#play" class="page__taxonomy-item p-category" rel="tag">play</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-04-08T11:51:00+01:00">April 8, 2019</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=OCR+Hack+-+grabbing+text+from+the+screen+on+a+Macbook%20http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F08%2Focr-hack-grabbing-text-from-the-screen-on-a-macbook.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F08%2Focr-hack-grabbing-text-from-the-screen-on-a-macbook.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F08%2Focr-hack-grabbing-text-from-the-screen-on-a-macbook.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2019/01/20/excel-life.html" class="pagination--pager" title="Excel life
+">Previous</a>
+    
+    
+      <a href="/2020/01/20/the-swiss-cheese-model-and-acceptance-tests.html" class="pagination--pager" title="The swiss cheese model and acceptance tests
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You May Also Enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2023/10/14/blog-refresh" rel="permalink">New job, new blog!
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-10-14T00:00:00+01:00">October 14, 2023</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">I quit my job! Yes, after 12 amazing years at Thoughtworks, I decided it was time to move on.
+
+I’m starting a new job in November - more on that later - but ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/12/01/folks-to-follow-on-mastodon.html" rel="permalink">Interesting folks to follow on Mastodon
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-01T09:27:00+00:00">December 1, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          8 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">My highly-idiosyncratic list of interesting people on Mastodon
+
+I’ve been really enjoying moving from the crumbling mess of Twitter, to the chaotic federated...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/10/buying-minecoins-on-a-child-s-android-minecraft-account.html" rel="permalink">Buying minecoins on a child’s Android Minecraft account
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-10T11:01:00+00:00">November 10, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Sharing here as this was a world of pain, and maybe I can save someone else this pain.
+
+Information is as of November 2022 - earlier advice on the web is wro...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2022/11/05/is-mastodon-a-twitter-replacement.html" rel="permalink">Is Mastodon a Twitter replacement?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-05T21:10:00+00:00">November 5, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">It depends which bits of Twitter you want…
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://hachyderm.io/@korny" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-mastodon" aria-hidden="true"></i> Mastodon</a></li>
+        
+      
+        
+          <li><a href="https://github.com/kornysietsma" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Korny's Blog. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2019/04/08/ocr-hack-grabbing-text-from-the-screen-on-a-macbook.html"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kornyblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

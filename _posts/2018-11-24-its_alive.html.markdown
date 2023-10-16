@@ -1,0 +1,31 @@
+---
+title: It's alive!
+date: 2018-11-24 17:58 UTC
+tags: ['jekyll']
+categories: ['blogging','personal']
+
+---
+I'm moving everything to Google Domains as I don't see the value in paying
+for complex hosting.  I'm using github pages for hosting static sites like
+this one - I'll see how it scales, it doesn't have unlimited scale but I don't
+think I get that many hits!
+
+<!--more-->
+
+For the moment this is using my fairly creaky middleman-blog setup - I might
+look at moving to Jekyll as that's what Github does best.  And I fear the
+css here is probably pretty dated, as I haven't done much CSS since 2013 and it's
+now 2018...  anyway, for now I'll port everything with minimal effort, and
+in reality that's probably all I'll have time for, for another 4 years!
+
+In the 4 years since I last blogged I:
+
+- Met a lovely person
+- Got engaged
+- Got married!
+- Had a baby!!! Who will be two in December
+
+So I have reason to feel I've been busy, and will stay busy.
+
+I still work for ThoughtWorks, though for the UK tentacle.  Doing all sorts
+of cool things - which I should blog about, some time.
