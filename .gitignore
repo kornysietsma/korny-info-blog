@@ -7,6 +7,8 @@
 # Ignore Sass' cache
 /.sass-cache
 
+/_site
+
 # Korny's bits
 /.idea
 *.iml
