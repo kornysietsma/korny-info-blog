@@ -68,10 +68,10 @@ This doesn't work immediately, but that's fine - it's good enough:
 
 - the function signature was OK (probably should be `&Path` though)
 - it reminded me how to slurp a file as a string
-- It suggested how to split the file into two parts ( split_front_matter function doesn't exist - it's just a suggestion)
-- It worked out that I wanted to get the front matter as YAML!  I didn't specify that - it must have inferred that from other markdown-parsing code.
+- It suggested how to split the file into two parts (the `split_front_matter` function doesn't exist - it's just a suggestion)
+- It worked out that I wanted to get the front matter as YAML. I didn't specify that - it must have inferred that from other markdown-parsing code.
 
-I could have written that myself, but it saved me some boilerplate typing, and guessing at API signatures.
+I could have written all that myself, but it saved me some boilerplate typing, and guessing at API signatures.
 
 However - then I asked it to generate `split_front_matter`:
 
@@ -99,9 +99,11 @@ pub fn split_front_matter(contents: &str) -> Result<(String, Vec<String>)> {
 }
 ```
 
-This was less good. It doesn't work! (I wrote a unit test to prove this - I wonder if Copilot would have done better if I'd TDD'd it?).  Like a lot of AI generated stuff, it _looks_ OK - confidently OK - but the `break` doesn't work, it should be setting `in_front_matter` to false.  Also it doesn't handle several edge cases like `---` inside the markdown body.
+This was less good. It doesn't work! (I wrote a unit test to prove this - I wonder if Copilot would have done better if I'd TDD'd it?).  Like a lot of AI generated stuff, it _looks_ OK - confidently OK - but the `break` is wrong, it should be setting `in_front_matter` to false.  Also it doesn't handle several edge cases like `---` inside the markdown body.
 
-Also it's pretty ugly C-style procedural code.  You can do this much more nicely with some iterators and splitting: (and a few extras like error checking and an `AsRef` parameter[^1]) 
+Also it's pretty ugly C-style procedural code.  You can do this much more nicely with some iterators and splitting:[^1]
+
+[^1]: I also added error checking, a more flexible `contents` parameter, and a minor cheat - I used `collect_tuple` from the itertools crate rather than doing more messy iterator-to-variable processing
 
 ```rust
 pub fn split_front_matter(contents: impl AsRef<str>) -> Result<(String, Vec<String>)> {
@@ -119,7 +121,5 @@ pub fn split_front_matter(contents: impl AsRef<str>) -> Result<(String, Vec<Stri
     ))
 }
 ```
-
-[^1]: also a minor cheat - I used `collect_tuple` from the itertools crate rather than doing more messy iterator-to-variable processing
 
 My conclusion so far from this tiny sample - Copilot is handy for this for a minor IDE boost for simple boilerplate code, but definitely not to be trusted for anything longer; at least not in rust.
