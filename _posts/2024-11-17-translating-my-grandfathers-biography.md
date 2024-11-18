@@ -11,6 +11,8 @@ This was a fascinating family history to me growing up - I was named after my gr
 
 Now I have kids of my own, and I started thinking about how I could explain their great-grandfather to them.  I knew quite a few broad facts, but hadn't dug into the specific details.  Also information about him is scattered all over the place, and is mostly in dutch - there's a  [dutch Wikipedia article](https://nl.wikipedia.org/wiki/Kornelis_Sietsma) for example, but no English one.  I thought it'd be good to start building something I could put on the [sietsma.com](https://sietsma.com) website.
 
+<!--more-->
+
 One important source I knew of was a short biography, written by a colleague of Dr Sietsma in 1946. It was titled "Een Waarlijk Vrie" which translates as "a Truly Free person" - and I already had translation made by my Uncle Arie in the 1990s.  I thought of just putting that online, however, looking at it, it was quite wordy and hard to read. I could have cleaned it up and simplified it, but I didn't feel confident just altering his translation, I thought it'd be good to cross-check it against the original dutch text.
 
 It also occurred to me that this could be a good use of a modern Large Language Model based AI.  I'm rather skeptical about LLMs in many cases, but this seemed one of the areas they might really add value - there's a lot of data to build on for translations, and in this case I could check the results - both against my Uncle's translation, but also I have Dutch speaking friends who could double check specific parts.
@@ -37,7 +39,7 @@ I also found the LLMs quite inconsistent with place names - in some places a chu
 
 On average Claude did somewhat better than DeepL. I think that's largely because I could give it a specific prompt, to tell it that the text was 1940s Dutch, which helped it do a better job at translating dated terms and idioms.  For reference this was the prompt I used:
 
-> I have a biography of my grandfather written in 1946. I need your help to translate it accurate so that his original meaning and intention is preserved. Please take note of the approximate time period as Dutch is likely to have been spoken in an older style than today. I would like it translated into a modern British english style.
+> I have a biography of my grandfather written in 1946. I need your help to translate it accurately so that his original meaning and intention is preserved. Please take note of the approximate time period as Dutch is likely to have been spoken in an older style than today. I would like it translated into a modern British english style.
 
 Claude also inserted explanations about some key points, which was sometimes useful where there was ambiguity or specific references - I used these explanations to add a lot of footnotes to the final translation.
 
