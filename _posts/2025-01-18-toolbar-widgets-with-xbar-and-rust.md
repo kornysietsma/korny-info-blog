@@ -11,9 +11,9 @@ Lately I wanted some toolbar widgets - mostly for looking at CI/CD build statuse
 
 ## What is XBar?
 
-[XBar](https://xbarapp.com/) is a nifty tool for Mac OSX machines which puts little UI widgets on your toolbar. (It started as an older project called Bitbar, which was abandoned for a while - so there is a similar alternative called [SwiftBar](https://github.com/swiftbar/SwiftBar) for those who want options)
+[XBar](https://xbarapp.com/) is a nifty tool for Mac OSX machines which puts little UI widgets on your toolbar. (It started as an older project called Bitbar, which was abandoned for a while - there is a similar alternative called [SwiftBar](https://github.com/swiftbar/SwiftBar) for those who want options)
 
-One of the marvellous things about XBar is how very simple it is. It follows very much a "Unix philosophy" - every widget is a very simple executable script - if it succeeds (e.g. exit status 0) then the STDOUT is parsed and used to display a toolbar widget.  If it fails, then STDOUT is parsed and displayed on an error widget.
+One of the marvellous things about XBar is how very simple it is. It very much follows the "Unix philosophy" - every plugin is a very simple executable script - if it succeeds (e.g. exit status 0) then the STDOUT is parsed and used to display a toolbar widget.  If it fails, then STDOUT is parsed and displayed on an error widget.
 
 So for example a very simple plugin might just be a bash script:
 
@@ -31,13 +31,13 @@ If you copy the above to an executable file in `~/Library/Application\ Support/x
 
 Click the "Don't click me" button and the command `/usr/bin/say ow` is run.
 
-The script even refreshes itself - based on the file name.  `ow.1m.sh` means every minute the script is run, and the widget is re-drawn.
+The script even refreshes itself - based on the file name. In `ow.1m.sh` the `1m` means "re-run this every 1 minute" - so every minute the script is run and the UI is refreshed.
 
-It's all text - but unicode is supported, so you can do fairly creative things to make it prettier.
+The UI is all based on text - but unicode is supported, so you can do fairly creative things to make it prettier.
 
 ## Hang on, you mentioned rust...
 
-Naturally I wanted more than can just be done in bash. I really wanted to write plugins in rust - but rust is a compiled language, so it can't really be run as a script, out of the box.
+Naturally I wanted to do more than can just be done in bash. I really wanted to write plugins in rust - but rust is a compiled language, so it can't really be run as a script, out of the box.
 
 There are some ways around this though.
 
