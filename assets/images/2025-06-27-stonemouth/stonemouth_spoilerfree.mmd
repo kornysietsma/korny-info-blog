@@ -1,0 +1,98 @@
+graph TB
+    %% Main Characters
+    Stewart["Stewart Gilmour<br/>(Stu, Stewie)<br/>Protagonist, lighting designer"]
+    Ellie["Ellie Murston<br/>(El)<br/>Stewart's ex-fiancée"]
+    Ferg["Bodie Ferguson<br/>(Ferg)<br/>Stewart's best friend"]
+    
+    %% Murston Family
+    Donald["Donald Murston<br/>(Don, Mr M)<br/>Crime boss patriarch"]
+    Joe["Joe Murston<br/>(Grandpa Joe)<br/>Donald's father (deceased)"]
+    MrsM["Mrs Murston<br/>(Mrs M)<br/>Donald's wife"]
+    Grier["Grier Murston<br/>(Gree)<br/>Youngest daughter, photographer"]
+    Murdo["Murdo Murston<br/>Eldest son"]
+    Fraser["Fraser Murston<br/>(Frase)<br/>Second son"]
+    Norrie["Norrie Murston<br/>Fraser's twin"]
+    Callum["Callum Murston<br/>Son (deceased)"]
+    
+    %% MacAvett Family
+    MikeMac["Mike MacAvett<br/>(Mike Mac)<br/>Other crime boss"]
+    Sue["Sue MacAvett<br/>(Mrs Mac)<br/>Mike's wife"]
+    Josh["Josh MacAvett<br/>Eldest son, gay"]
+    Jel["Anjelica MacAvett<br/>(Jel)<br/>Had affair with Stewart"]
+    Ryan["Ryan MacAvett<br/>Younger son"]
+    
+    %% Gilmour Family
+    Al["Al Gilmour<br/>(Alastair)<br/>Stewart's father"]
+    Morven["Morven Gilmour<br/>Stewart's mother"]
+    
+    %% Others
+    Powell["Powell Imrie<br/>(Pow)<br/>Donald's enforcer"]
+    Phelpie["Ryan Phelps<br/>(Phelpie)<br/>Local character"]
+    
+    %% Family Relationships - Murston
+    Joe -.->|father| Donald
+    Donald ---|husband| MrsM
+    Donald -->|father| Ellie
+    Donald -->|father| Grier
+    Donald -->|father| Murdo
+    Donald -->|father| Fraser
+    Donald -->|father| Norrie
+    Donald -->|father| Callum
+    MrsM -->|mother| Ellie
+    MrsM -->|mother| Grier
+    MrsM -->|mother| Murdo
+    MrsM -->|mother| Fraser
+    MrsM -->|mother| Norrie
+    MrsM -->|mother| Callum
+    
+    %% Family Relationships - MacAvett
+    MikeMac ---|husband| Sue
+    MikeMac -->|father| Josh
+    MikeMac -->|father| Jel
+    MikeMac -->|father| Ryan
+    Sue -->|mother| Josh
+    Sue -->|mother| Jel
+    Sue -->|mother| Ryan
+    
+    %% Family Relationships - Gilmour
+    Al ---|husband| Morven
+    Al -->|father| Stewart
+    Morven -->|mother| Stewart
+    
+    %% Romantic/Sexual Relationships
+    Stewart -.->|ex-fiancé| Ellie
+    Stewart ==>|affair| Jel
+    Ellie -.->|ex-husband| Ryan
+    Grier ==>|one night| Ferg
+    
+    %% Friendships
+    Stewart ---|best friend| Ferg
+    Stewart ---|childhood friend| Josh
+    Al ---|best friend| MikeMac
+    
+    %% Business/Crime Relationships
+    Donald ---|employs| Powell
+    Donald <-.->|rival/associate| MikeMac
+    
+    %% Godparent Relationships
+    Al -.->|godfather| Josh
+    MikeMac -.->|godfather| Stewart
+    
+    %% Sibling tensions
+    Ellie x--x|stopped talking| Callum
+    Fraser ---|twins| Norrie
+    
+    %% Styling
+    classDef protagonist fill:#ff9999,stroke:#333,stroke-width:3px
+    classDef murston fill:#99ccff,stroke:#333,stroke-width:2px
+    classDef macavett fill:#99ff99,stroke:#333,stroke-width:2px
+    classDef gilmour fill:#ffcc99,stroke:#333,stroke-width:2px
+    classDef deceased fill:#cccccc,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    classDef other fill:#ffff99,stroke:#333,stroke-width:2px
+    
+    class Stewart protagonist
+    class Donald,MrsM,Ellie,Grier,Murdo,Fraser,Norrie murston
+    class MikeMac,Sue,Josh,Jel,Ryan macavett
+    class Al,Morven gilmour
+    class Joe,Callum deceased
+    class Powell,Ferg,Phelpie other

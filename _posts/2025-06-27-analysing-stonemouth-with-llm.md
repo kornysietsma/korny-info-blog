@@ -1,0 +1,157 @@
+---
+title: Analysing Stonemouth with an LLM
+categories: ['AI']
+date: 2025-06-27
+tags: [llm, books, iain-banks, claude]
+toc: false
+---
+
+There's a lot of positive and negative discussion happening about AIs at the moment. I have thoughts - lots of them - and I want to blog more, mostly about coding tools. But I don't have the time!
+
+But some small experiments still blow me away - and are worthy of a quick post.
+
+So, I finished reading the Iain M Banks book [Stonemouth](https://en.wikipedia.org/wiki/Stonemouth) last night - it's a complex story with a lot of characters, and I mostly kept track, but to be honest I got lost in a few minor characters - it doesn't help that I read in small chunks at bedtime!
+
+But I thought - "I wonder how an LLM could handle this amount of text - could it process it? Work out names, relationships, all of that?" - so I asked it.
+
+I had the book as a `.mobi` kindle file - with DRM removed - so I could get it into markdown, which seemed a nice clean format for analysis, using [Calibre](https://calibre-ebook.com/) and [Pandoc](https://pandoc.org/):
+
+```sh
+<calibre app path>ebook-convert Stonemouth.mobi Stonemouth.epub
+pandoc Stonemouth.epub -f epub -t gfm-raw_html -o Stonemouth.md
+```
+
+Then I made a new project in the Claude desktop app, and added the Markdown file as project knowledge.
+
+Then I asked:
+
+> In the provided book Stonemouth, please analyse all the characters - note some have multiple names like "Ferg" whose full name is "Bodie Ferguson"
+And try to work out the relationships - some are parents / children / siblings, some have brief affairs, some get married or almost get married.
+Can you build a graph of the people, including any alternative names and a one-line summary of their role in the book, and all their relationships to other characters?
+And then output that graph both as a json file for further analysis, and a mermaid.js rendering for viewing. ultrathink
+
+And - it mostly worked! Really the only problem was that the output had pretty massive spoilers for the end of the book, that would totally ruin it for people new to the book, so I added:
+
+> that's great - but can you make a second version that avoids spoilers near the end of the book - so doesn't show that &lt;examples removed&gt;
+
+And it produced the following diagram (note - it _still_ gives away a fair bit of the plot - the book slowly reveals facts, so this is still fairly spoiler-y)
+
+**⚠️ SPOILER WARNING** — The content below contains minor spoilers for *Stonemouth*. If you haven't read the book yet, stop here!
+{: .notice--danger}
+
+---
+
+```mermaid
+graph TB
+    %% Main Characters
+    Stewart["Stewart Gilmour<br/>(Stu, Stewie)<br/>Protagonist, lighting designer"]
+    Ellie["Ellie Murston<br/>(El)<br/>Stewart's ex-fiancée"]
+    Ferg["Bodie Ferguson<br/>(Ferg)<br/>Stewart's best friend"]
+    
+    %% Murston Family
+    Donald["Donald Murston<br/>(Don, Mr M)<br/>Crime boss patriarch"]
+    Joe["Joe Murston<br/>(Grandpa Joe)<br/>Donald's father (deceased)"]
+    MrsM["Mrs Murston<br/>(Mrs M)<br/>Donald's wife"]
+    Grier["Grier Murston<br/>(Gree)<br/>Youngest daughter, photographer"]
+    Murdo["Murdo Murston<br/>Eldest son"]
+    Fraser["Fraser Murston<br/>(Frase)<br/>Second son"]
+    Norrie["Norrie Murston<br/>Fraser's twin"]
+    Callum["Callum Murston<br/>Son (deceased)"]
+    
+    %% MacAvett Family
+    MikeMac["Mike MacAvett<br/>(Mike Mac)<br/>Other crime boss"]
+    Sue["Sue MacAvett<br/>(Mrs Mac)<br/>Mike's wife"]
+    Josh["Josh MacAvett<br/>Eldest son, gay"]
+    Jel["Anjelica MacAvett<br/>(Jel)<br/>Had affair with Stewart"]
+    Ryan["Ryan MacAvett<br/>Younger son"]
+    
+    %% Gilmour Family
+    Al["Al Gilmour<br/>(Alastair)<br/>Stewart's father"]
+    Morven["Morven Gilmour<br/>Stewart's mother"]
+    
+    %% Others
+    Powell["Powell Imrie<br/>(Pow)<br/>Donald's enforcer"]
+    Phelpie["Ryan Phelps<br/>(Phelpie)<br/>Local character"]
+    
+    %% Family Relationships - Murston
+    Joe -.->|father| Donald
+    Donald ---|husband| MrsM
+    Donald -->|father| Ellie
+    Donald -->|father| Grier
+    Donald -->|father| Murdo
+    Donald -->|father| Fraser
+    Donald -->|father| Norrie
+    Donald -->|father| Callum
+    MrsM -->|mother| Ellie
+    MrsM -->|mother| Grier
+    MrsM -->|mother| Murdo
+    MrsM -->|mother| Fraser
+    MrsM -->|mother| Norrie
+    MrsM -->|mother| Callum
+    
+    %% Family Relationships - MacAvett
+    MikeMac ---|husband| Sue
+    MikeMac -->|father| Josh
+    MikeMac -->|father| Jel
+    MikeMac -->|father| Ryan
+    Sue -->|mother| Josh
+    Sue -->|mother| Jel
+    Sue -->|mother| Ryan
+    
+    %% Family Relationships - Gilmour
+    Al ---|husband| Morven
+    Al -->|father| Stewart
+    Morven -->|mother| Stewart
+    
+    %% Romantic/Sexual Relationships
+    Stewart -.->|ex-fiancé| Ellie
+    Stewart ==>|affair| Jel
+    Ellie -.->|ex-husband| Ryan
+    Grier ==>|one night| Ferg
+    
+    %% Friendships
+    Stewart ---|best friend| Ferg
+    Stewart ---|childhood friend| Josh
+    Al ---|best friend| MikeMac
+    
+    %% Business/Crime Relationships
+    Donald ---|employs| Powell
+    Donald <-.->|rival/associate| MikeMac
+    
+    %% Godparent Relationships
+    Al -.->|godfather| Josh
+    MikeMac -.->|godfather| Stewart
+    
+    %% Sibling tensions
+    Ellie x--x|stopped talking| Callum
+    Fraser ---|twins| Norrie
+    
+    %% Styling
+    classDef protagonist fill:#ff9999,stroke:#333,stroke-width:3px
+    classDef murston fill:#99ccff,stroke:#333,stroke-width:2px
+    classDef macavett fill:#99ff99,stroke:#333,stroke-width:2px
+    classDef gilmour fill:#ffcc99,stroke:#333,stroke-width:2px
+    classDef deceased fill:#cccccc,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    classDef other fill:#ffff99,stroke:#333,stroke-width:2px
+    
+    class Stewart protagonist
+    class Donald,MrsM,Ellie,Grier,Murdo,Fraser,Norrie murston
+    class MikeMac,Sue,Josh,Jel,Ryan macavett
+    class Al,Morven gilmour
+    class Joe,Callum deceased
+    class Powell,Ferg,Phelpie other
+```
+
+---
+
+Here's a png version of the image in case mermaid doesn't render well:
+
+![Stonemouth character relationships - spoiler free version](/assets/images/2025-06-27-stonemouth/stonemouth_spoilerfree.png)
+
+And you can see [the mermaid file here](/assets/images/2025-06-27-stonemouth/stonemouth_spoilerfree.mmd)
+
+Honestly, this is science-fiction land (even though this is Iain M Banks not Iain Banks) - stuff like this would have been unimaginable a few short years ago.
+
+I do think we need to beware of the risks - AI hype is ludicrous, there's a huge bubble risk in the unsustainable amounts of money being poured into these tools, and the tech [broligarchy](https://broligarchy.substack.com/) (thanks [Carole Cadwalla](https://substack.com/@carolecadwalla) for the term!) that are behind all this.
+
+But still, where it works and doesn't make stuff up, it can be pretty impressive. (I did check the graph represents, as far as I can tell, the book! It'd be quite ironic if it had mistakes and I didn't see them - I'll leave that as a task for the reader)
