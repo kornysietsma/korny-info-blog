@@ -62,6 +62,8 @@ It's probably a _lot_ faster to use a paid LLM, sadly my Claude Code license see
 
 The output, however, was great.  More on that later
 
+**UPDATE** I tried a different model - the new [gemma3n model](https://ollama.com/library/gemma3n) "for efficient execution on everyday devices" - and it was drastically faster.  Under 3 minutes. So there must have been some massive bottleneck using gemma3?  But - the gemma3n output had some major flaws - hallucinations in tables, for instance!  I need to investigate this more when I have time.
+
 ### PyMyPDF
 
 Finally, I tried a Python library - a bit of digging suggested [PyMuPDF](https://pymupdf.readthedocs.io/) which is very popular and has a specific [PyMyPDF4LLM](https://pymupdf.readthedocs.io/en/latest/pymupdf4llm/index.html) model for LLM use.
@@ -305,5 +307,5 @@ This was a kind-of fun digression.  I think it's pretty clear though that I have
 
 1. If I just want an LLM to summarize an ebook that is mostly text, PyMyPdf is _fine_.  It's fast, easy, and there's enough context for it to work with.
 2. If I want a full markdown version of an ebook, for detailed analysis or copying sections to Obsidian or something, it'd be worth using Marker - though maybe not with the "images as descriptions" setting.
-   - The ollama LLM is fine if I have lots of time, and don't need perfection
+   - Using a free ollama LLM can be fine if I have lots of time, don't mind some spurious descriptions, and can fiddle models / time.  (this needs investigation)
    - But maybe if I wanted something higher quality, it'd be worth using it with a commercial LLM.
