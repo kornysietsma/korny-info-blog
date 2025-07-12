@@ -1,14 +1,14 @@
 ---
-title: "The power of the Unix philosophy for LLM agents"
+title: "The power of the Unix philosophy for LLM agentic tools"
 categories: ['AI']
 date: 2025-07-11
 tags: [ai, llm, agents, unix, philosophy, tools]
 toc: true
 ---
 
-I was demonstrating using Claude Code inside the JetBrains Rider IDE to a colleague the other day, and they said something along the lines of "it uses a lot of bash commands like `find` - why doesn't it hook into the IDE to understand the structure?"
+I was demonstrating using Claude Code to edit some ASP.Net Core C# code the other day, within the JetBrains Rider IDE. They said something along the lines of "it uses a lot of bash commands like `find` - why doesn't it hook into the IDE to understand the structure?"
 
-I was a bit surprised about this - I quite like the way it uses small simple commands. Musing about it afterwards, I realised that this is actually them benefiting from the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) - "write programs that do one thing and do it well".
+I was a bit surprised by this - I quite like the way it uses small simple commands. Musing about it afterwards, I realised that this is actually them benefiting from the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) - "write programs that do one thing and do it well".
 
 I am already someone who loves diving into the command-line, I have a string of handy tools I use all the time - [jq](https://jqlang.github.io/jq/), [dua](https://github.com/Byron/dua-cli), [ripgrep](https://github.com/BurntSushi/ripgrep), [pbcopy and pbpaste](https://osxdaily.com/2007/03/05/manipulating-the-clipboard-from-the-command-line/), plus all the standard shell tools like find, grep etc - I was already enjoying this aspect of using LLM-based tools; they can be easily trained to use the tools I use already.
 
@@ -26,9 +26,9 @@ Sounds a bit familiar.[^2]
 
 Anyway - my colleague seemed to be surprised that the LLM wasn't embracing the large, complicated, sophisticated modelling that a tool like Rider does - in fact up to now you _needed_ a tool like Rider to understand complex ecosystems like ASP.Net.
 
-Whereas I quite like that it _doesn't have to_ - it uses the Unix philosophy - text-based interfaces (which language models naturally work well with), a mix of small dumb tools that do one thing and one thing well.  And despite the powerful IDEs, the world has shifted - even Cathedrals like ASP.Net now supply quite good command-line tools like `dotnet` for building, formatting, linting, and testing, with an LLM-friendly text interface. With all these tools, plus the ability to iterate over solutions and use trial-and-error to course correct, it does a quite good job of what previously needed a huge complex IDE.
+Whereas I quite like that it _doesn't have to_ - it uses the Unix philosophy - text-based input and output (which language models naturally work well with), small fast stand-alone tools, that do one thing and one thing well. And despite the continued need for powerful IDEs, the world has shifted - even Cathedrals like ASP.Net now supply quite good command-line tools like `dotnet` for building, formatting, linting, and testing, with an LLM-friendly text interface. With all these tools, plus the ability to iterate over solutions and use trial-and-error to course correct, LLM-based tools do a quite good job of what previously needed a huge complex IDE.
 
-Claude Code even does a _better_ job than the smart IDEs for a lot of refactorings. I remember when refactoring IDEs first appeared, and they were amazing - I could say "extract these lines into a function" and it just worked. But now I can say to Claude "we are doing this repetitive pattern in our tests - can you change it to test against an array using Fluent Assertions instead" and it turns:
+Often Claude Code does a _better_ job than the smart IDEs for a lot of refactorings. I remember when refactoring IDEs first appeared, and they were amazing - I could say "extract these lines into a function" and it just worked. But now I can say to Claude "we are doing this repetitive pattern in our tests - can you change it to test against an array using Fluent Assertions instead?" and it turns:
 
 ```csharp
 getBusinessResponse.People.Count.Should().Be(2);
@@ -46,15 +46,19 @@ getBusinessResponse.People.Select(p => p.Id)
 
 and then it can find the equivalent pattern through all the tests, and do a good job of fixing them all.[^3]
 
-[^3]: It's non-deterministic, you have to check it for hallucinations, but they are pretty rare on simple changes like this.
+[^3]: It's non-deterministic, you have to check it for hallucinations, but they are pretty rare on simple changes like this. And it will run the tests after every change, and iterate if something goes wrong.
 
 Claude Code itself also follows this philosophy - instead of being tightly coupled to an IDE, it runs in a terminal, with a text interface, and they have plugins for various IDEs to provide a smarter user interface - using the editor's context and UI elements for changes.  But basically it's a text app - which must keep their complexity much lower than the competitors who are building their tools tightly coupled to particular editors.
 
-Another example - my personal music collection is stored as mp3 files indexed and served by [MPD](https://www.musicpd.org/), the Music Player Daemon. It used to be in the Catheral-like iTunes, but as Apple enshittified their apps, and my veneral iPod died (many years ago) I moved to MPD for storage, and other tools for UIs - and now this fits well with LLM tools.  It has a textual command-line interface in mpc, I'm already using this to play music in Obsidian - see [my previous blog post](/2024/09/06/custom-mac-uri-schemes-obsidian). So it'd be easy to call this from an LLM - or wrap it in an MCP service for a home-grown Siri or Alexa like music player.
+Another example - my personal music collection is stored as mp3 files indexed and served by [MPD](https://www.musicpd.org/), the Music Player Daemon. It used to be in the Catheral-like iTunes, but as Apple enshittified their apps, and my veneral iPod died (many years ago) I moved to MPD for storage, and other tools for UIs - and now this fits well with LLM tools. It has a command-line interface in [mpc](https://www.musicpd.org/clients/mpc/), I'm already using this to play music in Obsidian - see [my previous blog post](/2024/09/06/custom-mac-uri-schemes-obsidian). So it'd be easy to call this from an LLM - or wrap it in an MCP service for a home-grown Siri or Alexa like music player.
+
+And a third example - this blog is written using [Jekyll](https://jekyllrb.com/), which means it's just markdown text. LLMs _love_ working with markdown. I don't use LLMs to write the text[^4] but I can say "please turn the word Jekyll into a link" and save a lot of annoying toil.
+
+[^4]: I'm fine with expressing my ideas in writing, though I tend to digress too much!
 
 ---
 
-I'm digressing again. Tired brain tends to ramble. Back to my main thought - LLM code augmentation tools work best where they, and their users, embrace Unix-philosophy tools - multiple small tools that do one thing each, that interact with simple text-based formats.
+Anyway I digress. Tired brain tends to ramble. Back to my main thought - LLM code augmentation tools work best where they, and their users, embrace Unix-philosophy tools - multiple small tools that do one thing each, that interact with simple text-based formats.
 
 I can see this being a bit of a struggle, and a culture clash, for people who love the Cathedral model - big complex clever systems. Often these are more powerful, more robust, more carefully engineered, and safer than the Bazaar of small independant tools. But I think LLMs are tipping the balance further to where the smaller tools, despite the risks and chaos, are dramatically more productive.
 
