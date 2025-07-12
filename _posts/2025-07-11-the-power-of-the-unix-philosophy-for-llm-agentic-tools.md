@@ -3,7 +3,7 @@ title: "The power of the Unix philosophy for LLM agentic tools"
 categories: ['AI']
 date: 2025-07-11
 tags: [ai, llm, agents, unix, philosophy, tools]
-toc: true
+toc: false
 ---
 
 I was demonstrating Claude Code to a colleague the other day - I was working on an ASP.Net Core C# service, using Claude within the JetBrains Rider IDE. And my colleague said "it uses a lot of bash commands like `find` - why doesn't it hook into the IDE to understand the structure?"
