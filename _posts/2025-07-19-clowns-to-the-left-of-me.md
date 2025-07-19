@@ -32,7 +32,7 @@ A lot though seems to be genuine users lured by the quick result, the slick prot
 
 And as the last year or two have shown us, it's very easy for people to be fooled by LLMs, which excel at looking like something they are not. People anthropomorphise the tools all the time - "Why did you do this dumb thing? Can't you see the example I'm looking at of how to do it?" - they start to think this is genuine intelligence that can reason and learn, not a specific set of tools.
 
-LLMs are wonderful machines that read your data and questions and produce results in a way that _feels_ like intelligence, but is actually just really clever pattern matching and a surrounding ecosystem of context sources and tools. Sometimes the results are amazing, occasionally they are terrible, and _you always need to check the results_ because the process is fundamentally nondeterministic, and just because 99% of the time something worked, there's always that 1% change it was confidently wrong.
+LLMs are wonderful machines that read your data and questions and produce results in a way that _feels_ like intelligence, but is actually just really clever pattern matching and a surrounding ecosystem of context sources and tools. Sometimes the results are amazing, occasionally they are terrible, and _you always need to check the results_ because the process is fundamentally nondeterministic, and just because 99% of the time something worked, there's always that 1% chance it was confidently wrong.
 
 ### Skeptics to the right
 
@@ -54,7 +54,7 @@ And this interesting breakdown of likely contributing factors:
 
 This study is great, by the way - and it does show where we should be cautious to assume self-assessment of how good these tools are. And probably real limitations in large complex systems. But it's no "Ah-ha! The emperor has no clothes!" moment, as far as I can tell. (After I wrote this, I found that [Simon Willison has a good discussion of this paper as well](https://simonwillison.net/2025/Jul/12/ai-open-source-productivity/) - and there's a rather more severe critique at [Cat Hick's blog](https://www.fightforthehuman.com/are-developers-slowed-down-by-ai-evaluating-an-rct-and-what-it-tells-us-about-developer-productivity/) )
 
-I also see quite a few people who have tried the most basic, un-assisted, low-context tools, and get terrible results; and then rule out AI tools as fundamentally broken. "I used copilot and it's suggestions are wrong 40% of the time, often ludicrously wrong". This was where I was at 6 months ago - Copilot seemed like a handy yet often irritating Clippy, no big deal. Sadly this puts off a lot of people - I was far more skeptical myself until I saw other more sensible folks saying "Hang on, it can do a lot better once you know how it works and how to tune it"
+I also see quite a few people who have tried the most basic, un-assisted, low-context tools, and get terrible results; and then rule out AI tools as fundamentally broken. "I used copilot and its suggestions are wrong 40% of the time, often ludicrously wrong". This was where I was at 6 months ago - Copilot seemed like a handy yet often irritating Clippy, no big deal. Sadly this puts off a lot of people - I was far more skeptical myself until I saw other more sensible folks saying "Hang on, it can do a lot better once you know how it works and how to tune it"
 
 And generally there's just a lot of anger and frustration, in reaction to the constant flood of hype:
 
@@ -76,6 +76,14 @@ And they are already giving me a bunch of obvious speedups, small and large. For
 
 I've written up a [detailed real-world example](/2025/07/18/a-real-world-ai-coding-case-sample) of using Claude Code to implement a Kafka messaging feature in an ASP.Net Core application. This demonstrates what can actually be done with AI coding tools today - not the wild hype, not the complete dismissal, but practical reality.
 
+TODO:
+
+My point here is, this actually worked, with some human guidance. It wasn't perfect on its own - the LLMs need guidance to get it right, to avoid technical debt, to rescue them when they get stuck. But still, it sped up this work considerably for me - even considering the time I spent course-correcting.
+
+It certainly isn't the "these never work and always hallucinate or produce garbage" take I hear from some people.
+
+And this is a change touching several areas of a non-trivial codebase - I've seen LLMs do even better on simple things - changes to a small class, adding a feature flag, writing a python script to build a data visualization. They are _great_ at little utility scripts to solve a single problem that you throw away when you are finished.
+
 ## What's next?
 
 I'm still learning - I've made masses of progress in the couple of months since I started using the tools in anger, and I expect there's a lot more to learn; especially as the tools keep changing - not always for the better.
@@ -84,4 +92,4 @@ I'm keen to continue exploring and learning how to use these tools effectively.
 
 ## Further reading
 
-I'm not alone, stuck here in the middle - for some good sensible approaches I'd also recommend [Birgitta Böckeler](https://birgitta.info/) and [Pete Hodgson](https://blog.thepete.net/blog/) and of course [Simon Willison](https://simonwillison.net/)'s blog is essential reading
+I'm not alone, stuck here in the middle. For some good sensible approaches I'd also recommend [Birgitta Böckeler](https://birgitta.info/) and [Pete Hodgson](https://blog.thepete.net/blog/) and of course [Simon Willison](https://simonwillison.net/)'s blog is essential reading
