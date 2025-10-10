@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="220" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300">
+  <defs>
+    <linearGradient id="tailGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5B9BD5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2EBBC1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Back hair -->
+  <ellipse cx="80" cy="70" rx="35" ry="50" fill="#8B4513" stroke="#654321" stroke-width="3"/>
+
+  <!-- Front hair (behind face) -->
+  <ellipse cx="120" cy="50" rx="38" ry="35" fill="#8B4513" stroke="#654321" stroke-width="3"/>
+
+  <!-- Hair strands -->
+  <path d="M 90 45 Q 80 65 85 85" fill="none" stroke="#654321" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 145 50 Q 155 70 150 90" fill="none" stroke="#654321" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Head -->
+  <circle cx="110" cy="70" r="38" fill="#FFDAB9" stroke="#CD853F" stroke-width="3"/>
+
+  <!-- Eyes (hidden behind sunglasses) -->
+  <circle cx="100" cy="65" r="6" fill="#000" opacity="0"/>
+  <circle cx="125" cy="65" r="6" fill="#000" opacity="0"/>
+  <circle cx="102" cy="63" r="2" fill="#FFF" opacity="0"/>
+  <circle cx="127" cy="63" r="2" fill="#FFF" opacity="0"/>
+
+  <!-- Secret Agent Sunglasses -->
+  <!-- Left lens -->
+  <rect x="88" y="58" width="22" height="14" rx="2" fill="#000" stroke="#333" stroke-width="2"/>
+  <!-- Right lens -->
+  <rect x="115" y="58" width="22" height="14" rx="2" fill="#000" stroke="#333" stroke-width="2"/>
+  <!-- Bridge -->
+  <line x1="110" y1="64" x2="115" y2="64" stroke="#333" stroke-width="2"/>
+  <!-- Left temple -->
+  <line x1="88" y1="65" x2="75" y2="68" stroke="#333" stroke-width="2"/>
+  <!-- Right temple -->
+  <line x1="137" y1="65" x2="150" y2="68" stroke="#333" stroke-width="2"/>
+  <!-- Shine effect on lenses for coolness -->
+  <line x1="92" y1="60" x2="97" y2="62" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="119" y1="60" x2="124" y2="62" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Smile -->
+  <path d="M 100 82 Q 112 88 124 82" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <ellipse cx="110" cy="135" rx="32" ry="45" fill="#FFDAB9" stroke="#CD853F" stroke-width="3"/>
+
+  <!-- Shell bra -->
+  <circle cx="95" cy="125" r="14" fill="#FF69B4" stroke="#C71585" stroke-width="3"/>
+  <circle cx="125" cy="125" r="14" fill="#FF69B4" stroke="#C71585" stroke-width="3"/>
+
+  <!-- Arms -->
+  <ellipse cx="75" cy="120" rx="10" ry="28" fill="#FFDAB9" stroke="#CD853F" stroke-width="3" transform="rotate(-20 75 120)"/>
+  <circle cx="68" cy="100" r="10" fill="#FFDAB9" stroke="#CD853F" stroke-width="3"/>
+
+  <ellipse cx="145" cy="125" rx="10" ry=  "28" fill="#FFDAB9" stroke="#CD853F" stroke-width="3" transform="rotate(35 145 125)"/>
+  <circle cx="156" cy="106" r="10" fill="#FFDAB9" stroke="#CD853F" stroke-width="3"/>
+
+  <!-- Waist -->
+  <ellipse cx="110" cy="175" rx="28" ry="18" fill="#FFDAB9" stroke="#CD853F" stroke-width="3"/>
+
+  <!-- Tail - vertical part (the | of the J) -->
+  <ellipse cx="110" cy="205" rx="24" ry="32" fill="url(#tailGrad)" stroke="#4A90E2" stroke-width="3"/>
+  <ellipse cx="110" cy="240" rx="20" ry="28" fill="url(#tailGrad)" stroke="#4A90E2" stroke-width="3"/>
+
+  <!-- Tail curve (the bottom curve of the J) -->
+  <path d="M 90 260 Q 95 270 115 272 Q 135 273 155 270"
+        fill="url(#tailGrad)" stroke="#4A90E2" stroke-width="3"/>
+
+  <!-- Horizontal part of tail -->
+  <ellipse cx="175" cy="268" rx="28" ry="16" fill="url(#tailGrad)" stroke="#4A90E2" stroke-width="3"/>
+
+  <!-- Tail fin -->
+  <path d="M 198 258 Q 215 265 210 275 L 200 270 Z"
+        fill="#2EBBC1" stroke="#1A9BA8" stroke-width="3"/>
+  <path d="M 200 270 Q 215 275 208 285 L 198 278 Z"
+        fill="#2EBBC1" stroke="#1A9BA8" stroke-width="3"/>
+
+  <!-- Fin details -->
+  <line x1="200" y1="265" x2="208" y2="270" stroke="#1A9BA8" stroke-width="2"/>
+  <line x1="200" y1="276" x2="206" y2="280" stroke="#1A9BA8" stroke-width="2"/>
+
+  <!-- Scale details -->
+  <circle cx="105" cy="210" r="6" fill="#FFF" opacity="0.4"/>
+  <circle cx="118" cy="220" r="6" fill="#FFF" opacity="0.4"/>
+  <circle cx="108" cy="235" r="6" fill="#FFF" opacity="0.4"/>
+  <circle cx="120" cy="250" r="6" fill="#FFF" opacity="0.4"/>
+  <circle cx="135" cy="265" r="6" fill="#FFF" opacity="0.4"/>
+  <circle cx="155" cy="270" r="6" fill="#FFF" opacity="0.4"/>
+</svg>
