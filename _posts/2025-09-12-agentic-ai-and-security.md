@@ -17,7 +17,7 @@ Bruce Schneier summarised the current Agentic AI situation [in his blog](https:/
 
 There are many risks in this area, and it is in a state of rapid change - we need to understand the risks, keep an eye on them, and work out how to mitigate them where we can.
 
-(I'm going to shamelessly plagiarise [Simon Willison's excellent "Lethal Trifecta for AI agents"](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) article as it is an excellent overview of the risks.)
+(Due credit - a lot of the core ideas here come from [Simon Willison's excellent "Lethal Trifecta for AI agents article"](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) - and Simon's blog in general is a great source of ideas and information about AI-assisted coding)
 
 ## What do we mean by Agentic AI
 
@@ -219,6 +219,158 @@ AIs make mistakes, they hallucinate, they can easily produce slop and technical 
 It is _ALWAYS_ a good idea to check what they are doing. Either run them interactively, and watch them and approve as they work - or if running in the background, monitor their output carefully and make sure you are there to prune, to remove junk, to course-correct. If you are writing code, best practice is to have all code reviewed before it hits production - and those reviewers need to be human eyes.
 
 Having a human in the loop allows us to catch problems earlier, and to produce better results, as well as helping be more secure.
+
+### Use containers
+
+This is an increasingly popular approach - _lock down your AI in a virtual machine_ - using Docker or [Apple's containers](https://github.com/apple/container) or one of the various Docker alternatives.
+
+Containers have the advantage that you can control their behaviour at a very low level - they isolate your AI tool from the host machine, you can block file access and network access. [Simon Willison (again!) talks about this approach](https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#the-joy-of-yolo-mode) - he also notes [that there are sometimes ways for malicious code to escape a container](https://attack.mitre.org/techniques/T1611/) but these seem low-risk for mainstream AI tools.
+
+There are a few ways you can do this:
+
+- Run a terminal-based AI tool inside a container
+- Run a subprocess such as an MCP server inside a container
+- Run your whole development environment, including the AI tool, inside a container
+
+#### Running the AI inside a container
+
+This is quite straightforward - set up a Docker (or similar) container with a linux virtual machine, ssh into the machine, and run a terminal-based AI tool such as [Claude Code](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.claude.com/product/claude-code&ved=2ahUKEwja7NmRx6uQAxVhVkEAHWe0MmkQFnoECAwQAQ&usg=AOvVaw3FkBZhFqU6thxqaejWGtlC) or [Codex](https://developers.openai.com/codex/cli/). (I'm a Claude Code user so most of my examples are based on Claude).
+
+You will still probably need to mount your source code into the container, as you need a way for information to get into and out of the AI tool - but that's the only thing it should be able to access. You can even set up a firewall to limit external access, though you'll need enough to allow the tool itself to be installed and to run!
+
+I found a good example of this approach [in Harald Nezbeda's claude-container github repository](https://github.com/nezhar/claude-container)
+
+```mermaid
+flowchart TD
+    user@{shape: stadium, label: "User"}
+
+    subgraph container["Container (Docker/VM)"]
+        sshio@{shape: doc, label: "Terminal<br/>Prompt & Response"}
+
+        subgraph llm["Agentic LLM Client"]
+            context[System Context]
+            training[Training Data]
+            sessioncontext@{shape: doc, label: "Session Context"}
+        end
+
+        allowed@{shape: lean-r, label: "Allowed R/W"}
+        blocked@{shape: notch-rect, label: "Blocked"}
+    end
+
+    project@{shape: cyl, label: "Mounted<br/>Project Dir"}
+    llmapi@{shape: cloud, label: "LLM API Service"}
+    approved@{shape: cloud, label: "Approved<br/>External Hosts"}
+    blocked_host@{shape: hex, label: "✗ Host System"}
+    blocked_fs@{shape: cyl, label: "✗ Host Filesystem"}
+    blocked_net@{shape: cloud, label: "✗ General Internet"}
+
+    %% Allowed connections
+    user <-->|SSH| sshio
+    sshio --> llm
+    llm --> sshio
+    llm --> allowed
+    allowed --> project
+    allowed --> llmapi
+    allowed --> approved
+
+    %% Blocked connections
+    llm -.-x blocked
+    blocked -.-x blocked_host
+    blocked -.-x blocked_fs
+    blocked -.-x blocked_net
+
+    %% Styling
+    classDef allowed fill:#90EE90,stroke:#006400,color:#000;
+    classDef blockedStyle fill:#FFB6C6,stroke:#8B0000,color:#000;
+    classDef containerStyle fill:#E6F3FF,stroke:#4A90E2,stroke-width:3px;
+
+    class project,llmapi,approved allowed;
+    class blocked,blocked_host,blocked_fs,blocked_net blockedStyle;
+    class container containerStyle;
+```
+
+#### Running an MCP server inside a container
+
+Local MCP servers are typically run as a subprocess, using a runtime like Node.JS or even running an arbitrary executable script or binary. This actually _may_ be OK - the security here is much the same as running _any_ third party tool; you need to be careful about trusting the authors and being careful about watching for vulnerabilities, but unless they themselves run an AI agent they aren't especially vulnerable to the lethal trifecta. The are scripts, they run the code they are given, they aren't prone to treating data as instructions by accident!
+
+Having said that, some MCPs _do_ use LLMs internally (you can usually tell as they'll need an API key to operate!) - and it is still often a good idea to run them in a container - if you have any concerns about their trustworthiness, a container will give you a degree of isolation.
+
+Docker Desktop have made this much easier, if you are a Docker customer - [they have their own catalogue of MCP servers](https://www.docker.com/products/mcp-catalog-and-toolkit/) and you can automatically set up an MCP server in a container using their Desktop UI.
+
+_Note_ however that this doesn't protect you _that_ much. It protects against the MCP server itself being insecure, but it doesn't protect you against the MCP server being used as a conduit for prompt injection. Putting a Github Issues MCP inside a container doesn't stop it sending you issues crafted by a bad actor that your LLM may then treat as instructions.
+
+#### Running your whole development environment inside a container
+
+If you are using Visual Studio Code they have [an extension](https://code.visualstudio.com/docs/devcontainers/containers) that allows you to run your entire development environment inside a container:
+
+![VSCode dev containers architecture](/assets/images/2025-09-12-agentic-ai-and-security/architecture-containers.png)
+
+And Anthropic have given us [a reference implementation for running Claude Code in a Dev Container](https://github.com/anthropics/claude-code/tree/main/.devcontainer) - note this [includes a firewall with an allow-list of acceptable domains](https://github.com/anthropics/claude-code/blob/b4b858a11500393159bcdd64752be0e4f64864d5/.devcontainer/init-firewall.sh#L66) which gives you some very fine control over access.
+
+I haven't had the time to try this extensively, but it seems a very nice way to get a full Claude Code setup inside a container, with all the extra benefits of their IDE integration. Note it is isn't very well documented - just a paragraph in [Claude Code best practices - safe YOLO mode](https://www.anthropic.com/engineering/claude-code-best-practices#d-safe-yolo-mode) - so you might need some experimentation to use it yourself. And consider if you really want it to use `--dangerously-skip-permissions` - I think this might be putting a tad too much trust in the container, myself.
+
+Just like the earlier example, the LLM is limited to accessing just the current project, plus anything you explicitly allow:
+
+```mermaid
+flowchart TD
+    user@{shape: stadium, label: "User"}
+
+    subgraph host["Local OS"]
+        vscode_ui["VS Code UI"]
+    end
+
+    subgraph container["Dev Container (Docker)"]
+        vscode_server["VS Code Server"]
+
+        subgraph llm["Agentic LLM Client"]
+            context[System Context]
+            training[Training Data]
+            sessioncontext@{shape: doc, label: "Session Context"}
+        end
+
+        allowed@{shape: lean-r, label: "Allowed R/W"}
+        blocked@{shape: notch-rect, label: "Blocked"}
+    end
+
+    project@{shape: cyl, label: "Project Files<br/>(volume mount)"}
+    llmapi@{shape: cloud, label: "LLM API Service"}
+    approved@{shape: cloud, label: "Approved<br/>External Hosts"}
+    blocked_host@{shape: hex, label: "✗ Host System"}
+    blocked_fs@{shape: cyl, label: "✗ Host Filesystem"}
+    blocked_net@{shape: cloud, label: "✗ General Internet"}
+
+    %% Allowed connections
+    user --> vscode_ui
+    vscode_ui <-->|Exposed Port| vscode_server
+    vscode_server --> llm
+    vscode_server --> project
+    llm --> vscode_server
+    llm --> allowed
+    allowed --> project
+    allowed --> llmapi
+    allowed --> approved
+
+    %% Blocked connections
+    llm -.-x blocked
+    blocked -.-x blocked_host
+    blocked -.-x blocked_fs
+    blocked -.-x blocked_net
+
+    %% Styling
+    classDef allowed fill:#90EE90,stroke:#006400,color:#000;
+    classDef blockedStyle fill:#FFB6C6,stroke:#8B0000,color:#000;
+    classDef containerStyle fill:#E6F3FF,stroke:#4A90E2,stroke-width:3px;
+    classDef hostStyle fill:#FFF9E6,stroke:#996600,stroke-width:2px;
+
+    class project,llmapi,approved,allowed allowed;
+    class blocked,blocked_host,blocked_fs,blocked_net blockedStyle;
+    class container containerStyle;
+    class host hostStyle;
+```
+
+#### This doesn't solve every security risk
+
+_**Using a container is not a panacea!**_ You can still be vulnerable to the lethal trifecta _inside_ the container. For instance, if you load a project inside a container, and that project contains a credentials file and browses untrusted websites, the LLM can still be tricked into leaking those credentials. All the risks discussed elsewhere still apply, within the container world - you still need to consider the lethal trifecta.
 
 ## Other risks
 
