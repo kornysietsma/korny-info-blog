@@ -169,12 +169,14 @@ Vendors like Anthropic are working hard to lock these down, but it's pretty much
 
 ### Limiting access to untrusted content
 
-This is probably the best category for limiting our risk.
+This is probably the simplest category for most people to change
 {: .notice--info}
 
-**You should avoid reading content that can be written by the general public** - don't read public issue trackers, don't read arbitrary web pages, don't let an LLM read your email or public chats!
+**Avoid reading content that can be written by the general public** - don't read public issue trackers, don't read arbitrary web pages, don't let an LLM read your email!
 
-Obviously _some_ content is unavoidable - you can ask an LLM to summarise a web page, and you are _probably_ safe from that web page having hidden instructions in the text. Probably. But probably better to stick to "Please search on docs.microsoft.com" than "Please read the latest comments on reddit". Or keep the task that reads Reddit separate from other tasks - see "Split the tasks" below.
+Obviously _some_ content is unavoidable - you can ask an LLM to summarise a web page, and you are _probably_ safe from that web page having hidden instructions in the text. Probably. But for most of us it's pretty easy to limit what we need to "Please search on docs.microsoft.com" and avoid "Please read comments on Reddit".
+
+Of course there are situations where you need to do research, which often involves arbitrary searches on the web - for that I'd suggest segregating just that risky task from the rest of your work - see "Split the tasks" below.
 
 ### Beware tools that violate all three of these!
 
@@ -195,34 +197,9 @@ You should only use these tools if you can run them in a completely unauthentica
 
 > I strongly expect that the _entire concept_ of an agentic browser extension is fatally flawed and cannot be built safely. - Simon Willison
 
-### Split the tasks
-
-A key point of the Lethal Trifecta is that it's worst when all three factors exist.
-So you can mitigate risks by - splitting up the work into stages where each stage is safer.
-
-For instance, you might want to research how to fix a kafka problem - and yes, you might need to access reddit. So run this as a multi-stage research project:
-
-1. Identify the problem - ask the LLM to examine the codebase, examine official docs, identify the possible issues. Get it to craft a `research-plan.md` document describing what information it needs.
-   - Read the `research-plan.md` to check it makes sense!
-2. In a new session, run the research plan - this can be run without the same tool access, it could even be a standalone agent with access to only web searches. Get it to generate `research-results.md`
-   - Read the `research-results.md` to make sure it makes sense!
-3. Now back in the codebase, ask the LLM to use the research results to work on a fix.
-
-This is not only more secure, it is also increasingly a way people are encouraged to work. It's too big a topic to cover here, but it's a good idea to split LLM work into small stages, as the LLM works much better when its context isn't too big. Dividing your tasks into "Think, Plan, Act" keeps context down, especially if "Act" can be chunked into a number of small independent and testable chunks.
-
-Also this follows another key recommendation: "**Keep a human in the loop**"
-
-### Keep a human in the loop
-
-AIs make mistakes, they hallucinate, they can easily produce slop and technical debt. And as we've seen, they can be used for attacks.
-
-It is _ALWAYS_ a good idea to check what they are doing. Either run them interactively, and watch them and approve as they work - or if running in the background, monitor their output carefully and make sure you are there to prune, to remove junk, to course-correct. If you are writing code, best practice is to have all code reviewed before it hits production - and those reviewers need to be human eyes.
-
-Having a human in the loop allows us to catch problems earlier, and to produce better results, as well as helping be more secure.
-
 ### Use containers
 
-This is an increasingly popular approach - _lock down your AI in a virtual machine_ - using Docker or [Apple's containers](https://github.com/apple/container) or one of the various Docker alternatives.
+Where you do have to do something risky, an easy way to improve security is to _lock down your AI in a virtual machine_. Use Docker or [Apple's containers](https://github.com/apple/container) or one of the various Docker alternatives.
 
 Containers have the advantage that you can control their behaviour at a very low level - they isolate your AI tool from the host machine, you can block file access and network access. [Simon Willison (again!) talks about this approach](https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#the-joy-of-yolo-mode) - he also notes [that there are sometimes ways for malicious code to escape a container](https://attack.mitre.org/techniques/T1611/) but these seem low-risk for mainstream AI tools.
 
@@ -371,6 +348,36 @@ flowchart TD
 #### This doesn't solve every security risk
 
 _**Using a container is not a panacea!**_ You can still be vulnerable to the lethal trifecta _inside_ the container. For instance, if you load a project inside a container, and that project contains a credentials file and browses untrusted websites, the LLM can still be tricked into leaking those credentials. All the risks discussed elsewhere still apply, within the container world - you still need to consider the lethal trifecta.
+
+### Split the tasks
+
+A key point of the Lethal Trifecta is that it's worst when all three factors exist.
+So you can mitigate risks by - splitting up the work into stages where each stage is safer.
+
+For instance, you might want to research how to fix a kafka problem - and yes, you might need to access reddit. So run this as a multi-stage research project:
+
+1. Identify the problem - ask the LLM to examine the codebase, examine official docs, identify the possible issues. Get it to craft a `research-plan.md` document describing what information it needs.
+   - Read the `research-plan.md` to check it makes sense!
+2. In a new session, run the research plan - this can be run without the same tool access, it could even be a standalone containerised session with access to only web searches. Get it to generate `research-results.md`
+   - Read the `research-results.md` to make sure it makes sense!
+3. Now back in the codebase, ask the LLM to use the research results to work on a fix.
+
+This is not only more secure, it is also increasingly a way people are encouraged to work. It's too big a topic to cover here, but it's a good idea to split LLM work into small stages, as the LLM works much better when its context isn't too big. Dividing your tasks into "Think, Research, Plan, Act" keeps context down, especially if "Act" can be chunked into a number of small independent and testable chunks.
+
+Also this follows another key recommendation: "**Keep a human in the loop**"
+
+### Keep a human in the loop
+
+AIs make mistakes, they hallucinate, they can easily produce slop and technical debt. And as we've seen, they can be used for attacks.
+
+It is _ALWAYS_ a good idea to check what they are doing. Either run them interactively, and watch them and approve as they work - or if running in the background, monitor their output carefully and make sure you are there to prune, to remove junk, to course-correct. If you are writing code, best practice is to have all code reviewed before it hits production - and those reviewers need to be human eyes.
+
+_**This, to me, is the best way to stay secure**_ - run everything in one of two modes:
+
+1. Most work should be in small controlled steps you can review regularly
+2. If you really have something you want to leave to run unsupervised - run it in a tightly controlled way where it can do no harm. And still have a human check the output.
+
+Having a human in the loop allows us to catch mistakes earlier, and to produce better results, as well as being critical to staying secure.
 
 ## Other risks
 
