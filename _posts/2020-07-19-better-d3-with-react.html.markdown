@@ -275,7 +275,7 @@ All of this is surprisingly smooth - I've had pages with thousands of `svg` node
 
 I'm using this for my polyglot code tools - I intend to write more about those when I have the time.
 
-I'd really value feedback on this post - especially as I'm not a react expert, and there are probably major things I've missed!  Feedback via Disqus below, or via `@kornys` on Twitter.
+I'd really value feedback on this post - especially as I'm not a react expert, and there are probably major things I've missed!  Feel free to contact me on [Mastodon](https://hachyderm.io/@korny) or [Bluesky](https://bsky.app/profile/korny.sietsma.com).
 
 ## Update Mar 2022
 

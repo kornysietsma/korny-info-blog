@@ -234,4 +234,4 @@ I'm keen to keep tinkering with this - I have a pile of possible enhancements, a
 
 A few things are of fairly high priority - I'd like to handle git history renames better, projects with a lot of refactoring will have poorer quality metrics at the moment.
 
-I'd also love to get feedback to help me prioritise - feel free to add comments on the Disqus form below, or contact me [on Twitter](https://twitter.com/kornys) or other social media - or for bugs / improvements you can raise issues on the linked GitHub projects.
+I'd also love to get feedback to help me prioritise - feel free to contact me on [Mastodon](https://hachyderm.io/@korny) or [Bluesky](https://bsky.app/profile/korny.sietsma.com) - or for bugs / improvements you can raise issues on the linked GitHub projects.

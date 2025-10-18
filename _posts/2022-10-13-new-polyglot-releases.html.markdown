@@ -69,4 +69,4 @@ I'm going back to work in a couple of weeks - yay!  (actually I do miss it - esp
 
 I have a long-term plan to rework the whole Voronoi layout tool - that's probably the next thing on my list.  But I'd love feedback if people are using this - what is good? What sucks?  What would you like to see?
 
-This blog has Disqus comments, but honestly I don't read them much - probably better to chat to me on [twitter](https://twitter.com/kornys) or [mastodon](https://hachydon.io/@Korny) or face to face!  Or you can raise issues on github for specific bugs.
+Feel free to chat to me on [Mastodon](https://hachyderm.io/@korny) or [Bluesky](https://bsky.app/profile/korny.sietsma.com) or face to face!  Or you can raise issues on github for specific bugs.

@@ -34,3 +34,22 @@ $base0f: #d33682 !default;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
+
+// Custom social share button styles
+.btn--mastodon {
+  background-color: #6364FF;
+  color: #fff;
+
+  &:hover {
+    background-color: darken(#6364FF, 10%);
+  }
+}
+
+.btn--bluesky {
+  background-color: #1185FE;
+  color: #fff;
+
+  &:hover {
+    background-color: darken(#1185FE, 10%);
+  }
+}
