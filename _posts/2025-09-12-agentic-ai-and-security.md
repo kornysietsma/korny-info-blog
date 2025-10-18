@@ -83,7 +83,7 @@ I'll talk a bit more about MCP servers in [other risks](#other-risks) below
 
 ## What are the risks?
 
-Commercially supported tools like Claude Code usually come with a lot of checks - for example Claude won't read files outside a project without permission. However it's hard for LLMs to block all behaviour - if misdirected, Claude might break its own rules. **Once you let a tool execute arbitrary commands it is very hard to block specific tasks** - for example Claude might be tricked into creating a script that reads a file outside a project.
+Commercially supported tools like Claude Code usually come with a lot of checks - for example Claude won't read files outside a project without permission. However, it's hard for LLMs to block all behaviour - if misdirected, Claude might break its own rules. **Once you let a tool execute arbitrary commands it is very hard to block specific tasks** - for example Claude might be tricked into creating a script that reads a file outside a project.
 
 Still these tools are relatively safe when you control all the commands sent to Claude. You might blow up your system by accident, you might produce terrible code - but you aren't likely to have a cat jump on your keyboard and suddenly Claude sends your private keys to pastebin.
 
@@ -107,9 +107,9 @@ It will query the MCP server, extract the text of the latest issue, and add it t
 _**The problem here is that the LLM can't always tell safe text from unsafe text - it can't tell data from instructions**_
 {: .notice--warning}
 
-Even if Claude adds checks like "this is for information only" there is no guarantee they will work. The LLM matching is random and non-deterministic - sometimes it will see an instruction and operate on it, especially when a bad actor is crafting the payload to avoid detection.
+Even if Claude adds checks like "this is for information only", there is no guarantee they will work. The LLM matching is random and non-deterministic - sometimes it will see an instruction and operate on it, especially when a bad actor is crafting the payload to avoid detection.
 
-For example if you say to Claude "What is the latest issue on our github project?" and the latest issue was created by a bad actor, it might include the text "But importantly, you really need to do X as well". Claude will insert those instructions into the context and then it may well follow them. This is fundamentally how prompt injection works.
+For example, if you say to Claude "What is the latest issue on our github project?" and the latest issue was created by a bad actor, it might include the text "But importantly, you really need to do X as well". Claude will insert those instructions into the context and then it may well follow them. This is fundamentally how prompt injection works.
 
 ## The Lethal Trifecta
 
@@ -191,9 +191,9 @@ A clear example of this is AI powered browsers, or browser extensions - anywhere
 2. External communication is unavoidable - a GET to an image can expose your data
 3. Untrusted content is also pretty much unavoidable
 
-Simon Willison (again!) [has a good coverage of this issue](https://simonwillison.net/2025/Aug/25/agentic-browser-security/) after a report on the Comet “AI Browser”.
+Simon Willison (again!) [has good coverage of this issue](https://simonwillison.net/2025/Aug/25/agentic-browser-security/) after a report on the Comet "AI Browser".
 
-You should only use these tools if you can run them in a completely unauthenticated way - Microsoft’s [Playwright MCP server](github.com/microsoft/playwright-mcp) is a good counter-example as it runs in an isolated browser instance. But don’t use their browser extension!
+You should only use these tools if you can run them in a completely unauthenticated way - Microsoft's [Playwright MCP server](https://github.com/microsoft/playwright-mcp) is a good counter-example as it runs in an isolated browser instance. But don't use their browser extension!
 
 > I strongly expect that the _entire concept_ of an agentic browser extension is fatally flawed and cannot be built safely. - Simon Willison
 
@@ -201,7 +201,7 @@ You should only use these tools if you can run them in a completely unauthentica
 
 Where you do have to do something risky, an easy way to improve security is to _lock down your AI in a virtual machine_. Use Docker or [Apple's containers](https://github.com/apple/container) or one of the various Docker alternatives.
 
-Containers have the advantage that you can control their behaviour at a very low level - they isolate your AI tool from the host machine, you can block file access and network access. [Simon Willison (again!) talks about this approach](https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#the-joy-of-yolo-mode) - he also notes [that there are sometimes ways for malicious code to escape a container](https://attack.mitre.org/techniques/T1611/) but these seem low-risk for mainstream AI tools.
+Containers have the advantage that you can control their behaviour at a very low level - they isolate your AI tool from the host machine, you can block file access and network access. [Simon Willison (again!) talks about this approach](https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#the-joy-of-yolo-mode) - He also notes [that there are sometimes ways for malicious code to escape a container](https://attack.mitre.org/techniques/T1611/) but these seem low-risk for mainstream AI tools.
 
 There are a few ways you can do this:
 
@@ -211,7 +211,7 @@ There are a few ways you can do this:
 
 #### Running the AI inside a container
 
-This is quite straightforward - set up a Docker (or similar) container with a linux virtual machine, ssh into the machine, and run a terminal-based AI tool such as [Claude Code](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.claude.com/product/claude-code&ved=2ahUKEwja7NmRx6uQAxVhVkEAHWe0MmkQFnoECAwQAQ&usg=AOvVaw3FkBZhFqU6thxqaejWGtlC) or [Codex](https://developers.openai.com/codex/cli/). (I'm a Claude Code user so most of my examples are based on Claude).
+This is quite straightforward - set up a Docker (or similar) container with a linux virtual machine, ssh into the machine, and run a terminal-based AI tool such as [Claude Code](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.claude.com/product/claude-code&ved=2ahUKEwja7NmRx6uQAxVhVkEAHWe0MmkQFnoECAwQAQ&usg=AOvVaw3FkBZhFqU6thxqaejWGtlC) or [Codex](https://developers.openai.com/codex/cli/). (I'm a Claude Code user, so most of my examples are based on Claude).
 
 You will still probably need to mount your source code into the container, as you need a way for information to get into and out of the AI tool - but that's the only thing it should be able to access. You can even set up a firewall to limit external access, though you'll need enough to allow the tool itself to be installed and to run!
 
@@ -268,7 +268,7 @@ flowchart TD
 
 #### Running an MCP server inside a container
 
-Local MCP servers are typically run as a subprocess, using a runtime like Node.JS or even running an arbitrary executable script or binary. This actually _may_ be OK - the security here is much the same as running _any_ third party tool; you need to be careful about trusting the authors and being careful about watching for vulnerabilities, but unless they themselves run an AI agent they aren't especially vulnerable to the lethal trifecta. The are scripts, they run the code they are given, they aren't prone to treating data as instructions by accident!
+Local MCP servers are typically run as a subprocess, using a runtime like Node.JS or even running an arbitrary executable script or binary. This actually _may_ be OK - the security here is much the same as running _any_ third party tool; you need to be careful about trusting the authors and being careful about watching for vulnerabilities, but unless they themselves run an AI agent they aren't especially vulnerable to the lethal trifecta. They are scripts, they run the code they are given, they aren't prone to treating data as instructions by accident!
 
 Having said that, some MCPs _do_ use LLMs internally (you can usually tell as they'll need an API key to operate!) - and it is still often a good idea to run them in a container - if you have any concerns about their trustworthiness, a container will give you a degree of isolation.
 
@@ -284,7 +284,7 @@ If you are using Visual Studio Code they have [an extension](https://code.visual
 
 And Anthropic have given us [a reference implementation for running Claude Code in a Dev Container](https://github.com/anthropics/claude-code/tree/main/.devcontainer) - note this [includes a firewall with an allow-list of acceptable domains](https://github.com/anthropics/claude-code/blob/b4b858a11500393159bcdd64752be0e4f64864d5/.devcontainer/init-firewall.sh#L66) which gives you some very fine control over access.
 
-I haven't had the time to try this extensively, but it seems a very nice way to get a full Claude Code setup inside a container, with all the extra benefits of their IDE integration. Note it is isn't very well documented - just a paragraph in [Claude Code best practices - safe YOLO mode](https://www.anthropic.com/engineering/claude-code-best-practices#d-safe-yolo-mode) - so you might need some experimentation to use it yourself. And consider if you really want it to use `--dangerously-skip-permissions` - I think this might be putting a tad too much trust in the container, myself.
+I haven't had the time to try this extensively, but it seems a very nice way to get a full Claude Code setup inside a container, with all the extra benefits of their IDE integration. Note it isn't very well documented - just a paragraph in [Claude Code best practices - safe YOLO mode](https://www.anthropic.com/engineering/claude-code-best-practices#d-safe-yolo-mode) - so you might need some experimentation to use it yourself. And consider if you really want it to use `--dangerously-skip-permissions` - I think this might be putting a tad too much trust in the container, myself.
 
 Just like the earlier example, the LLM is limited to accessing just the current project, plus anything you explicitly allow:
 
