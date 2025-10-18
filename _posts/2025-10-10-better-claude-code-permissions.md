@@ -82,3 +82,7 @@ Absolutely. I can now draw mermaid diagrams without drowning in permission promp
 And I got to write some Rust, which is always fun.
 
 If you're having similar frustrations with Claude Code permissions, [give it a try](https://github.com/kornysietsma/claude-code-permissions-hook). If you're not comfortable building Rust code, you could easily take the ideas here and implement them in your language of choice - the concepts are pretty simple.
+
+---
+
+I've given up on Discus for comments - if you want to discuss this post, please reply to [My post on Mastodon](https://hachyderm.io/@Korny/115395530660357132) or [My post on Bluesky](https://bsky.app/profile/korny.sietsma.com/post/3m3hx2gfjb22z) (I'm doing both as one is more free, one is more convenient for many people)
