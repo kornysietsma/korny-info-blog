@@ -14,7 +14,7 @@ You are an expert Mermaid.js diagram validator with deep knowledge of diagram re
 When you receive a file path to a .mmd or .md file containing Mermaid diagrams you will:
 
 1. **Read the entire source diagram** to make sure you understand the intention
-2. **Generate Test Output**: Create temporary PNG files using the Mermaid CLI. Use the command format: `npx -p @mermaid-js/mermaid-cli mmdc -s 3 -i <input-file> -o /tmp/mermaid-test-automation-{timestamp}.png` where:
+2. **Generate Test Output**: Create temporary PNG files using the Mermaid CLI. Use the command format: `npx -p @mermaid-js/mermaid-cli@latest mmdc -s 3 -i <input-file> -o /tmp/mermaid-test-automation-{timestamp}.png` where:
    - `-s 3` sets the scale factor to 3x for better quality
    - `-i` specifies the input file path provided by the user
    - `-o` specifies the output PNG file
@@ -43,7 +43,7 @@ When you receive a file path to a .mmd or .md file containing Mermaid diagrams y
 
 ## Technical Requirements
 
-- Use the Mermaid CLI (`npx -p @mermaid-js/mermaid-cli mmdc -s 3`) with appropriate flags for PNG generation
+- Use the Mermaid CLI (`npx -p @mermaid-js/mermaid-cli@latest mmdc -s 3`) with appropriate flags for PNG generation
 - Accept file paths to:
   * `.mmd` files containing pure Mermaid diagram content
   * `.md` markdown files with embedded Mermaid diagrams (will generate multiple PNGs if multiple diagrams present: `output-1.png`, `output-2.png`, etc.)

@@ -14,7 +14,7 @@ You should test any mermaid diagrams you draw:
 There are two ways to call mermaid-cli - (1) specify `-` as the filename and pipe the contents in:
 
 ```sh
-cat << EOF  | npx -p @mermaid-js/mermaid-cli mmdc -s 3 -i - -o tmp.png
+cat << EOF  | npx -p @mermaid-js/mermaid-cli@latest mmdc -s 3 -i - -o tmp.png
     graph TD
     A[Client] --> B[Load Balancer]
 EOF
@@ -23,7 +23,7 @@ EOF
 or (2) write the output to a temporary file, then pass the name as a parameter:
 
 ```sh
-npx -p @mermaid-js/mermaid-cli mmdc -s 3 -i tmp.md -o tmp.png
+npx -p @mermaid-js/mermaid-cli@latest mmdc -s 3 -i tmp.md -o tmp.png
 ```
 
 Input can be:
@@ -32,7 +32,7 @@ Input can be:
 
 You can get more help for mermaid-cli with
 ```sh
-npx -p @mermaid-js/mermaid-cli mmdc -h
+npx -p @mermaid-js/mermaid-cli@latest mmdc -h
 ```
 
 ## My preferences
@@ -42,7 +42,7 @@ npx -p @mermaid-js/mermaid-cli mmdc -h
 
 ## Quick Reference
 
-- **Test diagrams**: `npx -p @mermaid-js/mermaid-cli mmdc -i tmp.mmd -o tmp.png` then read the PNG
+- **Test diagrams**: `npx -p @mermaid-js/mermaid-cli@latest mmdc -i tmp.mmd -o tmp.png` then read the PNG
 - **Hand-drawn look**: Add `config: look: handDrawn` in frontmatter
 - **Invisible subgraphs**: Use `classDef invisible fill:#0000,stroke:#0000;`
 - **New shape syntax**: `NodeName@{shape: diamond, label: "Decision"}`

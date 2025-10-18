@@ -51,7 +51,7 @@ Here's the configuration I use for running the Mermaid agent:
 # Allow npx mermaid-cli mmdc commands (but exclude pipes, background jobs, etc.)
 [[allow]]
 tool = "Bash"
-command_regex = "^npx -p @mermaid-js/mermaid-cli mmdc "
+command_regex = "^npx -p @mermaid-js/mermaid-cli(@latest)? mmdc "
 command_exclude_regex = "&|;|\\||`"
 
 # Allow reading files in /tmp/mermaid-test-automation (but exclude parent navigation)

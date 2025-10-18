@@ -10,3 +10,5 @@ I have an info site at <https://korny.info> and an open source side project - th
 I worked for 12 wonderful years at Thoughtworks, but in 2023 I quit and am moving on to new things (I probably still haven't updated all my online info to reflect this yet!)
 
 My blogging is intermittent depending on how busy I am with life, work, parenting and the rest.  I also sometimes post on Mastodon for more regular and random updates.
+
+This site used to use Discus comments but I only had a handful of comments, and Discus moderation was fiddly; also they started spamming users with ads. So now I'll try to just include a link to a Mastodon or Bluesky post for people to share comments.
