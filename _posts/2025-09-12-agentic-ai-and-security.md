@@ -77,9 +77,9 @@ Some of these agents are triggered explicitly by the user - but many are built i
 
 ### What is an MCP server?
 
-An [MCP server](https://en.wikipedia.org/wiki/Model_Context_Protocol) really can be anything. MCP is an open standardised protocol to make it easier for an AI tool to call a service. That service might just be a local script that reads files, it might be a public cloud-based service that can read, write, perform actions, run background agents, pretty much do anything - it's a very flexible protocol.
+For those not aware, an [MCP server](https://en.wikipedia.org/wiki/Model_Context_Protocol) really can be anything. MCP is an open standardised protocol to make it easier for an AI tool to call a service. That service might just be a local script that reads files, it might be a public cloud-based service that can read, write, perform actions, run background agents, pretty much do anything - it's a very flexible protocol.
 
-MCP servers come with their own risks, as they don't always come from large trusted vendors like Anthropic - the boom in AI coding means there is also a boom in people building tools, not always with the best quality control. On top of more general security issues discussed below, just calling an MCP server that has a flaw puts you at risk - all the usual rules about using 3rd party tools should apply.
+I'll talk a bit more about MCP servers in [other risks](#other-risks) below
 
 ## What are the risks?
 
@@ -381,14 +381,22 @@ Having a human in the loop allows us to catch mistakes earlier, and to produce b
 
 ## Other risks
 
-### Hosted MCP servers
+This article has mostly covered risks that are new and specific to Agentic AI tools.
 
-MCP servers that you don't run yourself are increasingly common - [Context7](https://context7.com/) is a good example - it gives you API lookup information, based on their giant database of scraped documentation. This seems fine but - you probably don't have a commercial relationship with Context7. You don't really control what they store, what they log, what they do with what we send them. Context7 itself actually is OK - you can use the `/mcp` command in Claude to inspect its API, and it doesn't ask for any data beyond library names.
+However, it's worth noting that AI tooling has led to an explosion of new software - especially MCP servers, custom AI add-ons, sample code, and workflow tools.
 
-But some are not so safe - something like [GraphiLit](https://www.graphlit.com/) for instance is designed to slurp a whole pile of your data and store it in a database hosted on their servers, with no commercial agreement and (given these are LLMs) no real guarantee that your LLM won't decide to send them all sorts of confidential information.
+And _all your usual security checks should apply_ - if anything, you should be more cautious, as many of the tool authors themselves might not have been taking that much care. (_cough_ vibe coding _cough_)
+
+- Who wrote it? Is it well maintained and updated and patched?
+- Is it open-source? Does it have a lot of users, and/or can you review it yourself?
+- Does it have open issues? Do the developers respond to issues, especially vulnerabilities?
+- Do they have a license that is acceptable for your use (especially people using AI at work)?
+- Is it hosted externally, or does it send data externally? Do they slurp up arbitrary information from your AI tool and process it in opaque ways on their service?
+
+I'm especially cautious about hosted MCP services - your AI tool could be sending your corporate information to a 3rd party. Is that really acceptable?
 
 ## Conclusions
 
 This is an area of rapid change - tools are improving, and there are continuous attempts to lock them down more securely. But as Bruce Schneier noted in [the article I quoted at the start](https://www.schneier.com/blog/archives/2025/08/we-are-still-unable-to-secure-llms-from-malicious-inputs.html), this is currently not going so well. And it's probably going to get worse - as more people use the tools, and more attackers develop more sophisticated attacks - most of the articles are about "proof of concept" demos, but it's only a matter of time before we get some actual high-profile businesses caught by AI tooling hacks.
 
-So we need to keep aware of the changing state of things - keep reading sites like [Simon Willison's weblog](https://simonwillison.net/) and skeptical sites like [Pivot to AI](https://pivot-to-ai.com/), read the [Snyk blogs](https://snyk.io/blog/) which have a lot on AI risks, and specifically [MCP security](https://snyk.io/articles/mcp-security-whats-old-is-new-again/) - these are great learning resources, and I also assume Snyk will be offering more and more security tools in this space.
+So we need to keep aware of the changing state of things - keep reading sites like [Simon Willison's weblog](https://simonwillison.net/) and skeptical sites like [Pivot to AI](https://pivot-to-ai.com/), read the [Snyk blogs](https://snyk.io/blog/) which have a lot on AI risks, and specifically [MCP security](https://snyk.io/articles/mcp-security-whats-old-is-new-again/) - these are great learning resources, and I also assume security vendors like Snyk will be offering more and more tools in this space.
