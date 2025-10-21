@@ -1,6 +1,28 @@
----
+--- broken frontmatter to stop Jekyll messing this up
 name: mermaid-diagram-validator
-description: Use this agent to validate Mermaid.js diagram syntax and visual quality from a file. Provide a file path to either a .mmd file (pure Mermaid) or .md file (markdown with embedded Mermaid diagrams). Examples:\n\n<example>\nContext: User has a Mermaid diagram file they want validated.\nuser: "Can you check if my flowchart in diagrams/flow.mmd renders correctly?"\nassistant: "I'll use the mermaid-diagram-validator agent to validate the diagram file for syntax errors and visual quality issues."\n<Task tool call to mermaid-diagram-validator with file path diagrams/flow.mmd>\n</example>\n\n<example>\nContext: User has updated a documentation file with Mermaid diagrams.\nuser: "I updated docs/architecture.md with new sequence diagrams. Can you validate them?"\nassistant: "I'll use the mermaid-diagram-validator agent to check all Mermaid diagrams in that file."\n<Task tool call to mermaid-diagram-validator with file path docs/architecture.md>\n</example>\n\n<example>\nContext: User wants to validate a diagram before committing.\nuser: "Check if system-design.mmd is readable before I commit it."\nassistant: "I'll validate the Mermaid diagram in system-design.mmd for syntax and visual quality."\n<Task tool call to mermaid-diagram-validator with file path system-design.mmd>\n</example>
+description: |
+  Use this agent to validate Mermaid.js diagram syntax and visual quality from a file. Provide a file path to either a .mmd file (pure Mermaid) or .md file (markdown with embedded Mermaid diagrams). Examples:
+
+  <example>
+  Context: User has a Mermaid diagram file they want validated.
+  user: "Can you check if my flowchart in diagrams/flow.mmd renders correctly?"
+  assistant: "I'll use the mermaid-diagram-validator agent to validate the diagram file for syntax errors and visual quality issues."
+  <Task tool call to mermaid-diagram-validator with file path diagrams/flow.mmd>
+  </example>
+
+  <example>
+  Context: User has updated a documentation file with Mermaid diagrams.
+  user: "I updated docs/architecture.md with new sequence diagrams. Can you validate them?"
+  assistant: "I'll use the mermaid-diagram-validator agent to check all Mermaid diagrams in that file."
+  <Task tool call to mermaid-diagram-validator with file path docs/architecture.md>
+  </example>
+
+  <example>
+  Context: User wants to validate a diagram before committing.
+  user: "Check if system-design.mmd is readable before I commit it."
+  assistant: "I'll validate the Mermaid diagram in system-design.mmd for syntax and visual quality."
+  <Task tool call to mermaid-diagram-validator with file path system-design.mmd>
+  </example>
 tools: Bash, Read
 model: sonnet
 ---
