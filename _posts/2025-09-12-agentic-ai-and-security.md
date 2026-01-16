@@ -6,8 +6,14 @@ tags: [AI, security, LLM, agents, MCP]
 toc: true
 ---
 
+An expanded version of this post has been published at [https://martinfowler.com/articles/agentic-ai-security.html](https://martinfowler.com/articles/agentic-ai-security.html) - with more mitigations and updated content - I'd suggest reading that article instead, I'm leaving this one up for posterity.
+{: .notice--success}
+
+Also I've given up on Discus for comments - if you want to discuss this post, please reply to [My post on Mastodon](https://hachyderm.io/@Korny/115451903530308404) or [My post on Bluesky](https://bsky.app/profile/did:plc:bdphvffyy3x2lf5foeogab6u/post/3m4ay3wsjls26) (I'm doing both as one is more free, one is more convenient for many people)
+
+-----
+
 This is an edited version of a post I wrote for the [Liberis](https://www.liberis.com) internal engineering blog - it is not particularly original, most of the ideas come directly from [Simon Willison's article "Lethal Trifecta for AI agents"](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) - but I thought it was worth writing a summary for our engineers, and sharing it more widely.
-{: .notice--info}
 
 -----
 
@@ -233,3 +239,7 @@ But some are not so safe - something like [GraphiLit](https://www.graphlit.com/)
 This is an area of rapid change - tools are improving, and there are continuous attempts to lock them down more securely. But as Bruce Schneier noted in [the article I quoted at the start](https://www.schneier.com/blog/archives/2025/08/we-are-still-unable-to-secure-llms-from-malicious-inputs.html), this is currently not going so well. And it's probably going to get worse - as more people use the tools, and more attackers develop more sophisticated attacks - most of the articles are about "proof of concept" demos, but it's only a matter of time before we get some actual high-profile businesses caught by AI tooling hacks.
 
 So we need to keep aware of the changing state of things - keep reading sites like [Simon Willison's weblog](https://simonwillison.net/) and skeptical sites like [Pivot to AI](https://pivot-to-ai.com/), read the [Snyk blogs](https://snyk.io/blog/) which have a lot on AI risks, and specifically [MCP security](https://snyk.io/articles/mcp-security-whats-old-is-new-again/) - these are great learning resources, and I also assume Snyk will be offering more and more security tools in this space.
+
+-----
+
+I've given up on Discus for comments - if you want to discuss this post, please reply to [My post on Mastodon](https://hachyderm.io/@Korny/115451903530308404) or [My post on Bluesky](https://bsky.app/profile/did:plc:bdphvffyy3x2lf5foeogab6u/post/3m4ay3wsjls26) (I'm doing both as one is more free, one is more convenient for many people)
