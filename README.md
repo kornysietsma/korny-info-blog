@@ -8,7 +8,7 @@ It's a Jekyll / Minimal Mistakes blog - moved from Middelman in 2023, still need
 
 really just notes for me.
 
-Build locally with `bundle exec jekyll serve`
+Build locally with `./run-locally.sh` (this works around OpenSSL 3.x SSL certificate issues with jekyll-remote-theme)
 
 Then open <http://localhost:4000/>
 
