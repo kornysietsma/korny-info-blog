@@ -78,3 +78,7 @@ Just to be clear: I'm sad about this. Twitter was amazing when it was new - so m
 But that Twitter is gone. What wears its skin is something else entirely - a platform optimised for engagement-bait, algorithmic amplification of outrage, and the political projects of its [broligarch](https://en.wikipedia.org/wiki/Broligarchy) owner.
 
 I can't pretend otherwise anymore, and I can't keep feeding it with my attention.
+
+---
+
+If you want to discuss this post, please reply to [my post on Mastodon](https://hachyderm.io/@Korny/115957135117935614) or [my post on Bluesky](https://bsky.app/profile/korny.sietsma.com/post/3mdbe3j76mk2q) (I'm doing both as one is more free, one is more convenient for many people)
