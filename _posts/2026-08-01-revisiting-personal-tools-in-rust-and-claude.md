@@ -55,4 +55,4 @@ As I said at the start, my standard [AI Disclaimer](/ai-disclaimer/) still appli
 
 ---
 
-If you want to discuss this post, please reply to [my post on Mastodon](TODO) or [my post on Bluesky](TODO) (I'm doing both as one is more free, one is more convenient for many people)
+If you want to discuss this post, please reply to [my post on Mastodon](https://hachyderm.io/@Korny/117020834327340037) or [my post on Bluesky](https://bsky.app/profile/korny.sietsma.com/post/3mrzq5u2clc2a) (I'm doing both as one is more free, one is more convenient for many people)
