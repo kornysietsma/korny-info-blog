@@ -26,7 +26,7 @@ It occurred to me that most of these tools were to fill my knowledge gaps - you 
 
 Also Claude has gotten much better at rust, so I thought I'd try it again at tackling all of this as a single native rust app.
 
-So over a handful of Claude sessions in my spare time,  I built [rust-mpd-controller](https://github.com/kornysietsma/rust-mpd-controller) - one Rust binary that does both jobs at once:
+So over a handful of Claude sessions in my spare time,  I built [rust-mpd-controller](https://github.com/kornysietsma/rust-mpd-controller/tree/blog-post-rust-claude) - one Rust binary that does both jobs at once:
 
 - a menu bar widget showing the current track, with play controls, album navigation, playlist manipulation, and more features as I need them
 - a registered `mpdcontrol://` URL scheme, so my Obsidian links still work - same encoding as before, just a new scheme name
@@ -49,7 +49,7 @@ I should note this isn't just because models and harnesses have improved - that 
 
 The thing that's actually significant here, for me, isn't that the code is better, it's that the *cost of writing a tool at all* has dropped far enough to change what's worth building. Scratching the itch of "I wish I had a handy music navigation interface" was just something I'd push on the long pile of "too hard to even contemplate" projects, now it's a pretty trivial spare-time project.
 
-The code is [on GitHub](https://github.com/kornysietsma/rust-mpd-controller) under MIT. It is explicitly a personal tool - but feel free to pilfer, if any of the ideas are useful. (And the prompts are largely there in git history too - apologies for the git history, I made lots of little commits with bad names, I probably should get Claude to clean it up some day!)
+The code is [on GitHub](https://github.com/kornysietsma/rust-mpd-controller/tree/blog-post-rust-claude) under MIT. It is explicitly a personal tool - but feel free to pilfer, if any of the ideas are useful. (And the prompts are largely there in git history too - apologies for the git history, I made lots of little commits with bad names, I probably should get Claude to clean it up some day!)
 
 As I said at the start, my standard [AI Disclaimer](/ai-disclaimer/) still applies - this is using commercial models funding money to tech oligarchs using climate-destroying data centres. It sucks. I do have some hope though - most of what I'm doing would be viable using open models (if you have the hardware) so one day we might be able to do this in a more sustainable way.
 
